@@ -1,10 +1,5 @@
 #include "base.h"
-
-extern bool inRange(int p, int q);
-extern int dir[8][2];
-extern bool sideFlag;
-extern int emptyCount, blackCount, whiteCount, validCount;
-extern enum status { White, Black, Empty, Valid } board[10][10];
+#include "extern.h"
 
 bool isValid(int x, int y, bool side)
 {
