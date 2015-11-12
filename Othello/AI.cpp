@@ -3,5 +3,6 @@
 
 string AI()
 {
-	return "11";
+	string AI;
+	return AI;
 }

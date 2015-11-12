@@ -8,8 +8,8 @@ extern int passCount, emptyCount, blackCount, whiteCount, validCount;
 
 extern bool assistFlag, sideFlag, inputFlag;
 
-extern enum getType { Human, Computer };
-extern enum status { White, Black, Empty, Valid }; 
+enum getType { Human, Computer };
+enum status { White, Black, Empty, Valid }; 
 extern status board[10][10];						  
 
 extern void isAssistMode(), fatalError(), init(), othelloMain(), getCoord(getType T), move(int x, int y), output(), setValid(), stoneCount(), judge();

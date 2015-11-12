@@ -1,11 +1,11 @@
 /*
 Othello For Term Task
-Version 0.7.5
+Version 0.7.6
 */
 #include "base.h"
 #include "declaration.h"
 
-int main(int argc, char* argv[])
+int main()
 {
 	//fin.open("othelloinput.txt");
 	init();

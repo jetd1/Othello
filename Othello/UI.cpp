@@ -1,3 +1,3 @@
-#include "GL/freeglut.h"
 #include "base.h"
+#include "GL/freeglut.h"
 

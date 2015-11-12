@@ -22,6 +22,7 @@
 
 ////common includes
 #include <iostream>
+#include <cstdio>
 #include <string>
 #include <cctype>
 //#include <fstream> 
