@@ -1,5 +1,10 @@
 #include "base.h"
-#include "extern.h"
+
+void isAssistMode();
+extern void setValid();
+extern bool assistFlag, sideFlag;
+extern int passCount, emptyCount, blackCount, whiteCount, validCount;
+extern enum status { White, Black, Empty, Valid } board[10][10];
 
 void init()
 {

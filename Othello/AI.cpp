@@ -1,7 +1,4 @@
-#include "base.h"
-#include "extern.h"
-
-string AI()
+void AI()
 {
-	return "11";
+
 }
