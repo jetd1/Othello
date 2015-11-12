@@ -3,12 +3,13 @@ Jet Othello
 Version 0.6
 */
 #include "pltfmbase.h"
+#include "GL/freeglut.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
 #include <cctype>
 //#include <fstream> 
-#include <GL/freeglut.h>
+
 using namespace std;
 
 int inputX, inputY, passCount, emptyCount, blackCount, whiteCount, validCount;
