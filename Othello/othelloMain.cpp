@@ -1,6 +1,6 @@
 /*
 Othello For Term Task
-Version 0.7
+Version 0.7.5
 */
 #include "base.h"
 #include "declaration.h"
@@ -9,11 +9,11 @@ int main(int argc, char* argv[])
 {
 	//fin.open("othelloinput.txt");
 	init();
-	othello();
+	othelloMain();
 	PAUSE;
 }
 
-void othello()
+void othelloMain()
 {
 	output();
 	while(emptyCount&&passCount<2&&blackCount&&whiteCount)
@@ -32,12 +32,12 @@ void othello()
 			setValid();
 			continue;
 		}
-		input();
+		getCoord(Human);
 		while(!inputFlag||board[inputX][inputY]!=Valid)
 		{
 			if(inputFlag) cout<<"Invalid Position!"<<endl;
 			else cout<<"Invalid Input!"<<endl;
-			input();
+			getCoord(Human);
 		}
 		move(inputX, inputY);
 		sideFlag^=1;
