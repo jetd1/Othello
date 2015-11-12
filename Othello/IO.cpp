@@ -1,11 +1,16 @@
 #include "base.h"
-#include "extern.h"
 #include <iomanip>
+using namespace std;
 
-string input()
+extern int inputX, inputY;
+extern bool assistFlag, sideFlag, inputFlag;
+extern int blackCount, whiteCount;
+extern enum status { White, Black, Empty, Valid };
+extern status board[10][10];
+
+void input()
 {
 	inputFlag=false;
-
 	if(sideFlag) cout<<"Black Turn:__\b\b";
 	else cout<<"White Turn:__\b\b";
 	string input;
@@ -16,20 +21,17 @@ string input()
 		input[1]=toupper(input[1]);
 		if(input[0]>='A'&&input[0]<='H'&&input[1]>='1'&&input[1]<='8')
 		{
-			input[1]-='0';
-			input[0]-='@';
-			input.assign(input.rbegin(), input.rend());
+			inputX=input[1]-'0';
+			inputY=input[0]-'@';
 			inputFlag=true;
 		}
 		else if(input[1]>='A'&&input[1]<='H'&&input[0]>='1'&&input[0]<='8')
 		{
-			input[0]-='0';
-			input[1]-='@';
+			inputX=input[0]-'0';
+			inputY=input[1]-'@';
 			inputFlag=true;
 		}
 	}
-	fflush(stdin);
-	return input;
 }
 
 void output()
@@ -68,23 +70,4 @@ void output()
 		if(i-8) cout<<endl;
 	}
 	cout<<endl<<left<<"Black(X):"<<setw(2)<<blackCount<<"  White(O):"<<setw(2)<<whiteCount<<endl<<endl;
-}
-
-void getCoord(getType T)
-{
-	switch(T)
-	{
-		case Human:
-			coord=input();
-			inputX=coord[0];
-			inputY=coord[1];
-			break;
-		case Computer:
-			coord=AI();
-			inputX=coord[0];
-			inputY=coord[1];
-			break;
-		default:
-			fatalError();
-	}
 }
