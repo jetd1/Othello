@@ -1,6 +1,6 @@
 /*
 Othello For Term Task
-Version 0.7.7
+Version 0.8
 */
 #include "base.h"
 #include "declaration.h"
@@ -16,14 +16,9 @@ int main()
 void othelloMain()
 {
 	output();
-	while(emptyCount&&passCount<2&&blackCount&&whiteCount)
+	while(stoneCount[Empty]&&passCount<2&&stoneCount[Black]&&stoneCount[White])
 	{
-		if(passCount)
-		{
-			CLS;
-			output();
-		}
-		if(!validCount)
+		if(!stoneCount[Valid])
 		{
 			cout<<"No Possible Move, Enter to Pass!"<<endl;
 			PAUSE;
@@ -32,17 +27,34 @@ void othelloMain()
 			setValid();
 			continue;
 		}
-		getCoord(Human);
-		while(!inputFlag||board[inputX][inputY]!=Valid)
+		if(!modeFlag||sideFlag==userSide)
 		{
-			if(inputFlag) cout<<"Invalid Position!"<<endl;
-			else cout<<"Invalid Input!"<<endl;
 			getCoord(Human);
+			while(!inputFlag||board[inputX][inputY]!=Valid)
+			{
+				if(inputFlag) cout<<"Invalid Position!"<<endl;
+				else cout<<"Invalid Input!"<<endl;
+				getCoord(Human);
+			}
+		}
+		else
+		{
+			setValid();
+			if(stoneCount[Valid]) getCoord(Computer);
+			else
+			{
+				cout<<"Computer Passed, Your turn."<<endl;
+				passCount++;
+				sideFlag^=1;
+				setValid();
+				continue;
+			}
+			
 		}
 		move(inputX, inputY);
 		sideFlag^=1;
 		setValid();
-		stoneCount();
+		count();
 		output();
 		passCount=0;
 	}

@@ -38,6 +38,7 @@ void fatalError();
 #include <cstdio>
 #include <string>
 #include <cctype>
+#include <vector>
 //#include <fstream> 
 
 using namespace std;

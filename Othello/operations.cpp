@@ -21,27 +21,32 @@ bool isValid(int x, int y, bool side)
 
 void setValid()
 {
-	validCount=0;
+	validCoord.clear();
+	stoneCount[Valid]=0;
 	for(int i=1; i<=8; i++) for(int j=1; j<=8; j++)
 	{
+		string tmpCoord;
 		if(board[i][j]<=Black) continue;
 		if(isValid(i, j, sideFlag))
 		{
 			board[i][j]=Valid;
-			validCount++;
+			stoneCount[Valid]++;
+			tmpCoord.push_back(char(i+'0'));
+			tmpCoord.push_back(char(j+'0'));
+			validCoord.push_back(tmpCoord);
 		}
 		else board[i][j]=Empty;
 	}
 }
 
-void stoneCount()
+void count()
 {
-	blackCount=whiteCount=emptyCount=0;
+	stoneCount[Black]=stoneCount[White]=stoneCount[Empty]=0;
 	for(int i=1; i<=8; i++) for(int j=1; j<=8; j++)
 	{
-		blackCount+=(board[i][j]==Black);
-		whiteCount+=(board[i][j]==White);
-		emptyCount+=(board[i][j]>=Empty);
+		stoneCount[Black]+=(board[i][j]==Black);
+		stoneCount[White]+=(board[i][j]==White);
+		stoneCount[Empty]+=(board[i][j]>=Empty);
 	}
 }
 
@@ -73,7 +78,16 @@ inline bool inRange(int p, int q)
 
 void judge()
 {
-	if(blackCount>whiteCount||!whiteCount) cout<<"Black Win!"<<endl<<endl;
-	else if(blackCount<whiteCount||!blackCount) cout<<"White Win!"<<endl<<endl;
-	else cout<<"Tie!"<<endl<<endl;
+	if(modeFlag)
+	{
+		if(stoneCount[userSide]>stoneCount[!userSide]) cout<<"You Defeated Computer! Congratulations!"<<endl<<endl;
+		else if(stoneCount[userSide]<stoneCount[!userSide]) cout<<"Too Young too Simple!"<<endl<<endl;
+		else cout<<"Tie! But Liangchen Want to Play Again With You."<<endl<<endl;
+	}
+	else
+	{
+		if(stoneCount[Black]>stoneCount[White]||!stoneCount[White]) cout<<"Black Win!"<<endl<<endl;
+		else if(stoneCount[Black]<stoneCount[White]||!stoneCount[Black]) cout<<"White Win!"<<endl<<endl;
+		else cout<<"Tie!"<<endl<<endl;
+	}
 }
