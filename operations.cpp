@@ -1,7 +1,7 @@
 #include "base.h"
 #include "extern.h"
 
-bool isValid(int x, int y, bool side)
+bool isValid(int x, int y, bool side, status board[10][10])
 {
 	if(board[x][y]<Empty) return false;
 	for(int i=0; i<8; i++)
@@ -19,7 +19,7 @@ bool isValid(int x, int y, bool side)
 	return false;
 }
 
-void setValid()
+void setValid(status board[10][10])
 {
 	validCoord.clear();
 	stoneCount[Valid]=0;
@@ -27,7 +27,7 @@ void setValid()
 	{
 		string tmpCoord;
 		if(board[i][j]<=Black) continue;
-		if(isValid(i, j, sideFlag))
+		if(isValid(i, j, sideFlag, board))
 		{
 			board[i][j]=Valid;
 			stoneCount[Valid]++;
@@ -39,7 +39,7 @@ void setValid()
 	}
 }
 
-void count()
+void count(status board[10][10])
 {
 	stoneCount[Black]=stoneCount[White]=stoneCount[Empty]=0;
 	for(int i=1; i<=8; i++) for(int j=1; j<=8; j++)
@@ -50,7 +50,7 @@ void count()
 	}
 }
 
-void move(int x, int y)
+void move(int x, int y, status board[10][10])
 {
 	for(int i=0; i<8; i++)
 	{

@@ -23,7 +23,7 @@ void init()
     sideFlag = Black;
     passCount = 0;
     count();
-    setValid();
+    setValid(board);
 }
 
 /*
