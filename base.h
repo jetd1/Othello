@@ -6,24 +6,24 @@
 void fatalError();
 
 #ifdef _WIN32
-#include <windows.h>
-#define CLS system("cls")
-#define SLP(X) Sleep(X)
+    #include <windows.h>
+    #define CLS system("cls")
+    #define SLP(X) Sleep(X)
 #elif defined  _WIN64
-#include <windows.h>
-#define CLS system("cls")
-#define SLP(X) Sleep(X)
+    #include <windows.h>
+    #define CLS system("cls")
+    #define SLP(X) Sleep(X)
 #elif defined linux
-#include <unistd.h>
-#define CLS system("clear")
-#define SLP(X) usleep(X)
+    #include <unistd.h>
+    #define CLS system("clear")
+    #define SLP(X) usleep(X)
 #elif defined __APPLE__
-#include <unistd.h>
-#define CLS system("clear")
-#define SLP(X) usleep(X)
+    #include <unistd.h>
+    #define CLS system("clear")
+    #define SLP(X) usleep(X)
 #else
-#define CLS fatalError(2)
-#define SLP(X) fatalError(2)
+    #define CLS fatalError(2)
+    #define SLP(X) fatalError(2)
 #endif
 
 

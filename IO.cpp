@@ -38,8 +38,8 @@ void output()
 {
 	SLP(200);
 	CLS;
-	cout<<" ";
-	for(int i=1; i<=8; i++) cout<<' '<<char('@'+i);
+	cout << " ";
+	for (int i = 1; i<=8; i++) cout<<' '<<char('@'+i);
 	cout<<endl;
 	char outTmp;
 	for(int i=1; i<=8; i++)
