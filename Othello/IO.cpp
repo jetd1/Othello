@@ -2,15 +2,19 @@
 #include "extern.h"
 #include <iomanip>
 
-string input()
+string input() //For human input
 {
 	inputFlag=false;
+
+	////Echo
 	if(modeFlag) cout<<"Your Turn:__\b\b";
 	else
 	{
 		if(sideFlag) cout<<"Black(X) Turn:__\b\b";
 		else cout<<"White(X) Turn:__\b\b";
 	}
+
+	////Input conversion
 	string input;
 	cin>>input;
 	if(input.length()==2)
@@ -72,7 +76,7 @@ void getCoord(getType T)
 {
 	switch(T)
 	{
-		case Human:
+		case Player:
 			coord=input();
 			inputX=coord[0]-'0';
 			inputY=coord[1]-'@';
