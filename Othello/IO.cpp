@@ -5,8 +5,12 @@
 string input()
 {
 	inputFlag=false;
-	if(sideFlag) cout<<"Black Turn:__\b\b";
-	else cout<<"White Turn:__\b\b";
+	if(modeFlag) cout<<"Your Turn:__\b\b";
+	else
+	{
+		if(sideFlag) cout<<"Black(X) Turn:__\b\b";
+		else cout<<"White(X) Turn:__\b\b";
+	}
 	string input;
 	cin>>input;
 	if(input.length()==2)
@@ -64,7 +68,7 @@ void output()
 	cout<<endl<<left<<"Black(X):"<<setw(2)<<stoneCount[Black]<<"  White(O):"<<setw(2)<<stoneCount[White]<<endl<<endl;
 }
 
-inline void getCoord(getType T)
+void getCoord(getType T)
 {
 	switch(T)
 	{
