@@ -1,10 +1,20 @@
 #include "base.h"
 
-void fatalError()
+void fatalError(unsigned ErrorCode)
 {
-	SLP(300);
-	CLS;
-	cerr<<"Fatal Error Detected, Program Will Now Terminate."<<endl;
-	PAUSE;
-	exit(-1);
+	switch(ErrorCode)
+	{
+		case 1:
+			SLP(300);
+			CLS;
+			cerr<<"Unknown Fatal Error Detected, Program Will Now Terminate."<<endl;
+			PAUSE;
+			exit(1);
+		case 2:
+			cerr<<"Unsupported Platform, Program Will Now Terminate."<<endl;
+			PAUSE;
+			exit(2);
+		default:
+			exit(233);
+	}
 }

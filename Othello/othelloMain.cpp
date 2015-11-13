@@ -1,6 +1,6 @@
 /*
 Othello For Term Task
-Version 0.7.6
+Version 0.7.7
 */
 #include "base.h"
 #include "declaration.h"

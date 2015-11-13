@@ -66,7 +66,7 @@ void move(int x, int y)
 	}
 }
 
-bool inRange(int p, int q)
+inline bool inRange(int p, int q)
 {
 	return p>=1&&p<=8&&q>=1&&q<=8;
 }

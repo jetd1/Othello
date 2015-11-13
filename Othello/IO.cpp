@@ -28,7 +28,6 @@ string input()
 			inputFlag=true;
 		}
 	}
-	fflush(stdin);
 	return input;
 }
 
@@ -61,7 +60,7 @@ void output()
 					else outTmp=' ';
 					break;
 				default:
-					extern void fatalError();
+					fatalError(1);
 			}
 			cout<<' '<<outTmp;
 		}
@@ -70,7 +69,7 @@ void output()
 	cout<<endl<<left<<"Black(X):"<<setw(2)<<blackCount<<"  White(O):"<<setw(2)<<whiteCount<<endl<<endl;
 }
 
-void getCoord(getType T)
+inline void getCoord(getType T)
 {
 	switch(T)
 	{
@@ -85,6 +84,6 @@ void getCoord(getType T)
 			inputY=coord[1];
 			break;
 		default:
-			fatalError();
+			fatalError(1);
 	}
 }

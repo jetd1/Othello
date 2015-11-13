@@ -13,6 +13,6 @@ enum status { White, Black, Empty, Valid };    //Then status<Empty: Have Stone o
 status board[10][10];						   //White=false & Black=true
 //ifstream fin;
 
-void isAssistMode(), isAfatalError(), init(), othelloMain(), getCoord(getType T), move(int x, int y), output(), setValid(), stoneCount(), judge();
+void isAssistMode(), fatalError(unsigned ErrorCode), init(), othelloMain(), getCoord(getType T), move(int x, int y), output(), setValid(), stoneCount(), judge();
 bool isValid(int x, int y, bool side), inRange(int p, int q);
 string input(), AI();
