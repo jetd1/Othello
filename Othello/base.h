@@ -27,7 +27,7 @@ void fatalError();
 #endif
 
 
-////GLUT flaw fix
+//GLUT flaw fix
 #ifndef GLUT_DISABLE_ATEXIT_HACK
 #define GLUT_DISABLE_ATEXIT_HACK
 #endif
@@ -36,9 +36,11 @@ void fatalError();
 ////common includes
 #include <iostream>
 #include <cstdio>
+#include <cstdlib>
 #include <string>
 #include <cctype>
 #include <vector>
-//#include <fstream> 
+#include <GL/freeglut.h> //Header needed differs on other platforms
+
 
 using namespace std;
