@@ -25,7 +25,7 @@
 
 #elif defined linux
 #include <unistd.h>
-#include "freeglut_m/include/GL/freeglut.h"
+#include "freeglut_l/include/GL/freeglut.h"
 #pragma comment(lib, "freeglut.lib")
 #define CLS system("clear")
 #define SLP(X) usleep(1000*X)
