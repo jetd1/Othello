@@ -15,7 +15,7 @@
 
 
 extern int dir[8][2];
-extern int stoneCount[4];
+extern int statusCount[4];
 
 extern int passCount;
 extern bool modeFlag, assistFlag, sideFlag, inputFlag, playerSide;
@@ -36,8 +36,13 @@ struct Cell
     short value;
 };
 
-extern Cell board[SAFE_LENGTH][SAFE_LENGTH];
+struct Board
+{
+    Cell cell[SAFE_LENGTH][SAFE_LENGTH];
+    short value;
+};
 
+extern Board gameBoard;
 extern Coord inputCoord;
 
 extern vector<Coord> validCoord;
@@ -62,14 +67,14 @@ extern void getCoord(getType T);
 
 //In operations.cpp
 extern void judge();
-extern void count(Cell board[SAFE_LENGTH][SAFE_LENGTH]);
-extern void setValid(Cell board[SAFE_LENGTH][SAFE_LENGTH], bool side);
-extern void move(Coord pos, Cell board[SAFE_LENGTH][SAFE_LENGTH]);
+extern void count(Board board);
 extern bool inline inRange(int p, int q);
-extern bool isValid(Coord pos, bool side, Cell board[SAFE_LENGTH][SAFE_LENGTH]);
+extern bool isValid(Board board, Coord pos, bool side);
+extern Board setValid(Board board, bool side);
+extern Board move(Board board, Coord pos, bool side);
 
 //In AI.cpp
-extern Coord AI(Cell board[SAFE_LENGTH][SAFE_LENGTH], bool side);
+extern Coord AI(Board board, bool side);
 
 
 

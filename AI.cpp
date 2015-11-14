@@ -9,14 +9,14 @@
 //Position Estimate
 //Mobility Significance
 
-Coord AI(Cell board[SAFE_LENGTH][SAFE_LENGTH], bool side)
+Coord AI(Board board, bool side)
 {
     Coord AI = validCoord[0];
     random_shuffle(validCoord.begin(), validCoord.end());
 
 
-    status tmpBoard[SAFE_LENGTH][SAFE_LENGTH];
-    for (int i = 0; i < SAFE_LENGTH; i++) for (int j = 0; j < SAFE_LENGTH; j++) tmpBoard[i][j] = board[i][j].stat;
+    Board tmpBoard = board;
+    
 
 
 

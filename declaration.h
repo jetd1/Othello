@@ -9,7 +9,7 @@
 
 
 
-int stoneCount[4];
+int statusCount[4];
 int passCount;
 
 int dir[8][2] = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
@@ -32,7 +32,13 @@ struct Cell
     short value;
 };
 
-Cell board[SAFE_LENGTH][SAFE_LENGTH];
+struct Board
+{
+    Cell cell[SAFE_LENGTH][SAFE_LENGTH];
+    short value;
+};
+
+Board gameBoard;
 
 Coord inputCoord;
 
@@ -58,14 +64,14 @@ void getCoord(getType T);
 
 //In operations.cpp
 void judge();
-void count(Cell board[SAFE_LENGTH][SAFE_LENGTH]);
-void setValid(Cell board[SAFE_LENGTH][SAFE_LENGTH], bool side);
-void move(Coord pos, Cell board[SAFE_LENGTH][SAFE_LENGTH]);
+void count(Board board);
 bool inline inRange(int p, int q);
-bool isValid(Coord pos, bool side, Cell board[SAFE_LENGTH][SAFE_LENGTH]);
+bool isValid(Board board, Coord pos, bool side);
+Board setValid(Board board, bool side);
+Board move(Board board, Coord pos, bool side);
 
 //In AI.cpp
-Coord AI(Cell board[SAFE_LENGTH][SAFE_LENGTH], bool side);
+Coord AI(Board board, bool side);
 
 //In UI.cpp
 

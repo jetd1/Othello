@@ -1,6 +1,6 @@
 /*
 Othello For Term Task
-Version 0.9.0
+Version 0.9.1
 */
 #include "base.h"
 #include "declaration.h"
@@ -15,26 +15,26 @@ int main()
 void othelloMain()
 {
     output();
-    while (stoneCount[Empty] && passCount < 2 && stoneCount[Black] && stoneCount[White])
+    while (statusCount[Empty] && passCount < 2 && statusCount[Black] && statusCount[White])
     {
         ////No-valid situation handle
-        if (!stoneCount[Valid])
+        if (!statusCount[Valid])
         {
-            if (!modeFlag || (modeFlag&&sideFlag == playerSide)) cout << "No Possible Move, Enter to Pass!";
+            if (modeFlag == NON_AI_MODE || (modeFlag == AI_MODE &&sideFlag == playerSide)) cout << "No Possible Move, Enter to Pass!";
             else cout << "Computer Passed, Enter to Your Turn!";
             PAUSE;
             passCount++;
             sideFlag ^= 1;
-            setValid(board, sideFlag);
-            count(board);
+            gameBoard = setValid(gameBoard, sideFlag);
+            count(gameBoard);
             continue;
         }
 
         ////Get input
-        if (!modeFlag || sideFlag == playerSide)
+        if (modeFlag == NON_AI_MODE || sideFlag == playerSide)
         {
             getCoord(Player);
-            while (!inputFlag || board[inputCoord.x][inputCoord.y].stat != Valid)
+            while (!inputFlag || gameBoard.cell[inputCoord.x][inputCoord.y].stat != Valid)
             {
                 if (inputFlag) cout << "Invalid Position!" << endl;
                 else cout << "Invalid Input!" << endl;
@@ -44,10 +44,10 @@ void othelloMain()
         else getCoord(Computer);
 
         ////Refresh board
-        move(inputCoord, board);
+        gameBoard = move(gameBoard, inputCoord, sideFlag);
         sideFlag ^= 1;
-        setValid(board, sideFlag);
-        count(board);
+        gameBoard = setValid(gameBoard, sideFlag);
+        count(gameBoard);
         output();
         passCount = 0;
     }

@@ -17,17 +17,17 @@ void init()
     isAssistMode();
     for (int i = 0; i < SAFE_LENGTH; i++) for (int j = 0; j < SAFE_LENGTH; j++)
     {
-        board[i][j].stat = Empty;
-        board[i][j].pos.x = i;
-        board[i][j].pos.y = j;
-        if (modeFlag == AI_MODE) board[i][j].value = initBoardValue[i][j];
+        gameBoard.cell[i][j].stat = Empty;
+        gameBoard.cell[i][j].pos.x = i;
+        gameBoard.cell[i][j].pos.y = j;
+        if (modeFlag == AI_MODE) gameBoard.cell[i][j].value = initBoardValue[i][j];
     }
-    board[SIDE_LENGTH/2][SIDE_LENGTH/2].stat = board[SIDE_LENGTH/2+1][SIDE_LENGTH/2+1].stat = White;
-    board[SIDE_LENGTH/2][SIDE_LENGTH/2+1].stat = board[SIDE_LENGTH/2+1][SIDE_LENGTH/2].stat = Black;
+    gameBoard.cell[SIDE_LENGTH/2][SIDE_LENGTH/2].stat = gameBoard.cell[SIDE_LENGTH/2+1][SIDE_LENGTH/2+1].stat = White;
+    gameBoard.cell[SIDE_LENGTH/2][SIDE_LENGTH/2+1].stat = gameBoard.cell[SIDE_LENGTH/2+1][SIDE_LENGTH/2].stat = Black;
     sideFlag = Black;
     passCount = 0;
-    count(board);
-    setValid(board, sideFlag);
+    count(gameBoard);
+    gameBoard = setValid(gameBoard, sideFlag);
 }
 
 /*

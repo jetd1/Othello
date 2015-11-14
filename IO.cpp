@@ -7,7 +7,7 @@ Coord input() //For human input
     inputFlag = false;
 
     ////Echo
-    if (modeFlag) cout << "Your Turn:__\b\b";
+    if (modeFlag == AI_MODE) cout << "Your Turn:__\b\b";
     else
     {
         if (sideFlag) cout << "Black(X) Turn:__\b\b";
@@ -51,7 +51,7 @@ void output()
         cout << i;
         for (int j = 1; j <= SIDE_LENGTH; j++)
         {
-            switch (board[i][j].stat)
+            switch (gameBoard.cell[i][j].stat)
             {
                 case Black:
                     outTmp = 'X';
@@ -63,7 +63,7 @@ void output()
                     outTmp = ' ';
                     break;
                 case Valid:
-                    if (assistFlag && ((modeFlag&&sideFlag == playerSide) || (!modeFlag))) outTmp = '*';
+                    if (assistFlag && ((modeFlag == AI_MODE&&sideFlag == playerSide) || (modeFlag == NON_AI_MODE))) outTmp = '*';
                     else outTmp = ' ';
                     break;
                 default:
@@ -73,7 +73,7 @@ void output()
         }
         if (i - SIDE_LENGTH) cout << endl;
     }
-    cout << endl << left << "Black(X):" << setw(2) << stoneCount[Black] << "  White(O):" << setw(2) << stoneCount[White] << endl << endl;
+    cout << endl << left << "Black(X):" << setw(2) << statusCount[Black] << "  White(O):" << setw(2) << statusCount[White] << endl << endl;
 }
 
 void getCoord(getType T)
@@ -84,7 +84,7 @@ void getCoord(getType T)
             inputCoord = input();
             break;
         case Computer:
-            inputCoord = AI(board,sideFlag);
+            inputCoord = AI(gameBoard,sideFlag);
             break;
         default:
             fatalError(1);
