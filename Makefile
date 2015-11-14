@@ -3,9 +3,9 @@
 DIR = bin
 BIN = $(DIR)/Othello
 OBJ = $(DIR)/main.o $(DIR)/AI.o $(DIR)/error.o $(DIR)/init.o $(DIR)/IO.o $(DIR)/operations.o $(DIR)/UI.o
-LIB = -Lfreeglut -Wl,-Bstatic -lglut -Wl,-Bdynamic -lGL -lX11 -lXxf86vm -lXrandr -lXi -g3
+LIB = -Lfreeglut -Wl,-Bstatic -lglut -Wl,-Bdynamic -lGL -lX11 -lXxf86vm -g3
 CXX = g++
-CXXFLAGS = -I"freeglut/include" -Wall -g3
+CXXFLAGS = -I"freeglut_l/include" -Wall -g3
 
 .PHONY: test clean cleanbackup cb win
 

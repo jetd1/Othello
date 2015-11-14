@@ -1,8 +1,7 @@
 #include "base.h"
 #include <cmath>
 
-
-////OpenGL Test
+////OpenGL Test *Do not remove please
 //const int n=3;
 //const GLdouble R=0.5;
 //const GLdouble Pi=3.1415926536;
