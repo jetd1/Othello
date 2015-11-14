@@ -1,9 +1,6 @@
 #include "base.h"
 #include "extern.h"
 
-#define AI_MODE true
-#define NON_AI_MODE false
-
 /*
 * Initialize the game:
 * 1.Choose mode(AI or non-AI);
@@ -17,9 +14,9 @@ void init()
     selectMode();
     selectSide();
     isAssistMode();
-    for (int i = 0; i < 10; i++) for (int j = 0; j < 10; j++) board[i][j] = Empty;
-    board[4][4] = board[5][5] = White;
-    board[4][5] = board[5][4] = Black;
+    for (int i = 0; i < SAFE_LENGTH; i++) for (int j = 0; j < SAFE_LENGTH; j++) board[i][j] = Empty;
+    board[SIDE_LENGTH/2][SIDE_LENGTH/2] = board[SIDE_LENGTH/2+1][SIDE_LENGTH/2+1] = White;
+    board[SIDE_LENGTH/2][SIDE_LENGTH/2+1] = board[SIDE_LENGTH/2+1][SIDE_LENGTH/2] = Black;
     sideFlag = Black;
     passCount = 0;
     count(board);

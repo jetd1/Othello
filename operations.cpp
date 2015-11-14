@@ -1,7 +1,7 @@
 #include "base.h"
 #include "extern.h"
 
-bool isValid(int x, int y, bool side, status board[10][10])
+bool isValid(int x, int y, bool side, status board[SAFE_LENGTH][SAFE_LENGTH])
 {
     if (board[x][y] < Empty) return false;
     for (int i = 0; i < 8; i++)
@@ -19,11 +19,11 @@ bool isValid(int x, int y, bool side, status board[10][10])
     return false;
 }
 
-void setValid(status board[10][10])
+void setValid(status board[SAFE_LENGTH][SAFE_LENGTH])
 {
     validCoord.clear();
     stoneCount[Valid] = 0;
-    for (int i = 1; i <= 8; i++) for (int j = 1; j <= 8; j++)
+    for (int i = 1; i <= SIDE_LENGTH; i++) for (int j = 1; j <= SIDE_LENGTH; j++)
     {
         string tmpCoord;
         if (board[i][j] <= Black) continue;
@@ -39,10 +39,10 @@ void setValid(status board[10][10])
     }
 }
 
-void count(status board[10][10])
+void count(status board[SAFE_LENGTH][SAFE_LENGTH])
 {
     stoneCount[Black] = stoneCount[White] = stoneCount[Empty] = 0;
-    for (int i = 1; i <= 8; i++) for (int j = 1; j <= 8; j++)
+    for (int i = 1; i <= SIDE_LENGTH; i++) for (int j = 1; j <= SIDE_LENGTH; j++)
     {
         stoneCount[Black] += (board[i][j] == Black);
         stoneCount[White] += (board[i][j] == White);
@@ -50,7 +50,7 @@ void count(status board[10][10])
     }
 }
 
-void move(int x, int y, status board[10][10])
+void move(int x, int y, status board[SAFE_LENGTH][SAFE_LENGTH])
 {
     for (int i = 0; i < 8; i++)
     {
@@ -73,7 +73,7 @@ void move(int x, int y, status board[10][10])
 
 inline bool inRange(int p, int q)
 {
-    return p >= 1 && p <= 8 && q >= 1 && q <= 8;
+    return p >= 1 && p <= SIDE_LENGTH && q >= 1 && q <= SIDE_LENGTH;
 }
 
 void judge()
