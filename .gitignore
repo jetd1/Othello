@@ -211,6 +211,7 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 
+Othello/
 Othello/Debug/
 Othello/*.vcxproj
 Othello/*.vcxproj.*
