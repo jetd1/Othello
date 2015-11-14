@@ -10,8 +10,8 @@ extern int passCount;
 extern bool modeFlag, assistFlag, sideFlag, inputFlag, userSide;
 
 enum getType { Player, Computer };
-enum status { White, Black, Empty, Valid }; 
-extern status board[10][10];						
+enum status { White, Black, Empty, Valid };
+extern status board[10][10];
 
 extern vector<string> validCoord;
 

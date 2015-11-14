@@ -6,14 +6,14 @@ int inputX, inputY;
 int stoneCount[4];
 int passCount;
 
-const int dir[8][2]={{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
+int dir[8][2] = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
 
 bool modeFlag, assistFlag, sideFlag, inputFlag, userSide;
 
 enum getType { Player, Computer };
 enum status { White, Black, Empty, Valid };    //Then status<Empty: Have Stone on It, status>=Empty: Truly Empty
 status board[10][10];						   //White=false & Black=true
-//ifstream fin;
+                                               //ifstream fin;
 
 vector<string> validCoord;
 
