@@ -2,7 +2,7 @@
 #include "extern.h"
 #include <iomanip>
 
-string input() //For human input
+Coord input() //For human input
 {
     inputFlag = false;
 
@@ -16,6 +16,7 @@ string input() //For human input
 
     ////Input conversion
     string input;
+    Coord tmpCoord{};
     cin >> input;
     if (input.length() == 2)
     {
@@ -30,8 +31,11 @@ string input() //For human input
         {
             inputFlag = true;
         }
+        else return tmpCoord;
+        tmpCoord.x = input[0] - '0';
+        tmpCoord.y = input[1] - '@';
     }
-    return input;
+    return tmpCoord;
 }
 
 void output()
@@ -47,7 +51,7 @@ void output()
         cout << i;
         for (int j = 1; j <= SIDE_LENGTH; j++)
         {
-            switch (board[i][j])
+            switch (board[i][j].stat)
             {
                 case Black:
                     outTmp = 'X';
@@ -59,7 +63,7 @@ void output()
                     outTmp = ' ';
                     break;
                 case Valid:
-                    if (assistFlag && ((modeFlag&&sideFlag == userSide) || (!modeFlag))) outTmp = '*';
+                    if (assistFlag && ((modeFlag&&sideFlag == playerSide) || (!modeFlag))) outTmp = '*';
                     else outTmp = ' ';
                     break;
                 default:
@@ -77,14 +81,10 @@ void getCoord(getType T)
     switch (T)
     {
         case Player:
-            coord = input();
-            inputX = coord[0] - '0';
-            inputY = coord[1] - '@';
+            inputCoord = input();
             break;
         case Computer:
-            coord = AI();
-            inputX = coord[0] - '0';
-            inputY = coord[1] - '0';
+            inputCoord = AI(board,sideFlag);
             break;
         default:
             fatalError(1);

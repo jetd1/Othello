@@ -1,5 +1,6 @@
 #include "base.h"
 #include "extern.h"
+#include "AIbase.h"
 
 /*
 * Initialize the game:
@@ -14,13 +15,19 @@ void init()
     selectMode();
     selectSide();
     isAssistMode();
-    for (int i = 0; i < SAFE_LENGTH; i++) for (int j = 0; j < SAFE_LENGTH; j++) board[i][j] = Empty;
-    board[SIDE_LENGTH/2][SIDE_LENGTH/2] = board[SIDE_LENGTH/2+1][SIDE_LENGTH/2+1] = White;
-    board[SIDE_LENGTH/2][SIDE_LENGTH/2+1] = board[SIDE_LENGTH/2+1][SIDE_LENGTH/2] = Black;
+    for (int i = 0; i < SAFE_LENGTH; i++) for (int j = 0; j < SAFE_LENGTH; j++)
+    {
+        board[i][j].stat = Empty;
+        board[i][j].pos.x = i;
+        board[i][j].pos.y = j;
+        if (modeFlag == AI_MODE) board[i][j].value = initBoardValue[i][j];
+    }
+    board[SIDE_LENGTH/2][SIDE_LENGTH/2].stat = board[SIDE_LENGTH/2+1][SIDE_LENGTH/2+1].stat = White;
+    board[SIDE_LENGTH/2][SIDE_LENGTH/2+1].stat = board[SIDE_LENGTH/2+1][SIDE_LENGTH/2].stat = Black;
     sideFlag = Black;
     passCount = 0;
     count(board);
-    setValid(board);
+    setValid(board, sideFlag);
 }
 
 /*
@@ -64,7 +71,7 @@ void selectSide()
             cin >> in;
             in[0] = toupper(in[0]);
         }
-        userSide = ((in=="W") ? White : Black);
+        playerSide = ((in=="W") ? White : Black);
     }
     else sideFlag = Black;
 }

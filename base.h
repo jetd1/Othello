@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _BASE
+#define _BASE
 
 ////Cross-platform implement
 #define PAUSE cin.get();cin.get();
@@ -56,3 +57,6 @@
 
 ////Namespaces
 using namespace std;
+
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _DECL
+#define _DECL
 
 #define AI_MODE true
 #define NON_AI_MODE false
@@ -6,24 +7,67 @@
 #define SIDE_LENGTH 8
 #define SAFE_LENGTH SIDE_LENGTH+2
 
-string coord;
 
-int inputX, inputY;
+
 int stoneCount[4];
 int passCount;
 
 int dir[8][2] = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
 
-bool modeFlag, assistFlag, sideFlag, inputFlag, userSide;
+bool modeFlag, assistFlag, sideFlag, inputFlag, playerSide;
 
 enum getType { Player, Computer };
 enum status { White, Black, Empty, Valid };    //Then status<Empty: Have Stone on It, status>=Empty: Truly Empty
-status board[SAFE_LENGTH][SAFE_LENGTH];	       //White=false & Black=true
-                                               //ifstream fin;
+	                                           //White=false & Black=true
+struct Coord
+{
+    int x;
+    int y;
+};
 
-vector<string> validCoord;
+struct Cell
+{
+    Coord pos;
+    status stat;
+    short value;
+};
 
-void selectMode(), isAssistMode(), selectSide(), fatalError(unsigned ErrorCode), init(), othelloMain(), getCoord(getType T), move(int x, int y, status board[SAFE_LENGTH][SAFE_LENGTH]), output(), setValid(status board[SAFE_LENGTH][SAFE_LENGTH]), count(status board[SAFE_LENGTH][SAFE_LENGTH]), judge();
-bool isValid(int x, int y, bool side, status board[SAFE_LENGTH][SAFE_LENGTH]), inRange(int p, int q);
-string input(), AI();
+Cell board[SAFE_LENGTH][SAFE_LENGTH];
 
+Coord inputCoord;
+
+vector<Coord> validCoord;
+
+
+//In init.cpp
+void init();
+void selectMode();
+void selectSide();
+void isAssistMode();
+
+//In error.cpp
+void fatalError(unsigned ErrorCode);
+
+//In main.cpp
+void othelloMain();
+
+//In IO.cpp
+Coord input();
+void output();
+void getCoord(getType T);
+
+//In operations.cpp
+void judge();
+void count(Cell board[SAFE_LENGTH][SAFE_LENGTH]);
+void setValid(Cell board[SAFE_LENGTH][SAFE_LENGTH], bool side);
+void move(Coord pos, Cell board[SAFE_LENGTH][SAFE_LENGTH]);
+bool inline inRange(int p, int q);
+bool isValid(Coord pos, bool side, Cell board[SAFE_LENGTH][SAFE_LENGTH]);
+
+//In AI.cpp
+Coord AI(Cell board[SAFE_LENGTH][SAFE_LENGTH], bool side);
+
+//In UI.cpp
+
+
+#endif
