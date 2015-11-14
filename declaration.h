@@ -5,7 +5,8 @@ string coord;
 int inputX, inputY;
 int stoneCount[4];
 int passCount;
-int dir[8][2]={{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
+
+const int dir[8][2]={{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
 
 bool modeFlag, assistFlag, sideFlag, inputFlag, userSide;
 

@@ -75,4 +75,5 @@ void isAssistMode()
 	}
 	if(in=="Y") assistFlag=true;
 	else assistFlag=false;
+	;;
 }
