@@ -25,8 +25,8 @@ void othelloMain()
 			PAUSE;
 			passCount++;
 			sideFlag^=1;
-			setValid();
-			count();
+			setValid(board);
+			count(board);
 			continue;
 		}
 
@@ -44,10 +44,10 @@ void othelloMain()
 		else getCoord(Computer);
 
 		////Refresh board
-		move(inputX, inputY);
+		move(inputX, inputY, board);
 		sideFlag^=1;
-		setValid();
-		count();
+		setValid(board);
+		count(board);
 		output();
 		passCount=0;
 	}

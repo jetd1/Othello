@@ -12,8 +12,8 @@ void init()
 	board[4][5]=board[5][4]=Black;
 	sideFlag=Black;
 	passCount=0;
-	count();
-	setValid();
+	count(board);
+	setValid(board);
 }
 
 void selectMode()
