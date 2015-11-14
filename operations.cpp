@@ -22,7 +22,7 @@ bool isValid(Board board, Coord pos, bool side)
 Board setValid(Board board, bool side)
 {
     validCoord.clear();
-    statusCount[Valid] = 0;
+    board.statusCount[Valid] = 0;
     for (int i = 1; i <= SIDE_LENGTH; i++) for (int j = 1; j <= SIDE_LENGTH; j++)
     {
         if (board.cell[i][j].stat <= Black) continue;
@@ -33,7 +33,7 @@ Board setValid(Board board, bool side)
         if (isValid(board, tmpCoord, side))
         {
             board.cell[i][j].stat = Valid;
-            statusCount[Valid]++;
+            board.statusCount[Valid]++;
             validCoord.push_back(tmpCoord);
         }
         else board.cell[i][j].stat = Empty;
@@ -41,15 +41,16 @@ Board setValid(Board board, bool side)
     return board;
 }
 
-void count(Board board)
+Board count(Board board)
 {
-    statusCount[Black] = statusCount[White] = statusCount[Empty] = 0;
+    board.statusCount[Black] = board.statusCount[White] = board.statusCount[Empty] = 0;
     for (int i = 1; i <= SIDE_LENGTH; i++) for (int j = 1; j <= SIDE_LENGTH; j++)
     {
-        statusCount[Black] += (board.cell[i][j].stat == Black);
-        statusCount[White] += (board.cell[i][j].stat == White);
-        statusCount[Empty] += (board.cell[i][j].stat >= Empty);
+        board.statusCount[Black] += (board.cell[i][j].stat == Black);
+        board.statusCount[White] += (board.cell[i][j].stat == White);
+        board.statusCount[Empty] += (board.cell[i][j].stat >= Empty);
     }
+    return board;
 }
 
 Board move(Board board, Coord pos, bool side)
@@ -83,14 +84,14 @@ void judge()
 {
     if (modeFlag == AI_MODE)
     {
-        if (statusCount[playerSide] > statusCount[!playerSide]) cout << "You Defeated Computer! Congratulations!" << endl << endl;
-        else if (statusCount[playerSide] < statusCount[!playerSide]) cout << "Too Young too Simple!" << endl << endl;
+        if (gameBoard.statusCount[playerSide] > gameBoard.statusCount[!playerSide]) cout << "You Defeated Computer! Congratulations!" << endl << endl;
+        else if (gameBoard.statusCount[playerSide] < gameBoard.statusCount[!playerSide]) cout << "Too Young too Simple!" << endl << endl;
         else cout << "Tie! But Liangchen Want to Play Again With You." << endl << endl;
     }
     else
     {
-        if (statusCount[Black] > statusCount[White] || !statusCount[White]) cout << "Black Win!" << endl << endl;
-        else if (statusCount[Black] < statusCount[White] || !statusCount[Black]) cout << "White Win!" << endl << endl;
+        if (gameBoard.statusCount[Black] > gameBoard.statusCount[White] || !gameBoard.statusCount[White]) cout << "Black Win!" << endl << endl;
+        else if (gameBoard.statusCount[Black] < gameBoard.statusCount[White] || !gameBoard.statusCount[Black]) cout << "White Win!" << endl << endl;
         else cout << "Tie!" << endl << endl;
     }
 }

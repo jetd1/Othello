@@ -1,6 +1,6 @@
 /*
 Othello For Term Task
-Version 0.9.1
+Version 0.9.2
 */
 #include "base.h"
 #include "declaration.h"
@@ -15,10 +15,10 @@ int main()
 void othelloMain()
 {
     output();
-    while (statusCount[Empty] && passCount < 2 && statusCount[Black] && statusCount[White])
+    while (gameBoard.statusCount[Empty] && passCount < 2 && gameBoard.statusCount[Black] && gameBoard.statusCount[White])
     {
         ////No-valid situation handle
-        if (!statusCount[Valid])
+        if (!gameBoard.statusCount[Valid])
         {
             if (modeFlag == NON_AI_MODE || (modeFlag == AI_MODE &&sideFlag == playerSide)) cout << "No Possible Move, Enter to Pass!";
             else cout << "Computer Passed, Enter to Your Turn!";

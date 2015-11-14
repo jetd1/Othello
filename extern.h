@@ -15,7 +15,6 @@
 
 
 extern int dir[8][2];
-extern int statusCount[4];
 
 extern int passCount;
 extern bool modeFlag, assistFlag, sideFlag, inputFlag, playerSide;
@@ -39,6 +38,7 @@ struct Cell
 struct Board
 {
     Cell cell[SAFE_LENGTH][SAFE_LENGTH];
+    int statusCount[4];
     short value;
 };
 
@@ -67,9 +67,9 @@ extern void getCoord(getType T);
 
 //In operations.cpp
 extern void judge();
-extern void count(Board board);
 extern bool inline inRange(int p, int q);
 extern bool isValid(Board board, Coord pos, bool side);
+extern Board count(Board board);
 extern Board setValid(Board board, bool side);
 extern Board move(Board board, Coord pos, bool side);
 

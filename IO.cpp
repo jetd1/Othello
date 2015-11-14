@@ -73,7 +73,7 @@ void output()
         }
         if (i - SIDE_LENGTH) cout << endl;
     }
-    cout << endl << left << "Black(X):" << setw(2) << statusCount[Black] << "  White(O):" << setw(2) << statusCount[White] << endl << endl;
+    cout << endl << left << "Black(X):" << setw(2) << gameBoard.statusCount[Black] << "  White(O):" << setw(2) << gameBoard.statusCount[White] << endl << endl;
 }
 
 void getCoord(getType T)
@@ -84,7 +84,7 @@ void getCoord(getType T)
             inputCoord = input();
             break;
         case Computer:
-            inputCoord = AI(gameBoard,sideFlag);
+            inputCoord = AI(gameBoard, !playerSide);
             break;
         default:
             fatalError(1);

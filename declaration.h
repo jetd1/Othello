@@ -9,7 +9,6 @@
 
 
 
-int statusCount[4];
 int passCount;
 
 int dir[8][2] = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
@@ -35,6 +34,7 @@ struct Cell
 struct Board
 {
     Cell cell[SAFE_LENGTH][SAFE_LENGTH];
+    int statusCount[4];
     short value;
 };
 
@@ -64,9 +64,9 @@ void getCoord(getType T);
 
 //In operations.cpp
 void judge();
-void count(Board board);
 bool inline inRange(int p, int q);
 bool isValid(Board board, Coord pos, bool side);
+Board count(Board board);
 Board setValid(Board board, bool side);
 Board move(Board board, Coord pos, bool side);
 
