@@ -39,10 +39,10 @@ $(DIR)/operations.o : operations.cpp elements.h
 $(DIR)/UI.o : UI.cpp elements.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/main.o : declarations.cpp elements.h
+$(DIR)/declarations.o : declarations.cpp elements.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/AI.o : board.cpp elements.h
+$(DIR)/board.o : board.cpp elements.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
