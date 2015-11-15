@@ -1,6 +1,6 @@
 /*
 Othello For Term Task
-Version 0.9.3
+Version 0.9.7
 */
 #include "elements.h"
 
@@ -59,7 +59,7 @@ int main()
 
 void othelloMain()
 {
-    output();
+    gameBoard.print();
     while (gameBoard.statusCount[Empty] && passCount < 2 && gameBoard.statusCount[Black] && gameBoard.statusCount[White])
     {
         ////No-valid situation handle
@@ -79,7 +79,7 @@ void othelloMain()
         if (modeFlag == NON_AI_MODE || sideFlag == playerSide)
         {
             getCoord(Player);
-            while (!inputFlag || gameBoard.cell[inputCoord.x][inputCoord.y].stat != Valid)
+            while (!inputFlag || gameBoard[inputCoord.x][inputCoord.y].stat != Valid)
             {
                 if (inputFlag) cout << "Invalid Position!" << endl;
                 else cout << "Invalid Input!" << endl;
@@ -89,11 +89,9 @@ void othelloMain()
         else getCoord(Computer);
 
         ////Refresh board
-        gameBoard.move(inputCoord, sideFlag);
+        gameBoard.move(inputCoord, sideFlag);   //Move will auto refresh the board now
         sideFlag ^= 1;
-        gameBoard.setValidFor(sideFlag);
-        gameBoard.count();
-        output();
+        gameBoard.print();
         passCount = 0;
     }
     judge();

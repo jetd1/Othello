@@ -13,20 +13,42 @@ extern Board gameBoard;
 
 Coord AI(Board &board, bool side)
 {
-    random_shuffle(gameBoard.validCoord.begin(), gameBoard.validCoord.end());
-    Coord AI = gameBoard.validCoord[0];
     Board *tmpBoard = new Board[board.statusCount[Valid]];
-    for (int i = 0; i < board.statusCount[Valid]; i++) tmpBoard[i] = board;
-    
-    return AI;
+    short *humanValidCount = new short[board.statusCount[Valid]];
+
+    for (int i = 0; i < board.statusCount[Valid]; i++)
+    {
+        tmpBoard[i] = board;
+        tmpBoard[i].move(gameBoard.validCoord[i], side);
+        board.validCoord[i].value=tmpBoard[i].vEval(!side)-0.5*tmpBoard[i].rCount(!side)*board.validCoord[i].chara;
+        if (DEBUGMODE)
+        {
+            tmpBoard[i].print();
+            cout << board.validCoord[i].value << endl;
+        }
+    }
+
+    sort(board.validCoord.begin(), board.validCoord.end(), rcmpCoord);
+
+    return gameBoard.validCoord[0];
 }
 
-short evaluate(Board board, bool side)
+bool cmpBoard(Board &A, Board &B)
 {
-    short value = 0;
-    for (int i = 1; i <= SIDE_LENGTH; i++) for (int j = 1; j <= SIDE_LENGTH; j++)
-    {
-        
-    }
-    return value;
+    return A > B;
+}
+
+bool rcmpBoard(Board &A, Board &B)
+{
+    return A < B;
+}
+
+bool cmpCoord(Coord &A, Coord &B)
+{
+    return A.value > B.value;
+}
+
+bool rcmpCoord(Coord &A, Coord &B)
+{
+    return A.value < B.value;
 }

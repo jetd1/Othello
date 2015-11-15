@@ -4,7 +4,15 @@
 #include "base.h"
 
 
-extern int initBoardValue[SAFE_LENGTH][SAFE_LENGTH];
+extern short initCoordChara[SAFE_LENGTH][SAFE_LENGTH];
+
+bool cmpBoard(Board &A, Board &B);
+
+bool rcmpBoard(Board &A, Board &B);
+
+bool cmpCoord(Coord &A, Coord &B);
+
+bool rcmpCoord(Coord &A, Coord &B);
 
 
 

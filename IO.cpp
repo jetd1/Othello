@@ -45,6 +45,8 @@ Coord input() //For human input
     return tmpCoord;
 }
 
+/*
+//Altered by print() method
 void output()
 {
     SLP(200);
@@ -58,7 +60,7 @@ void output()
         cout << i;
         for (int j = 1; j <= SIDE_LENGTH; j++)
         {
-            switch (gameBoard.cell[i][j].stat)
+            switch (gameBoard[i][j].stat)
             {
                 case Black:
                     outTmp = 'X';
@@ -82,6 +84,7 @@ void output()
     }
     cout << endl << left << "Black(X):" << setw(2) << gameBoard.statusCount[Black] << "  White(O):" << setw(2) << gameBoard.statusCount[White] << endl << endl;
 }
+*/
 
 void getCoord(getType T)
 {
