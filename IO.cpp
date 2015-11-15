@@ -1,6 +1,13 @@
-#include "base.h"
-#include "extern.h"
+#include "elements.h"
 #include <iomanip>
+
+extern bool inputFlag, assistFlag, modeFlag, sideFlag, playerSide;
+extern Board gameBoard;
+extern Coord inputCoord;
+
+extern Coord AI(Board &board, bool side);
+extern void fatalError(unsigned ErrorCode);
+
 
 Coord input() //For human input
 {

@@ -2,8 +2,53 @@
 Othello For Term Task
 Version 0.9.3
 */
-#include "base.h"
-#include "declaration.h"
+#include "elements.h"
+
+#define AI_MODE true
+#define NON_AI_MODE false
+
+#define SIDE_LENGTH 8
+#define SAFE_LENGTH SIDE_LENGTH+2
+
+
+short passCount;
+
+bool modeFlag, assistFlag, sideFlag, inputFlag, playerSide;
+
+Coord inputCoord;
+
+vector<Coord> validCoord;
+
+Board gameBoard;
+
+//In init.cpp
+void init();
+void selectMode();
+void selectSide();
+void isAssistMode();
+
+//In error.cpp
+void fatalError(unsigned ErrorCode);
+
+//In main.cpp
+void othelloMain();
+
+//In IO.cpp
+Coord input();
+void output();
+void getCoord(getType T);
+
+//In operations.cpp
+void judge();
+bool inline inRange(int p, int q);
+
+//In AI.cpp
+Coord AI(Board &board, bool side);
+
+//In UI.cpp
+
+
+
 
 int main()
 {
@@ -25,11 +70,11 @@ void othelloMain()
             PAUSE;
             passCount++;
             sideFlag ^= 1;
-            setValid(gameBoard, sideFlag);
-            count(gameBoard);
+            gameBoard.setValidFor(sideFlag);
+            gameBoard.count();
             continue;
         }
-
+ 
         ////Get input
         if (modeFlag == NON_AI_MODE || sideFlag == playerSide)
         {
@@ -44,10 +89,10 @@ void othelloMain()
         else getCoord(Computer);
 
         ////Refresh board
-        move(gameBoard, inputCoord, sideFlag);
+        gameBoard.move(inputCoord, sideFlag);
         sideFlag ^= 1;
-        setValid(gameBoard, sideFlag);
-        count(gameBoard);
+        gameBoard.setValidFor(sideFlag);
+        gameBoard.count();
         output();
         passCount = 0;
     }

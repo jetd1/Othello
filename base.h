@@ -59,4 +59,17 @@
 using namespace std;
 
 
+////Macro Arguments
+#define AI_MODE true
+#define NON_AI_MODE false
+
+#define SIDE_LENGTH 8
+#define SAFE_LENGTH SIDE_LENGTH+2
+
+#define START_COORD_X '1'
+#define END_COORD_X '0'+SIDE_LENGTH
+#define START_COORD_Y 'A'
+#define END_COORD_Y '@'+SIDE_LENGTH
+
+
 #endif

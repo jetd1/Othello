@@ -1,5 +1,4 @@
-#include "base.h"
-#include "extern.h"
+#include "elements.h"
 #include "AIbase.h"
 
 /*
@@ -9,6 +8,15 @@
 * 3.Choose with assistance or without;
 * 4.Place four stones;
 */
+
+void selectMode();
+void selectSide();
+void isAssistMode();
+
+extern bool assistFlag, modeFlag, sideFlag, playerSide;
+extern short passCount;
+extern Board gameBoard;
+
 void init()
 {
     CLS;
@@ -17,17 +25,17 @@ void init()
     isAssistMode();
     for (int i = 0; i < SAFE_LENGTH; i++) for (int j = 0; j < SAFE_LENGTH; j++)
     {
-        gameBoard.cell[i][j].stat = Empty;
-        gameBoard.cell[i][j].pos.x = i;
-        gameBoard.cell[i][j].pos.y = j;
+        gameBoard[i][j].stat = Empty;
+        gameBoard[i][j].pos.x = i;
+        gameBoard[i][j].pos.y = j;
         if (modeFlag == AI_MODE) gameBoard.cell[i][j].value = initBoardValue[i][j];
     }
-    gameBoard.cell[SIDE_LENGTH/2][SIDE_LENGTH/2].stat = gameBoard.cell[SIDE_LENGTH/2+1][SIDE_LENGTH/2+1].stat = White;
-    gameBoard.cell[SIDE_LENGTH/2][SIDE_LENGTH/2+1].stat = gameBoard.cell[SIDE_LENGTH/2+1][SIDE_LENGTH/2].stat = Black;
+    gameBoard[SIDE_LENGTH/2][SIDE_LENGTH/2].stat = gameBoard.cell[SIDE_LENGTH/2+1][SIDE_LENGTH/2+1].stat = White;
+    gameBoard[SIDE_LENGTH/2][SIDE_LENGTH/2+1].stat = gameBoard.cell[SIDE_LENGTH/2+1][SIDE_LENGTH/2].stat = Black;
     sideFlag = Black;
     passCount = 0;
-    count(gameBoard);
-    setValid(gameBoard, sideFlag);
+    gameBoard.count();
+    gameBoard.setValidFor(sideFlag);
 }
 
 /*

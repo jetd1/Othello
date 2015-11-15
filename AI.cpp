@@ -1,5 +1,4 @@
-#include "base.h"
-#include "extern.h"
+#include "elements.h"
 #include "AIbase.h"
 #include <algorithm>
 
@@ -10,21 +9,19 @@
 //Position Estimate
 //Mobility Significance
 
-Coord AI(sBoard &board, bool side)
-{
-    Coord AI = validCoord[0];
-    random_shuffle(validCoord.begin(), validCoord.end());
+extern Board gameBoard;
 
-    sBoard *tmpBoard = new sBoard[board.statusCount[Valid]];
+Coord AI(Board &board, bool side)
+{
+    random_shuffle(gameBoard.validCoord.begin(), gameBoard.validCoord.end());
+    Coord AI = gameBoard.validCoord[0];
+    Board *tmpBoard = new Board[board.statusCount[Valid]];
     for (int i = 0; i < board.statusCount[Valid]; i++) tmpBoard[i] = board;
     
-
-
-
     return AI;
 }
 
-short evaluate(sBoard board, bool side)
+short evaluate(Board board, bool side)
 {
     short value = 0;
     for (int i = 1; i <= SIDE_LENGTH; i++) for (int j = 1; j <= SIDE_LENGTH; j++)

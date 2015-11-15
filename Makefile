@@ -2,7 +2,7 @@
 
 DIR = bin
 BIN = $(DIR)/Othello
-OBJ = $(DIR)/main.o $(DIR)/AI.o $(DIR)/error.o $(DIR)/init.o $(DIR)/IO.o $(DIR)/operations.o $(DIR)/UI.o
+OBJ = $(DIR)/main.o $(DIR)/AI.o $(DIR)/error.o $(DIR)/init.o $(DIR)/IO.o $(DIR)/operations.o $(DIR)/UI.o $(DIR)/declarations.o $(DIR)/board.o
 LIB = -Lfreeglut -Wl,-Bstatic -lglut -Wl,-Bdynamic -lGL -lX11 -lXxf86vm -g3
 CXX = g++
 CXXFLAGS = -I"freeglut_l/include" -Wall -g3
@@ -18,26 +18,33 @@ $(DIR):
 test : $(BIN)
 	./$(BIN)
 
-$(DIR)/main.o : main.cpp base.h declaration.h
+$(DIR)/main.o : main.cpp elements.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/AI.o : AI.cpp base.h extern.h
+$(DIR)/AI.o : AI.cpp elements.h AIbase.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(DIR)/error.o : error.cpp base.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/init.o : init.cpp base.h extern.h
+$(DIR)/init.o : init.cpp elements.h AIbase.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/IO.o : IO.cpp base.h extern.h
+$(DIR)/IO.o : IO.cpp elements.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/operations.o : operations.cpp base.h extern.h
+$(DIR)/operations.o : operations.cpp elements.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/UI.o : UI.cpp base.h
+$(DIR)/UI.o : UI.cpp elements.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(DIR)/main.o : declarations.cpp elements.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(DIR)/AI.o : board.cpp elements.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 
 cleanbackup :
 	rm -vf *~ *.orig .*~
