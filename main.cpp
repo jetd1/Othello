@@ -1,15 +1,8 @@
 /*
 Othello For Term Task
-Version 0.9.7
+Version 0.9.8
 */
 #include "elements.h"
-
-#define AI_MODE true
-#define NON_AI_MODE false
-
-#define SIDE_LENGTH 8
-#define SAFE_LENGTH SIDE_LENGTH+2
-
 
 short passCount;
 
@@ -35,7 +28,6 @@ void othelloMain();
 
 //In IO.cpp
 Coord input();
-void output();
 void getCoord(getType T);
 
 //In operations.cpp
@@ -46,7 +38,6 @@ bool inline inRange(int p, int q);
 Coord AI(Board &board, bool side);
 
 //In UI.cpp
-
 
 
 
@@ -65,9 +56,12 @@ void othelloMain()
         ////No-valid situation handle
         if (!gameBoard.statusCount[Valid])
         {
-            if (modeFlag == NON_AI_MODE || (modeFlag == AI_MODE &&sideFlag == playerSide)) cout << "No Possible Move, Enter to Pass!";
-            else cout << "Computer Passed, Enter to Your Turn!";
+            if (modeFlag == NON_AI_MODE || (modeFlag == AI_MODE &&sideFlag == playerSide)) 
+                cout << "No Possible Move, Enter to Pass!";
+            else 
+                cout << "Computer Passed, Enter to Your Turn!";
             PAUSE;
+
             passCount++;
             sideFlag ^= 1;
             gameBoard.setValidFor(sideFlag);
@@ -81,8 +75,11 @@ void othelloMain()
             getCoord(Player);
             while (!inputFlag || gameBoard[inputCoord.x][inputCoord.y].stat != Valid)
             {
-                if (inputFlag) cout << "Invalid Position!" << endl;
-                else cout << "Invalid Input!" << endl;
+                if (inputFlag) 
+                    cout << "Invalid Position!" << endl;
+                else 
+                    cout << "Invalid Input!" << endl;
+
                 getCoord(Player);
             }
         }

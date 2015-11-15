@@ -71,7 +71,11 @@ using namespace std;
 #define START_COORD_Y 'A'
 #define END_COORD_Y '@'+SIDE_LENGTH
 
-#define DEBUGMODE true
+#define DEBUGMODE false
+
+#define POSFACTOR 200
+
+#define BALANCEFACTOR 8
 
 
 #endif

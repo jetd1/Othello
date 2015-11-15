@@ -1,6 +1,7 @@
-#include "elements.h"
-#include "AIbase.h"
-#include <algorithm>
+/*
+AI by Jet
+Version 0.3.6
+*/
 
 //Make Pass
 //C-squares and X-squares Awareness
@@ -8,6 +9,11 @@
 //Even Block Estimate
 //Position Estimate
 //Mobility Significance
+
+#include "elements.h"
+#include "AIbase.h"
+#include <algorithm>
+
 
 extern Board gameBoard;
 
@@ -20,35 +26,23 @@ Coord AI(Board &board, bool side)
     {
         tmpBoard[i] = board;
         tmpBoard[i].move(gameBoard.validCoord[i], side);
-        board.validCoord[i].value=tmpBoard[i].vEval(!side)-0.5*tmpBoard[i].rCount(!side)*board.validCoord[i].chara;
+        board.validCoord[i].value=(tmpBoard[i].rCount(!side)*board.validCoord[i].chara - tmpBoard[i].vEval(!side)+POSFACTOR);
+
         if (DEBUGMODE)
         {
+            cout << endl;
             tmpBoard[i].print();
             cout << board.validCoord[i].value << endl;
         }
     }
 
-    sort(board.validCoord.begin(), board.validCoord.end(), rcmpCoord);
+    sort(board.validCoord.begin(), board.validCoord.end(), cmpCoord);
 
     return gameBoard.validCoord[0];
 }
 
-bool cmpBoard(Board &A, Board &B)
-{
-    return A > B;
-}
 
-bool rcmpBoard(Board &A, Board &B)
-{
-    return A < B;
-}
-
-bool cmpCoord(Coord &A, Coord &B)
-{
-    return A.value > B.value;
-}
-
-bool rcmpCoord(Coord &A, Coord &B)
-{
-    return A.value < B.value;
-}
+bool cmpBoard(Board &A, Board &B) { return A > B; }
+bool rcmpBoard(Board &A, Board &B) { return A < B; }
+bool cmpCoord(Coord &A, Coord &B) { return A.value > B.value; }
+bool rcmpCoord(Coord &A, Coord &B) { return A.value < B.value; }

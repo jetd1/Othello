@@ -52,6 +52,7 @@ public:
     double raEval(bool side);
     double daEval(bool side);
     double rCount(bool side);
+    double dCount(bool side);
 
     //todo
     void colorReverse();
