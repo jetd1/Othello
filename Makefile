@@ -5,7 +5,7 @@ BIN = $(DIR)/Othello
 OBJ = $(DIR)/main.o $(DIR)/AI.o $(DIR)/error.o $(DIR)/init.o $(DIR)/IO.o $(DIR)/operations.o $(DIR)/UI.o $(DIR)/declarations.o $(DIR)/board.o
 LIB = -Lfreeglut -Wl,-Bstatic -lglut -Wl,-Bdynamic -lGL -lX11 -lXxf86vm -g3
 CXX = g++
-CXXFLAGS = -I"freeglut_l/include" -Wall -g3
+CXXFLAGS = -I"freeglut_l/include" -Wall -g3 -std=c++0x
 
 .PHONY: test clean cleanbackup cb win
 
@@ -17,6 +17,10 @@ $(DIR):
 
 test : $(BIN)
 	./$(BIN)
+
+AIbase.h : base.h
+
+elements.h : base.h
 
 $(DIR)/main.o : main.cpp elements.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@

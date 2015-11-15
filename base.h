@@ -24,10 +24,9 @@
 #define CLS system("cls")
 #define SLP(X) Sleep(X)
 
-#elif defined linux
+#elif defined __linux__
 #include <unistd.h>
 #include "freeglut_l/include/GL/freeglut.h"
-#pragma comment(lib, "freeglut.lib")
 #define CLS system("clear")
 #define SLP(X) usleep(1000*X)
 
