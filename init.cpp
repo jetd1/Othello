@@ -26,8 +26,8 @@ void init()
     gameBoard.cell[SIDE_LENGTH/2][SIDE_LENGTH/2+1].stat = gameBoard.cell[SIDE_LENGTH/2+1][SIDE_LENGTH/2].stat = Black;
     sideFlag = Black;
     passCount = 0;
-    gameBoard = count(gameBoard);
-    gameBoard = setValid(gameBoard, sideFlag);
+    count(gameBoard);
+    setValid(gameBoard, sideFlag);
 }
 
 /*

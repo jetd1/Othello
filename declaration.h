@@ -7,11 +7,11 @@
 #define SIDE_LENGTH 8
 #define SAFE_LENGTH SIDE_LENGTH+2
 
+#include "base.h"
 
+short passCount;
 
-int passCount;
-
-int dir[8][2] = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
+short dir[8][2] = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
 
 bool modeFlag, assistFlag, sideFlag, inputFlag, playerSide;
 
@@ -20,8 +20,8 @@ enum status { White, Black, Empty, Valid };    //Then status<Empty: Have Stone o
 	                                           //White=false & Black=true
 struct Coord
 {
-    int x;
-    int y;
+    short x;
+    short y;
 };
 
 struct Cell
@@ -31,14 +31,16 @@ struct Cell
     short value;
 };
 
-struct Board
+struct sBoard
 {
     Cell cell[SAFE_LENGTH][SAFE_LENGTH];
-    int statusCount[4];
+    short statusCount[4];
     short value;
 };
 
-Board gameBoard;
+Cell NULLCELL[SAFE_LENGTH][SAFE_LENGTH]{};
+
+sBoard gameBoard;
 
 Coord inputCoord;
 
@@ -65,13 +67,14 @@ void getCoord(getType T);
 //In operations.cpp
 void judge();
 bool inline inRange(int p, int q);
-bool isValid(Board board, Coord pos, bool side);
-Board count(Board board);
-Board setValid(Board board, bool side);
-Board move(Board board, Coord pos, bool side);
+bool isValid(sBoard &board, Coord &pos, bool side);
+void count(sBoard &board);
+void setValid(sBoard &board, bool side);
+void move(sBoard &board, Coord &pos, bool side);
+
 
 //In AI.cpp
-Coord AI(Board board, bool side);
+Coord AI(sBoard &board, bool side);
 
 //In UI.cpp
 

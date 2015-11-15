@@ -1,6 +1,6 @@
 /*
 Othello For Term Task
-Version 0.9.2
+Version 0.9.3
 */
 #include "base.h"
 #include "declaration.h"
@@ -25,7 +25,7 @@ void othelloMain()
             PAUSE;
             passCount++;
             sideFlag ^= 1;
-            gameBoard = setValid(gameBoard, sideFlag);
+            setValid(gameBoard, sideFlag);
             count(gameBoard);
             continue;
         }
@@ -44,9 +44,9 @@ void othelloMain()
         else getCoord(Computer);
 
         ////Refresh board
-        gameBoard = move(gameBoard, inputCoord, sideFlag);
+        move(gameBoard, inputCoord, sideFlag);
         sideFlag ^= 1;
-        gameBoard = setValid(gameBoard, sideFlag);
+        setValid(gameBoard, sideFlag);
         count(gameBoard);
         output();
         passCount = 0;

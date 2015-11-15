@@ -1,6 +1,8 @@
 #ifndef _EXT
 #define _EXT
 
+#include "base.h"
+
 #define AI_MODE true
 #define NON_AI_MODE false
 
@@ -14,9 +16,9 @@
 
 
 
-extern int dir[8][2];
+extern short dir[8][2];
 
-extern int passCount;
+extern short passCount;
 extern bool modeFlag, assistFlag, sideFlag, inputFlag, playerSide;
 
 enum getType { Player, Computer };
@@ -24,8 +26,8 @@ enum status { White, Black, Empty, Valid };
 
 struct Coord
 {
-    int x;
-    int y;
+    short x;
+    short y;
 };
 
 struct Cell
@@ -35,14 +37,16 @@ struct Cell
     short value;
 };
 
-struct Board
+struct sBoard
 {
     Cell cell[SAFE_LENGTH][SAFE_LENGTH];
-    int statusCount[4];
+    short statusCount[4];
     short value;
 };
 
-extern Board gameBoard;
+extern Cell NULLCELL[SAFE_LENGTH][SAFE_LENGTH];
+
+extern sBoard gameBoard;
 extern Coord inputCoord;
 
 extern vector<Coord> validCoord;
@@ -68,13 +72,13 @@ extern void getCoord(getType T);
 //In operations.cpp
 extern void judge();
 extern bool inline inRange(int p, int q);
-extern bool isValid(Board board, Coord pos, bool side);
-extern Board count(Board board);
-extern Board setValid(Board board, bool side);
-extern Board move(Board board, Coord pos, bool side);
+extern bool isValid(sBoard &board, Coord &pos, bool side);
+extern void count(sBoard &board);
+extern void setValid(sBoard &board, bool side);
+extern void move(sBoard &board, Coord &pos, bool side);
 
 //In AI.cpp
-extern Coord AI(Board board, bool side);
+extern Coord AI(sBoard &board, bool side);
 
 
 
