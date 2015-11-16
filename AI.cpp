@@ -1,6 +1,6 @@
 /*
 AI by Jet
-Version 0.3.6
+Version 0.5
 */
 
 //Make Pass
@@ -30,20 +30,27 @@ Coord AI(Board &board, bool side)
         if (tmpBoard[i].validCoord.size() == 0) 
             return gameBoard.validCoord[i];
 
-        board.validCoord[i].value = (sqrt(sqrt(tmpBoard[i].rCount(!side))) * board.validCoord[i].chara - tmpBoard[i].vEval(!side) + POSFACTOR);
+        board.validCoord[i].value = (sqrt(tmpBoard[i].rCount(!side) * ( board.validCoord[i].chara + POSFACTOR1)) - tmpBoard[i].vEval(!side) + POSFACTOR2);
 
         if (DEBUGMODE)
         {
             cout << endl;
-            tmpBoard[i].print();
-            cout << board.validCoord[i].value << endl;
+            cout << "Coord: " << char(board.validCoord[i].y + '@') << board.validCoord[i].x << endl;
+            cout << "Post-move Board Value: " << board.validCoord[i].value << endl;
+            cout << "Post-move rCount(!side): " << tmpBoard[i].rCount(!side) << endl;
+            cout << "Move Coord Chara: " << board.validCoord[i].chara << endl;
+            cout << "Post-move vEval(!side): " << tmpBoard[i].vEval(!side) << endl;
+            cout << endl;
+            cout << "Post-move aEval(side): " << tmpBoard[i].aEval(side) << endl;
+            cout << "Post-move aEval(!side): " << tmpBoard[i].aEval(!side) << endl;
+            cout << endl;
         }
     }
 
     delete[] tmpBoard;
     delete[] humanValidCount;
 
-    sort(board.validCoord.begin(), board.validCoord.end(), cmpCoord);
+    sort(board.validCoord.begin(), board.validCoord.end(), cmpCoordV);
 
     return gameBoard.validCoord[0];
 }
@@ -51,5 +58,7 @@ Coord AI(Board &board, bool side)
 
 bool cmpBoard(const Board &A, const Board &B) { return A > B; }
 bool rcmpBoard(const Board &A, const Board &B) { return A < B; }
-bool cmpCoord(const Coord &A, const Coord &B) { return A.value > B.value; }
-bool rcmpCoord(const Coord &A, const Coord &B) { return A.value < B.value; }
+bool cmpCoordV(const Coord &A, const Coord &B) { return A.value > B.value; }
+bool rcmpCoordV(const Coord &A, const Coord &B) { return A.value < B.value; }
+bool cmpCoordC(const Coord &A, const Coord &B) { return A.chara > B.chara; }
+bool rcmpCoordC(const Coord &A, const Coord &B) { return A.chara < B.chara; }

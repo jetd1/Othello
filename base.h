@@ -70,11 +70,12 @@ using namespace std;
 #define START_COORD_Y 'A'
 #define END_COORD_Y '@'+SIDE_LENGTH
 
-#define DEBUGMODE false
+#define DEBUGMODE true
 
-#define POSFACTOR 200
+#define POSFACTOR1 8
+#define POSFACTOR2 100
 
-#define BALANCEFACTOR 8
+#define VRFACTOR 6
 
 
 #endif

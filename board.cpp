@@ -3,7 +3,7 @@
 #include <algorithm>
 
 extern bool inRange(int p, int q);
-extern bool cmpCoord(const Coord &A, const Coord &B);
+extern bool cmpCoordC(const Coord &A, const Coord &B);
 extern void fatalError(unsigned ErrorCode);
 
 extern Cell NULLCELL;
@@ -220,10 +220,10 @@ double Board::vEval(bool side)
 {
     setValidFor(side);  //To be cautious, maybe not necessary
     
-    sort(validCoord.begin(), validCoord.end(), cmpCoord);
+    sort(validCoord.begin(), validCoord.end(), cmpCoordC);
 
     int vval=0;
-    for (size_t i = 0; i < validCoord.size()&&i <= BALANCEFACTOR; i++)
+    for (size_t i = 0; i < validCoord.size()&&i <= VRFACTOR; i++)
         vval += validCoord[i].chara;
 
     vValue = vval;
@@ -241,8 +241,8 @@ double Board::aEval(bool side)
     return aValue[side];
 }
 
-double Board::raEval(bool side) { return aEval(side) / aEval(!side); }
+double Board::raEval(bool side) { return double(aEval(side)) / aEval(!side); }
 double Board::daEval(bool side) { return aEval(side) - aEval(!side); }
 
-double Board::rCount(bool side) { return count(status(side)) / count(status(!side)); }
+double Board::rCount(bool side) { return double(count(status(side))) / count(status(!side)); }
 double Board::dCount(bool side) { return count(status(side)) - count(status(!side)); }

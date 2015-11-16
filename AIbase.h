@@ -7,12 +7,11 @@
 extern short initCoordChara[SAFE_LENGTH][SAFE_LENGTH];
 
 bool cmpBoard(const Board &A, const Board &B);
-
 bool rcmpBoard(const Board &A, const Board &B);
-
-bool cmpCoord(const Coord &A, const Coord &B);
-
-bool rcmpCoord(const Coord &A, const Coord &B);
+bool cmpCoordV(const Coord &A, const Coord &B);
+bool rcmpCoordV(const Coord &A, const Coord &B);
+bool cmpCoordC(const Coord &A, const Coord &B);
+bool rcmpCoordC(const Coord &A, const Coord &B);
 
 
 
