@@ -3,7 +3,7 @@
 #include <algorithm>
 
 extern bool inRange(int p, int q);
-extern bool cmpCoord(Coord &A, Coord &B);
+extern bool cmpCoord(const Coord &A, const Coord &B);
 extern void fatalError(unsigned ErrorCode);
 
 extern Cell NULLCELL;
@@ -35,13 +35,13 @@ Board::Board()  //need to rewrite
 
 //overload operators
 Cell* Board::operator [](int i){return cell[i];}
-bool Board::operator >(Board &board) { return vValue > board.vValue; }
-bool Board::operator <(Board &board) { return vValue < board.vValue; }
-bool Board::operator ==(Board &board) { return vValue == board.vValue; }
-bool Board::operator >=(Board &board) { return vValue >= board.vValue; }
-bool Board::operator <=(Board &board) { return vValue <= board.vValue; }
+bool Board::operator >(const Board &board)const { return vValue > board.vValue; }
+bool Board::operator <(const Board &board)const { return vValue < board.vValue; }
+bool Board::operator ==(const Board &board)const { return vValue == board.vValue; }
+bool Board::operator >=(const Board &board)const { return vValue >= board.vValue; }
+bool Board::operator <=(const Board &board)const { return vValue <= board.vValue; }
 
-void Board::operator =(Board &board)    //need to rewrite
+void Board::operator =(Board &board)     //need to rewrite
 {
     board.count();
     for (int i = 0; i < SAFE_LENGTH; i++)

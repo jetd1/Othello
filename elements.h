@@ -33,11 +33,11 @@ public:
     Board();
 
     void operator =(Board &board);
-    bool operator >(Board &board);
-    bool operator <(Board &board);
-    bool operator ==(Board &board);
-    bool operator >=(Board &board);
-    bool operator <=(Board &board);
+    bool operator >(const Board &board)const;
+    bool operator <(const Board &board)const;
+    bool operator ==(const Board &board)const;
+    bool operator >=(const Board &board)const;
+    bool operator <=(const Board &board)const;
     Cell* operator [](int i);
 
     void clear();

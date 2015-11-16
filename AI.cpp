@@ -49,7 +49,7 @@ Coord AI(Board &board, bool side)
 }
 
 
-bool cmpBoard(Board &A, Board &B) { return A > B; }
-bool rcmpBoard(Board &A, Board &B) { return A < B; }
-bool cmpCoord(Coord &A, Coord &B) { return A.value > B.value; }
-bool rcmpCoord(Coord &A, Coord &B) { return A.value < B.value; }
+bool cmpBoard(const Board &A, const Board &B) { return A > B; }
+bool rcmpBoard(const Board &A, const Board &B) { return A < B; }
+bool cmpCoord(const Coord &A, const Coord &B) { return A.value > B.value; }
+bool rcmpCoord(const Coord &A, const Coord &B) { return A.value < B.value; }
