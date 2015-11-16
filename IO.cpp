@@ -8,6 +8,14 @@ extern Coord inputCoord;
 extern Coord AI(Board &board, bool side);
 extern void fatalError(unsigned ErrorCode);
 
+void printVersion()
+{
+    cout << "Othello Main Version " << MAIN_VERSION << endl;
+    cout << "AI Version " << AI_VERSION << endl << endl ;
+    cout << "Copyleft 2015" << endl;
+    cout << endl << endl << endl;
+}
+
 Coord input() //For human input
 {
     inputFlag = false;

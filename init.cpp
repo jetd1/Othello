@@ -9,9 +9,12 @@
 * 4.Place four stones;
 */
 
+
 void selectMode();
 void selectSide();
 void isAssistMode();
+
+extern void printVersion();
 
 extern bool assistFlag, modeFlag, sideFlag, playerSide;
 extern short passCount;
@@ -20,6 +23,8 @@ extern Board gameBoard;
 void init()
 {
     CLS;
+    if (PRINT_VERSION)
+        printVersion();
     selectMode();
     selectSide();
     isAssistMode();
