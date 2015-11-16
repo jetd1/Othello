@@ -2,7 +2,7 @@
 #define _BASE
 
 ////Cross-platform implement
-#define PAUSE cin.get();cin.get();
+#define PAUSE cin.get();cin.get()
 
 //OpenGL flaw fix
 #ifndef NDEBUG

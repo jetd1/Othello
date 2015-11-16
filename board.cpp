@@ -225,6 +225,8 @@ double Board::vEval(bool side)
     int vval=0;
     for (size_t i = 0; i < validCoord.size()&&i <= BALANCEFACTOR; i++)
         vval += validCoord[i].chara;
+
+    vValue = vval;
     return vValue;
 }
 

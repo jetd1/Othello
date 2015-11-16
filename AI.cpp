@@ -26,7 +26,11 @@ Coord AI(Board &board, bool side)
     {
         tmpBoard[i] = board;
         tmpBoard[i].move(gameBoard.validCoord[i], side);
-        board.validCoord[i].value=(tmpBoard[i].rCount(!side)*board.validCoord[i].chara - tmpBoard[i].vEval(!side)+POSFACTOR);
+
+        if (tmpBoard[i].validCoord.size() == 0) 
+            return gameBoard.validCoord[i];
+
+        board.validCoord[i].value = (sqrt(sqrt(tmpBoard[i].rCount(!side))) * board.validCoord[i].chara - tmpBoard[i].vEval(!side) + POSFACTOR);
 
         if (DEBUGMODE)
         {
@@ -35,6 +39,9 @@ Coord AI(Board &board, bool side)
             cout << board.validCoord[i].value << endl;
         }
     }
+
+    delete[] tmpBoard;
+    delete[] humanValidCount;
 
     sort(board.validCoord.begin(), board.validCoord.end(), cmpCoord);
 
