@@ -66,6 +66,7 @@ void othelloMain()
             sideFlag ^= 1;
             gameBoard.setValidFor(sideFlag);
             gameBoard.count();
+            gameBoard.print();
             continue;
         }
  
