@@ -8,7 +8,7 @@ extern void fatalError(unsigned ErrorCode);
 
 extern Cell NULLCELL;
 extern short dir[8][2];
-extern short initCoordChara[SAFE_LENGTH][SAFE_LENGTH];
+extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
 extern bool assistFlag, modeFlag, sideFlag, playerSide;
 
 //construct function
@@ -18,7 +18,7 @@ Board::Board()  //need to rewrite
         for (short j = 0; j < SAFE_LENGTH; j++)
         {
             cell[i][j] = {
-                {i, j, initCoordChara[i][j], 0},
+                {i, j, coordChara[i][j], 0},
                 Empty};
         }
 
@@ -67,7 +67,7 @@ void Board::clear()
         for (short j = 0; j < SAFE_LENGTH; j++)
         {
             cell[i][j] = {
-                {i, j, initCoordChara[i][j], 0},
+                {i, j, coordChara[i][j], 0},
                 Empty};
         }
 
@@ -143,6 +143,8 @@ void Board::setValidFor(bool side)
         }
 }
 
+
+
 void Board::move(Coord &pos, bool side)
 {
     for (int i = 0; i < 8; i++)
@@ -216,33 +218,69 @@ void Board::print()
          << endl << endl;
 }
 
-double Board::vEval(bool side)
+double Board::validEval(bool side) //Evaluation for valid coordinates of side
 {
     setValidFor(side);  //To be cautious, maybe not necessary
     
     sort(validCoord.begin(), validCoord.end(), cmpCoordC);
 
     int vval=0;
-    for (size_t i = 0; i < validCoord.size()&&i <= VRFACTOR; i++)
+    for (size_t i = 0; i < validCoord.size(); i++)
         vval += validCoord[i].chara;
 
     vValue = vval;
     return vValue;
 }
 
-double Board::aEval(bool side)
+double Board::allEval(bool side) //Evaluation for all coordinates of side
 {
     int aval = 0;
     for (int i = 0; i < SIDE_LENGTH; i++)
         for (int j = 0; j < SIDE_LENGTH; j++)
             if (cell[i][j].stat == status(side))
                 aval += cell[i][j].pos.chara;
+
     aValue[side] = aval;
     return aValue[side];
 }
 
-double Board::raEval(bool side) { return double(aEval(side)) / aEval(!side); }
-double Board::daEval(bool side) { return aEval(side) - aEval(!side); }
+short Board::frontierCount(bool side)
+{
+    short cnt = 0;
+    for (short i = 1; i <= SIDE_LENGTH; i++)
+        for (short j = 1; j <= SIDE_LENGTH; j++)
+            if (cell[i][j].stat == status(side))
+                for (int d = 0; d < 8; d++)
+                {
+                    short x = i + dir[d][0];
+                    short y = j + dir[d][1];
+                    cnt += (inRange(x, y) && (cell[x][y].stat >= Empty));
+                }
 
-double Board::rCount(bool side) { return double(count(status(side))) / count(status(!side)); }
-double Board::dCount(bool side) { return count(status(side)) - count(status(!side)); }
+    return cnt;
+}
+
+double Board::aEvalRate(bool side) { return double(allEval(side)) / allEval(!side); }
+double Board::aEvalDiff(bool side) { return allEval(side) - allEval(!side); }
+
+double Board::CountRate(bool side) { return double(count(status(side))) / count(status(!side)); }
+double Board::CountDiff(bool side) { return count(status(side)) - count(status(!side)); }
+
+double Board::frontierCountRate(bool side) { return double(frontierCount(side)) / frontierCount(!side); }
+double Board::frontierCountDiff(bool side) { return frontierCount(side) - frontierCount(!side); }
+
+
+short Board::countValidFor(bool side)
+{
+    short cnt = 0;
+    for (int i = 1; i <= SIDE_LENGTH; i++)
+        for (int j = 1; j <= SIDE_LENGTH; j++)
+        {
+            Coord tmpCoord{};
+            tmpCoord.x = i;
+            tmpCoord.y = j;
+            cnt += isValid(tmpCoord, side);
+        }
+
+    return cnt;
+}

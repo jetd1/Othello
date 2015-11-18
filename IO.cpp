@@ -5,7 +5,8 @@ extern bool inputFlag, assistFlag, modeFlag, sideFlag, playerSide;
 extern Board gameBoard;
 extern Coord inputCoord;
 
-extern Coord AI(Board &board, bool side);
+extern int main();
+extern Coord AI(Board &board, bool AIside);
 extern void fatalError(unsigned ErrorCode);
 
 void printVersion()
@@ -35,6 +36,7 @@ Coord input() //For human input
     string input;
     Coord tmpCoord{};
     cin >> input;
+    if (DEBUGMODE) if (input == "RESTART") main();
     if (input.length() == 2)
     {
         input[0] = toupper(input[0]);

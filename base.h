@@ -62,7 +62,7 @@ using namespace std;
 
 //Version Information
 #define MAIN_VERSION "0.9.8"
-#define AI_VERSION "0.5"
+#define AI_VERSION "0.5.2"
 #define PRINT_VERSION true
 
 //Not Changeable
@@ -78,13 +78,8 @@ using namespace std;
 #define START_COORD_Y 'A'
 #define END_COORD_Y '@'+SIDE_LENGTH
 
-#define POSFACTOR1 8
-#define POSFACTOR2 100
-
-#define VRFACTOR 6
-
 //For Debug
-#define DEBUGMODE false
+#define DEBUGMODE true
 
 
 

@@ -34,7 +34,7 @@ void init()
             gameBoard[i][j].stat = Empty;
             gameBoard[i][j].pos.x = i;
             gameBoard[i][j].pos.y = j;
-            if (modeFlag == AI_MODE) gameBoard[i][j].pos.chara = initCoordChara[i][j];
+            if (modeFlag == AI_MODE) gameBoard[i][j].pos.chara = coordChara[i][j];
         }
     gameBoard[SIDE_LENGTH/2][SIDE_LENGTH/2].stat = gameBoard[SIDE_LENGTH/2+1][SIDE_LENGTH/2+1].stat = White;
     gameBoard[SIDE_LENGTH/2][SIDE_LENGTH/2+1].stat = gameBoard[SIDE_LENGTH/2+1][SIDE_LENGTH/2].stat = Black;

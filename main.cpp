@@ -35,7 +35,7 @@ void judge();
 bool inline inRange(int p, int q);
 
 //In AI.cpp
-Coord AI(Board &board, bool side);
+Coord AI(Board &board, bool AIside);
 
 //In UI.cpp
 
@@ -66,6 +66,7 @@ void othelloMain()
             sideFlag ^= 1;
             gameBoard.setValidFor(sideFlag);
             gameBoard.count();
+            gameBoard.print();
             continue;
         }
  
