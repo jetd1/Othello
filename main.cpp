@@ -88,7 +88,7 @@ void othelloMain()
             {
 
                 if (inputFlag)
-                    cout << "Invalid Position!" << endl;
+                    cout << "Invalid Position! Your input is " << inputCoord.x << " " << inputCoord.y << endl;
                 else
                     cout << "Invalid Input!" << endl;
 

@@ -11,6 +11,22 @@ extern Board gameBoard;
 extern bool modeFlag, assistFlag, sideFlag, inputFlag, playerSide;
 
 extern void fatalError(unsigned ErrorCode);
+extern void mouseKey(int button, int state, int x, int y);
+
+void initDisplay(){
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    /*
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glLineWidth(1.5);
+    */
+    glEnable(GL_MULTISAMPLE);
+
+    glClearColor (0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
 
 void drawCircle(double x, double y, double r, status s)
 {
@@ -127,14 +143,28 @@ void display()
 	drawable = false;
 }
 
+void reshape(int width, int height){
+    int screenSize = (width < height ? width : height);
+    glViewport (0, 0, width, height);
+    glLoadIdentity ();
+    glOrtho (-(GLfloat)width / screenSize, (GLfloat)width / screenSize,
+            -(GLfloat)height / screenSize, (GLfloat)height / screenSize,
+            -2.0f, 2.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
 void initdraw(int argc, char **argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB|GLUT_SINGLE);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(screenSize, screenSize);
-	glutCreateWindow("TEST");
+	glutCreateWindow("Othello");
+	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 	glutDisplayFunc(&display);
+	glutMouseFunc(&mouseKey);
+	//glutReshapeFunc(&reshape);
+	initDisplay();
 	glutMainLoop();
 }
 
