@@ -1,6 +1,6 @@
 /*
 AI by Jet
-Version 0.5
+Version 0.6.5
 */
 
 //Make Pass
@@ -14,11 +14,12 @@ Version 0.5
 #include "AIbase.h"
 #include <algorithm>
 
-
+int turnCount = 0;
 extern Board gameBoard;
 
 Coord AI(Board &board, bool AISide)
 {
+    turnCount++;
     Board *tmpBoard = new Board[board.statusCount[Valid]];
     short *humanValidCount = new short[board.statusCount[Valid]];
 
@@ -32,7 +33,14 @@ Coord AI(Board &board, bool AISide)
             cout << "Coord: " << char(board.validCoord[i].y + '@') << board.validCoord[i].x << endl;
         }
 
-        board.validCoord[i].value = AIBoardEval(tmpBoard[i], AISide);
+        if(MIXFACTOR - TURNFACTOR*turnCount < BOUNDFACTOR)
+            board.validCoord[i].value = AIBoardEval(tmpBoard[i], AISide) +
+            BOUNDFACTOR * JetEval(board.validCoord[i], tmpBoard[i], AISide);
+        else
+            board.validCoord[i].value = AIBoardEval(tmpBoard[i], AISide) +
+            (MIXFACTOR - TURNFACTOR * turnCount) * JetEval(board.validCoord[i], tmpBoard[i], AISide);
+
+        if (DEBUGMODE) cout << "FinalEval\t" << board.validCoord[i].value << endl << endl << endl;
     }
 
     delete[] tmpBoard;
@@ -90,7 +98,13 @@ double AIBoardEval(Board &board, bool side)
         (board[8][1].stat == status(side)) +
         (board[8][8].stat == status(side));
 
-    CornerEval = 50 * (myCornerCount - 2);
+    short opCornerCount =
+        (board[1][1].stat == status(!side)) +
+        (board[1][8].stat == status(!side)) +
+        (board[8][1].stat == status(!side)) +
+        (board[8][8].stat == status(!side));
+
+    CornerEval = 25 * (myCornerCount - opCornerCount);
 
 
     //Evaluation Based on Dangerous Corner-Beside-Stone Count
@@ -110,7 +124,21 @@ double AIBoardEval(Board &board, bool side)
         (board.cell[8][8].stat >= Empty) && (board.cell[7][7].stat == status(side)) +
         (board.cell[8][8].stat >= Empty) && (board.cell[7][8].stat == status(side));
 
-    DCornerEval = -25 * (myStoneCount - 6);
+    short opDCornerCount =
+        (board.cell[1][1].stat >= Empty) && (board.cell[1][2].stat == status(!side)) +
+        (board.cell[1][1].stat >= Empty) && (board.cell[2][2].stat == status(!side)) +
+        (board.cell[1][1].stat >= Empty) && (board.cell[2][1].stat == status(!side)) +
+        (board.cell[1][8].stat >= Empty) && (board.cell[1][7].stat == status(!side)) +
+        (board.cell[1][8].stat >= Empty) && (board.cell[2][7].stat == status(!side)) +
+        (board.cell[1][8].stat >= Empty) && (board.cell[2][8].stat == status(!side)) +
+        (board.cell[8][1].stat >= Empty) && (board.cell[8][2].stat == status(!side)) +
+        (board.cell[8][1].stat >= Empty) && (board.cell[7][1].stat == status(!side)) +
+        (board.cell[8][1].stat >= Empty) && (board.cell[7][2].stat == status(!side)) +
+        (board.cell[8][8].stat >= Empty) && (board.cell[8][7].stat == status(!side)) +
+        (board.cell[8][8].stat >= Empty) && (board.cell[7][7].stat == status(!side)) +
+        (board.cell[8][8].stat >= Empty) && (board.cell[7][8].stat == status(!side));
+
+    DCornerEval = -12.5 * (myDCornerCount - opDCornerCount);
 
 
     //Evaluation Based on Mobility
@@ -128,38 +156,45 @@ double AIBoardEval(Board &board, bool side)
 
     //Weighed Evaluation
     double Eval = 
-        (10 * BWRateEval) +
-        (801.724 * CornerEval) +
-        (382.026 * DCornerEval) + 
-        (78.922 * MobEval) + 
-        (74.396 * FrontierRateEval) + 
-        (10 * CharaEval);
+        (8 * BWRateEval) +
+        (800 * CornerEval) +
+        (380 * DCornerEval) + 
+        (80 * MobEval) + 
+        (70 * FrontierRateEval) + 
+        (9 * CharaEval);
 
     if (DEBUGMODE)
     {
+        cout << "Classic Eval:" << endl;
         cout << "BWRateEval\t" << BWRateEval << endl;
         cout << "CornerEval\t" << CornerEval << endl;
         cout << "DCornerEval\t" << DCornerEval << endl;
         cout << "MobilityEval\t" << MobEval << endl;
         cout << "FRTRRateEval\t" << FrontierRateEval << endl;
         cout << "CharaEval\t" << CharaEval << endl << endl;
-        cout << "TotalEval\t" << Eval << endl << endl << endl;
+        cout << "ClassicEval\t" << Eval << endl << endl;
     }
 
     return Eval;
 
 }
 
-//double AIEval(Coord &validMove, Board &tmpBoard, bool AISide)
-//{
-//    double AIEval = POSFACTOR1;
-//
-//    AIEval += PASSVALUE * (tmpBoard.validCoord.size() == 0);
-//
-//    AIEval += (sqrt(sqrt(tmpBoard.rCount(!AISide)) * ( validMove.chara + POSFACTOR2)) - tmpBoard.vEval(!AISide));
-//
-//    return AIEval;
-//}
+inline double JetEval(Coord &validMove, Board &tmpBoard, bool side)
+{
+    double JetEval = POSFACTOR1;
+
+    JetEval += PASSVALUE * (tmpBoard.validCoord.size() == 0);
+
+    JetEval += (sqrt(sqrt(tmpBoard.CountRate(!side)) * ( validMove.chara + POSFACTOR2)) - tmpBoard.validEval(!side));
+
+    if (DEBUGMODE)
+    {
+        cout << endl;
+        cout << "JetEval\t" << JetEval << endl << endl;
+    }
+
+    return JetEval;
+}
 
 
 bool cmpBoard(const Board &A, const Board &B) { return A > B; }

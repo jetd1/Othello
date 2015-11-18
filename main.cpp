@@ -1,6 +1,6 @@
 /*
 Othello For Term Task
-Version 0.9.8
+Version 0.9.9
 */
 #include "elements.h"
 
