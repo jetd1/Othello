@@ -36,7 +36,10 @@ Coord input() //For human input
     string input;
     Coord tmpCoord{};
     cin >> input;
-    if (DEBUGMODE) if (input == "RESTART") main();
+    if (DEBUGMODE) 
+        if (input == "RESTART")
+            main();
+
     if (input.length() == 2)
     {
         input[0] = toupper(input[0]);
@@ -71,43 +74,7 @@ void getCoord(getType T)
     }
 }
 
-/*
-//Altered by print() method
-void output()
+void fgetCoord()
 {
-    SLP(200);
-    CLS;
-    cout << " ";
-    for (int i = 1; i <= SIDE_LENGTH; i++) cout << ' ' << char('@' + i);
-    cout << endl;
-    char outTmp;
-    for (int i = 1; i <= SIDE_LENGTH; i++)
-    {
-        cout << i;
-        for (int j = 1; j <= SIDE_LENGTH; j++)
-        {
-            switch (gameBoard[i][j].stat)
-            {
-                case Black:
-                    outTmp = 'X';
-                    break;
-                case White:
-                    outTmp = 'O';
-                    break;
-                case Empty:
-                    outTmp = ' ';
-                    break;
-                case Valid:
-                    if (assistFlag && ((modeFlag == AI_MODE&&sideFlag == playerSide) || (modeFlag == NON_AI_MODE))) outTmp = '*';
-                    else outTmp = ' ';
-                    break;
-                default:
-                    fatalError(1);
-            }
-            cout << ' ' << outTmp;
-        }
-        if (i - SIDE_LENGTH) cout << endl;
-    }
-    cout << endl << left << "Black(X):" << setw(2) << gameBoard.statusCount[Black] << "  White(O):" << setw(2) << gameBoard.statusCount[White] << endl << endl;
+
 }
-*/

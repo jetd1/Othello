@@ -48,6 +48,7 @@
 
 ////Common includes
 #include <iostream>
+#include <fstream>
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -89,7 +90,6 @@ using namespace std;
 
 //For Debug
 #define DEBUGMODE true
-
 
 
 

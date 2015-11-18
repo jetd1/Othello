@@ -15,8 +15,8 @@ vector<Coord> validCoord;
 Board gameBoard;
 
 //In init.cpp
+void menu();
 void init();
-void selectMode();
 void selectSide();
 void isAssistMode();
 
@@ -41,9 +41,9 @@ Coord AI(Board &board, bool AIside);
 
 
 
-int main()
+int main(int argc, char** argv)
 {
-    init();
+    menu();
     othelloMain();
     PAUSE;
 }

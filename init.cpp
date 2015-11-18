@@ -9,25 +9,65 @@
 * 4.Place four stones;
 */
 
-
-void selectMode();
+void menu();
+void init();
 void selectSide();
 void isAssistMode();
 
 extern void printVersion();
+extern void fatalError(unsigned ErrorCode);
 
 extern bool assistFlag, modeFlag, sideFlag, playerSide;
 extern short passCount, turnCount;
 extern Board gameBoard;
 
-void init()
+void menu()
 {
-    CLS;
     if (PRINT_VERSION)
         printVersion();
-    selectMode();
-    selectSide();
-    isAssistMode();
+
+    string in;
+
+    menu:
+    cout << "1.Play with Your Friends" << endl;
+    cout << "2.Play with AI" << endl;
+    cout << "3.Change Board Size" << endl;
+    cout << "4.Read Game" << endl;
+    cout << "5.Select Language" << endl;
+    cout << "6.Exit" << endl;
+
+    cin >> in;
+
+    if (in.length() == 1)
+        switch (in[0])
+        {
+            case '1':
+                modeFlag = NON_AI_MODE;
+                isAssistMode();
+                init();
+                return;
+            case '2':
+                modeFlag = AI_MODE;
+                selectSide();
+                isAssistMode();
+                init();
+                return;
+            case '3':
+                break;
+            case '4':
+                break;
+            case '5':
+                break;
+            case '6':
+                exit(0);
+            default:
+                fatalError(1);
+        }
+    else goto menu;
+}
+
+void init()
+{
     for (int i = 0; i < SAFE_LENGTH; i++) 
         for (int j = 0; j < SAFE_LENGTH; j++)
         {
@@ -44,30 +84,24 @@ void init()
     gameBoard.setValidFor(sideFlag);
 }
 
-/*
-* Select to play with AI or with stupid human.
-*/
-void selectMode()
-{
-    string in;
-    string qst = "Play With Computer?(Y/N):_\b";
-    string rpt = "Invalid Input!(Sorry that I'm dumb)";
-    cout << qst;
-    cin >> in;
-    in[0] = toupper(in[0]);
-    while ((in!="Y")&&(in!="N"))
-    {
-        cout << rpt << endl;
-        cout << qst;
-        cin >> in;
-        in[0] = toupper(in[0]);
-    }
-    modeFlag = ((in=="Y") ? AI_MODE : NON_AI_MODE);
-}
+//void selectMode()
+//{
+//    string in;
+//    string qst = "Play With Computer?(Y/N):_\b";
+//    string rpt = "Invalid Input!(Sorry that I'm dumb)";
+//    cout << qst;
+//    cin >> in;
+//    in[0] = toupper(in[0]);
+//    while ((in!="Y")&&(in!="N"))
+//    {
+//        cout << rpt << endl;
+//        cout << qst;
+//        cin >> in;
+//        in[0] = toupper(in[0]);
+//    }
+//    modeFlag = ((in=="Y") ? AI_MODE : NON_AI_MODE);
+//}
 
-/*
-* Select Black or White for the player.
-*/
 void selectSide()
 {
     if (modeFlag==AI_MODE)

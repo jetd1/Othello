@@ -9,6 +9,7 @@ Version 0.6.7
 //Even Block Estimate
 //Position Estimate
 //Mobility Significance
+#include <cmath>
 
 #include "elements.h"
 #include "AIbase.h"
