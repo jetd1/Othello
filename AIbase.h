@@ -13,8 +13,9 @@ bool rcmpCoordV(const Coord &A, const Coord &B);
 bool cmpCoordC(const Coord &A, const Coord &B);
 bool rcmpCoordC(const Coord &A, const Coord &B);
 
-double AIBoardEval(Board &tmpBoard, bool side);
-inline double JetEval(Coord &validMove, Board &tmpBoard, bool side);
+double MixedBoardEval(Coord &validMove, Board &tmpBoard, bool side);
+double ClassicBoardEval(Board &tmpBoard, bool side);
+inline double JetBoardEval(Coord &validMove, Board &tmpBoard, bool side);
 
 
 

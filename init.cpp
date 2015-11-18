@@ -17,7 +17,7 @@ void isAssistMode();
 extern void printVersion();
 
 extern bool assistFlag, modeFlag, sideFlag, playerSide;
-extern short passCount;
+extern short passCount, turnCount;
 extern Board gameBoard;
 
 void init()
@@ -39,7 +39,7 @@ void init()
     gameBoard[SIDE_LENGTH/2][SIDE_LENGTH/2].stat = gameBoard[SIDE_LENGTH/2+1][SIDE_LENGTH/2+1].stat = White;
     gameBoard[SIDE_LENGTH/2][SIDE_LENGTH/2+1].stat = gameBoard[SIDE_LENGTH/2+1][SIDE_LENGTH/2].stat = Black;
     sideFlag = Black;
-    passCount = 0;
+    passCount = turnCount = 0;
     gameBoard.count();
     gameBoard.setValidFor(sideFlag);
 }

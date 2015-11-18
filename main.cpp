@@ -4,7 +4,7 @@ Version 0.9.9
 */
 #include "elements.h"
 
-short passCount;
+short passCount, turnCount;
 
 bool modeFlag, assistFlag, sideFlag, inputFlag, playerSide;
 

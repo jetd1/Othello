@@ -1,6 +1,6 @@
 /*
 AI by Jet
-Version 0.6.5
+Version 0.6.7
 */
 
 //Make Pass
@@ -14,45 +14,53 @@ Version 0.6.5
 #include "AIbase.h"
 #include <algorithm>
 
-int turnCount = 0;
+extern short turnCount;
 extern Board gameBoard;
 
 Coord AI(Board &board, bool AISide)
 {
     turnCount++;
     Board *tmpBoard = new Board[board.statusCount[Valid]];
-    short *humanValidCount = new short[board.statusCount[Valid]];
 
     for (int i = 0; i < board.statusCount[Valid]; i++)
     {
         tmpBoard[i] = board;
         tmpBoard[i].move(gameBoard.validCoord[i], AISide);
+
         if (DEBUGMODE)
         {
             cout << endl;
             cout << "Coord: " << char(board.validCoord[i].y + '@') << board.validCoord[i].x << endl;
         }
 
-        if(MIXFACTOR - TURNFACTOR*turnCount < BOUNDFACTOR)
-            board.validCoord[i].value = AIBoardEval(tmpBoard[i], AISide) +
-            BOUNDFACTOR * JetEval(board.validCoord[i], tmpBoard[i], AISide);
-        else
-            board.validCoord[i].value = AIBoardEval(tmpBoard[i], AISide) +
-            (MIXFACTOR - TURNFACTOR * turnCount) * JetEval(board.validCoord[i], tmpBoard[i], AISide);
-
+        board.validCoord[i].value = MixedBoardEval(board.validCoord[i], tmpBoard[i], AISide);
+            
         if (DEBUGMODE) cout << "FinalEval\t" << board.validCoord[i].value << endl << endl << endl;
     }
 
     delete[] tmpBoard;
-    delete[] humanValidCount;
 
     sort(board.validCoord.begin(), board.validCoord.end(), cmpCoordV);
 
     return gameBoard.validCoord[0];
 }
 
+double MixedBoardEval(Coord &validMove, Board &tmpBoard, bool side)
+{
+    double MixedEval;
 
-double AIBoardEval(Board &board, bool side)
+    if (MIXFACTOR - TURNFACTOR*turnCount < BOUNDFACTOR)
+        MixedEval = ClassicBoardEval(tmpBoard, side) +
+        BOUNDFACTOR * JetBoardEval(validMove, tmpBoard, side);
+    else
+        MixedEval = ClassicBoardEval(tmpBoard, side) +
+        (MIXFACTOR - TURNFACTOR * turnCount) * JetBoardEval(validMove, tmpBoard, side);
+
+    return MixedEval;
+}
+
+
+double ClassicBoardEval(Board &board, bool side)
 {
     //Evaluation Based on Character Value
     double CharaEval;
@@ -179,7 +187,7 @@ double AIBoardEval(Board &board, bool side)
 
 }
 
-inline double JetEval(Coord &validMove, Board &tmpBoard, bool side)
+inline double JetBoardEval(Coord &validMove, Board &tmpBoard, bool side)
 {
     double JetEval = POSFACTOR1;
 
