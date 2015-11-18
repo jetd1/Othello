@@ -1,8 +1,7 @@
-#ifndef _AIBASE
-#define _AIBASE
+#ifndef AIBASE_H
+#define AIBASE_H
 
 #include "base.h"
-
 
 extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
 

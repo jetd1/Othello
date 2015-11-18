@@ -15,6 +15,7 @@ Version 0.6.7
 #include "AIbase.h"
 #include <algorithm>
 
+extern bool debugFlag;
 extern short turnCount;
 extern Board gameBoard;
 
@@ -26,9 +27,9 @@ Coord AI(Board &board, bool AISide)
     for (int i = 0; i < board.statusCount[Valid]; i++)
     {
         tmpBoard[i] = board;
-        tmpBoard[i].move(gameBoard.validCoord[i], AISide);
+        tmpBoard[i].move(gameBoard.validCoord[i]);
 
-        if (DEBUGMODE)
+        if (debugFlag)
         {
             cout << endl;
             cout << "Coord: " << char(board.validCoord[i].y + '@') << board.validCoord[i].x << endl;
@@ -36,7 +37,7 @@ Coord AI(Board &board, bool AISide)
 
         board.validCoord[i].value = MixedBoardEval(board.validCoord[i], tmpBoard[i], AISide);
             
-        if (DEBUGMODE) cout << "FinalEval\t" << board.validCoord[i].value << endl << endl << endl;
+        if (debugFlag) cout << "FinalEval\t" << board.validCoord[i].value << endl << endl << endl;
     }
 
     delete[] tmpBoard;
@@ -172,7 +173,7 @@ double ClassicBoardEval(Board &board, bool side)
         (70 * FrontierRateEval) + 
         (9 * CharaEval);
 
-    if (DEBUGMODE)
+    if (debugFlag)
     {
         cout << "Classic Eval:" << endl;
         cout << "BWRateEval\t" << BWRateEval << endl;
@@ -196,7 +197,7 @@ inline double JetBoardEval(Coord &validMove, Board &tmpBoard, bool side)
 
     JetEval += (sqrt(sqrt(tmpBoard.CountRate(!side)) * ( validMove.chara + POSFACTOR2)) - tmpBoard.validEval(!side));
 
-    if (DEBUGMODE)
+    if (debugFlag)
     {
         cout << endl;
         cout << "JetEval\t" << JetEval << endl << endl;

@@ -2,7 +2,7 @@
 
 extern Board gameBoard;
 
-extern bool assistFlag, modeFlag, sideFlag, playerSide;
+extern bool assistFlag, AIFlag, playerSide;
 
 
 bool inRange(int p, int q)
@@ -12,7 +12,7 @@ bool inRange(int p, int q)
 
 void judge()
 {
-    if (modeFlag == AI_MODE)
+    if (AIFlag == AI_MODE)
     {
         if (gameBoard.statusCount[playerSide] > gameBoard.statusCount[!playerSide]) 
             cout << "You Defeated Computer! Congratulations!" << endl << endl;
@@ -30,4 +30,8 @@ void judge()
         else 
             cout << "Tie!" << endl << endl;
     }
+
+    cout << endl << "Press Any Key to Main Menu..." << endl;
+
+    PAUSE;
 }

@@ -5,7 +5,6 @@ void fatalError(unsigned ErrorCode)
     switch (ErrorCode)
     {
         case 1:
-            SLP(300);
             CLS;
             cerr << "Unknown Fatal Error Detected, Program Will Now Terminate." << endl;
             PAUSE;

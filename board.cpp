@@ -1,5 +1,6 @@
 #include "elements.h"
 #include <iomanip>
+#include <sstream>
 #include <algorithm>
 
 extern bool inRange(int p, int q);
@@ -9,7 +10,7 @@ extern void fatalError(unsigned ErrorCode);
 extern Cell NULLCELL;
 extern short dir[8][2];
 extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
-extern bool assistFlag, modeFlag, sideFlag, playerSide;
+extern bool debugFlag, assistFlag, AIFlag, playerSide;
 
 //construct function
 Board::Board()  //need to rewrite
@@ -23,6 +24,7 @@ Board::Board()  //need to rewrite
         }
 
     validCoord.clear();
+    movesRecord.clear();
 
     for (int i : {0, 1, 3})
         statusCount[i] = 0;
@@ -31,6 +33,7 @@ Board::Board()  //need to rewrite
     vValue = 0;
 
     aValue[White] = aValue[Black] = 0;
+    sideFlag = Black;
 }
 
 //overload operators
@@ -49,6 +52,7 @@ void Board::operator =(Board &board)     //need to rewrite
             cell[i][j] = board.cell[i][j];
 
     validCoord = board.validCoord;
+    movesRecord = board.movesRecord;
 
     for (int i = 0; i < 4; i++)
         statusCount[i] = board.statusCount[i];
@@ -57,6 +61,7 @@ void Board::operator =(Board &board)     //need to rewrite
 
     aValue[White] = board.aValue[White];
     aValue[Black] = board.aValue[Black];
+    sideFlag = board.sideFlag;
 }
 
 
@@ -72,6 +77,7 @@ void Board::clear()
         }
 
     validCoord.clear();
+    movesRecord.clear();
 
     for (int i : {0, 1, 3})
         statusCount[i] = 0;
@@ -81,7 +87,10 @@ void Board::clear()
     vValue = 0;
 
     aValue[White] = aValue[Black] = 0;
+    sideFlag = Black;
 }
+
+void Board::flipSide() { sideFlag ^= 1; }
 
 void Board::count()
 {
@@ -124,6 +133,25 @@ bool Board::isValid(Coord &pos, bool side)
     return false;
 }
 
+void Board::setValid()
+{
+    validCoord.clear();
+    statusCount[Valid] = 0;
+    for (int i = 1; i <= SIDE_LENGTH; i++)
+        for (int j = 1; j <= SIDE_LENGTH; j++)
+        {
+            if (cell[i][j].stat <= Black) continue;
+
+            if (isValid(cell[i][j].pos, sideFlag))
+            {
+                cell[i][j].stat = Valid;
+                statusCount[Valid]++;
+                validCoord.push_back(cell[i][j].pos);
+            }
+            else cell[i][j].stat = Empty;
+        }
+}
+
 void Board::setValidFor(bool side)
 {
     validCoord.clear();
@@ -143,39 +171,38 @@ void Board::setValidFor(bool side)
         }
 }
 
-
-
-void Board::move(Coord &pos, bool side)
+void Board::move(Coord &pos)
 {
     for (int i = 0; i < 8; i++)
     {
         int dx = dir[i][0], dy = dir[i][1];
 
-        if (cell[pos.x + dx][pos.y + dy].stat == !side)
+        if (cell[pos.x + dx][pos.y + dy].stat == !sideFlag)
         {
             for (int p = pos.x + dx, q = pos.y + dy; inRange(p, q); p += dx, q += dy)
             {
                 if (cell[p][q].stat >= Empty) break;
-                if (cell[p][q].stat == status(side))
+                if (cell[p][q].stat == status(sideFlag))
                 {
-                    cell[pos.x][pos.y].stat = status(side);
+                    cell[pos.x][pos.y].stat = status(sideFlag);
 
-                    for (int r = p - dx, s = q - dy; cell[r][s].stat != status(side); r -= dx, s -= dy) 
-                        cell[r][s].stat = status(side);
+                    for (int r = p - dx, s = q - dy; cell[r][s].stat != status(sideFlag); r -= dx, s -= dy)
+                        cell[r][s].stat = status(sideFlag);
                     break;
                 }
             }
         }
     }
-    setValidFor(!side);
-    count();  
+    flipSide();
+    setValid();
+    count();
 }
 
 void Board::print()
 {
-    if (!DEBUGMODE)
+    if (!debugFlag)
     {
-        SLP(200);
+        SLP(100);
         CLS;
     }
 
@@ -201,7 +228,7 @@ void Board::print()
                     outTmp = ' ';
                     break;
                 case Valid:
-                    if (assistFlag && ((modeFlag == AI_MODE&&sideFlag == playerSide) || (modeFlag == NON_AI_MODE))) 
+                    if (assistFlag && ((AIFlag == AI_MODE&&sideFlag == playerSide) || (AIFlag == NON_AI_MODE))) 
                         outTmp = '*';
                     else outTmp = ' ';
                     break;
@@ -269,7 +296,6 @@ double Board::CountDiff(bool side) { return count(status(side)) - count(status(!
 double Board::frontierCountRate(bool side) { return double(frontierCount(side)) / frontierCount(!side); }
 double Board::frontierCountDiff(bool side) { return frontierCount(side) - frontierCount(!side); }
 
-
 short Board::countValidFor(bool side)
 {
     short cnt = 0;
@@ -284,3 +310,48 @@ short Board::countValidFor(bool side)
 
     return cnt;
 }
+
+bool Board::save()
+{
+    ofstream save("Othello.save");
+    if (!save)
+    {
+        cout << "Unable to Save, Game Will Now Resume!";
+        PAUSE;
+        return false;
+    }
+    save << assistFlag << endl;
+    save << playerSide << endl;
+    save << AI_MODE << endl << endl;
+    save << movesRecord.size() << endl;
+    for (int i = 0; i < movesRecord.size(); i++)
+        save << movesRecord[i].x << ' '
+             << movesRecord[i].y << endl << endl;
+    save.close();
+    
+    ifstream load("Othello.save");
+    ofstream hsave("Othello.hash");
+    if (!load||!hsave)
+    {
+        remove("Othello.save");
+        remove("Othello.hash");
+        cout << "Unable to Save, Game Will Now Resume!";
+        PAUSE;
+        return false;
+    }
+    ostringstream sload;
+    sload << load.rdbuf();
+
+    string read = sload.str();
+
+    hash<string> hashptr;
+
+    hsave << hashptr(read);
+    hsave.close();
+    load.close();
+
+    return true;
+}
+
+
+

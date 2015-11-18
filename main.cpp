@@ -1,20 +1,24 @@
 /*
 Othello For Term Task
-Version 0.9.9
+Version 0.9.9.9
 */
 #include "elements.h"
-#include "draw.h"
+#include "UI.h"
 #include <thread>
 
 short passCount, turnCount;
 
-bool modeFlag, assistFlag, sideFlag, inputFlag, playerSide;
+bool UIFlag, debugFlag, AIFlag, assistFlag, inputFlag, playerSide;
 
 Coord inputCoord;
 
-vector<Coord> validCoord;
-
 Board gameBoard;
+
+extern bool drawable;
+
+//in main.cpp
+void multiThread(int argc, char **argv);
+void othelloMain();
 
 //In init.cpp
 void menu();
@@ -29,7 +33,9 @@ void fatalError(unsigned ErrorCode);
 void othelloMain();
 
 //In IO.cpp
-Coord input();
+void loadGame();
+Coord mouseInput();
+Coord keyboardInput();
 void getCoord(getType T);
 
 //In operations.cpp
@@ -39,18 +45,37 @@ bool inline inRange(int p, int q);
 //In AI.cpp
 Coord AI(Board &board, bool AIside);
 
-//In draw.cpp
-extern bool drawable;
+//In UI.cpp
 
 
 int main(int argc, char **argv)
 {
+    UIFlag = false;
+    debugFlag = false;
+    for (int i = 1; i < argc; i++)
+    {
+        if (argv[i][1] == 'c')
+            UIFlag = false;
+        if (argv[i][1] == 'd')
+            debugFlag = true;
+    }
+
     menu();
-    thread draw(initdraw, argc, argv);
-    thread game(othelloMain);
-    draw.join();
-    game.join();
-    PAUSE;
+
+    multiThread(argc, argv);
+}
+
+void multiThread(int argc, char **argv)
+{
+    if (UIFlag)
+    {
+        thread draw(initdraw, argc, argv);
+        thread game(othelloMain);
+        draw.join();
+        game.join();
+    }
+    else
+        othelloMain();
 }
 
 void othelloMain()
@@ -58,31 +83,31 @@ void othelloMain()
     gameBoard.print();
     while (gameBoard.statusCount[Empty] && passCount < 2 && gameBoard.statusCount[Black] && gameBoard.statusCount[White])
     {
-
-        while (drawable)
-        {
-            SLP(100);
-        }
+        if(UIFlag)
+            while (drawable)
+            {
+                SLP(100);
+            }
 
         //No-valid situation handle
         if (!gameBoard.statusCount[Valid])
         {
-            if (modeFlag == NON_AI_MODE || (modeFlag == AI_MODE &&sideFlag == playerSide)) 
+            if (AIFlag == NON_AI_MODE || (AIFlag == AI_MODE &&gameBoard.sideFlag == playerSide)) 
                 cout << "No Possible Move, Enter to Pass!";
             else 
                 cout << "Computer Passed, Enter to Your Turn!";
             PAUSE;
 
             passCount++;
-            sideFlag ^= 1;
-            gameBoard.setValidFor(sideFlag);
+            gameBoard.flipSide();
+            gameBoard.setValid();
             gameBoard.count();
             gameBoard.print();
             continue;
         }
  
         ////Get input
-        if (modeFlag == NON_AI_MODE || sideFlag == playerSide)
+        if (AIFlag == NON_AI_MODE || gameBoard.sideFlag == playerSide)
         {
             getCoord(Player);
             while (!inputFlag || gameBoard[inputCoord.x][inputCoord.y].stat != Valid)
@@ -98,13 +123,16 @@ void othelloMain()
         }
         else getCoord(Computer);
 
-        ////Refresh board
-        gameBoard.move(inputCoord, sideFlag);   //Move will auto refresh the board now
-        sideFlag ^= 1;
+        gameBoard.move(inputCoord);   //Move will auto flip side and refresh the board
         gameBoard.print();
-        drawable = true;
-        glutPostRedisplay();
-        passCount = 0;
+        if (UIFlag)
+        {
+            drawable = true;
+            glutPostRedisplay();
+            passCount = 0;
+        }
     }
+
     judge();
+    menu();
 }
