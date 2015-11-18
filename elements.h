@@ -49,12 +49,18 @@ public:
     void setValidFor(bool side);
     void move(Coord &pos, bool side);
     void print();
-    double vEval(bool side);
-    double aEval(bool side);
-    double raEval(bool side);
-    double daEval(bool side);
-    double rCount(bool side);
-    double dCount(bool side);
+    double validEval(bool side);
+    double allEval(bool side);
+    short frontierCount(bool side);
+
+    double aEvalRate(bool side);
+    double aEvalDiff(bool side);
+    double CountRate(bool side);
+    double CountDiff(bool side);
+    double frontierCountRate(bool side);
+    double frontierCountDiff(bool side);
+    short countValidFor(bool side);
+
 
     //todo
     void colorReverse();

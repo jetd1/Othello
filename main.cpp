@@ -1,12 +1,12 @@
 /*
 Othello For Term Task
-Version 0.9.8
+Version 0.9.9
 */
 #include "elements.h"
 #include "draw.h"
 #include <thread>
 
-short passCount;
+short passCount, turnCount;
 
 bool modeFlag, assistFlag, sideFlag, inputFlag, playerSide;
 
@@ -37,7 +37,7 @@ void judge();
 bool inline inRange(int p, int q);
 
 //In AI.cpp
-Coord AI(Board &board, bool side);
+Coord AI(Board &board, bool AIside);
 
 //In draw.cpp
 extern bool drawable;
@@ -77,6 +77,7 @@ void othelloMain()
             sideFlag ^= 1;
             gameBoard.setValidFor(sideFlag);
             gameBoard.count();
+            gameBoard.print();
             continue;
         }
 

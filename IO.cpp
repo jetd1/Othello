@@ -10,7 +10,8 @@ extern bool inputFlag, assistFlag, modeFlag, sideFlag, playerSide;
 extern Board gameBoard;
 extern Coord inputCoord;
 
-extern Coord AI(Board &board, bool side);
+extern int main();
+extern Coord AI(Board &board, bool AIside);
 extern void fatalError(unsigned ErrorCode);
 
 extern int screenSize;
