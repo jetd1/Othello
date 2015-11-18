@@ -217,3 +217,5 @@ Othello/*.vcxproj
 Othello/*.vcxproj.*
 Othello.sdf
 Othello.sln
+Othello.cbp
+Othello.layout

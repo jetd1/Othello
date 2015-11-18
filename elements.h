@@ -5,7 +5,9 @@
 
 enum getType { Player, Computer };
 enum status { White, Black, Empty, Valid };    //Then status<Empty: Have Stone on It, status>=Empty: Truly Empty
-                                               //White=false & Black=true                                          
+                                               //White=false & Black=true
+
+
 struct Coord
 {
     short x;

@@ -3,6 +3,8 @@ Othello For Term Task
 Version 0.9.9
 */
 #include "elements.h"
+#include "draw.h"
+#include <thread>
 
 short passCount, turnCount;
 
@@ -37,14 +39,17 @@ bool inline inRange(int p, int q);
 //In AI.cpp
 Coord AI(Board &board, bool AIside);
 
-//In UI.cpp
+//In draw.cpp
+extern bool drawable;
 
 
-
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     menu();
-    othelloMain();
+    thread draw(initdraw, argc, argv);
+    thread game(othelloMain);
+    draw.join();
+    game.join();
     PAUSE;
 }
 
@@ -53,7 +58,13 @@ void othelloMain()
     gameBoard.print();
     while (gameBoard.statusCount[Empty] && passCount < 2 && gameBoard.statusCount[Black] && gameBoard.statusCount[White])
     {
-        ////No-valid situation handle
+
+        while (drawable)
+        {
+            SLP(100);
+        }
+
+        //No-valid situation handle
         if (!gameBoard.statusCount[Valid])
         {
             if (modeFlag == NON_AI_MODE || (modeFlag == AI_MODE &&sideFlag == playerSide)) 
@@ -76,8 +87,9 @@ void othelloMain()
             getCoord(Player);
             while (!inputFlag || gameBoard[inputCoord.x][inputCoord.y].stat != Valid)
             {
+
                 if (inputFlag) 
-                    cout << "Invalid Position!" << endl;
+                    cout << "Invalid Position! Your input is " << inputCoord.x << " " << inputCoord.y << endl;
                 else 
                     cout << "Invalid Input!" << endl;
 
@@ -90,6 +102,8 @@ void othelloMain()
         gameBoard.move(inputCoord, sideFlag);   //Move will auto refresh the board now
         sideFlag ^= 1;
         gameBoard.print();
+        drawable = true;
+        glutPostRedisplay();
         passCount = 0;
     }
     judge();
