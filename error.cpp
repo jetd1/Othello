@@ -14,6 +14,14 @@ void fatalError(unsigned ErrorCode)
             cerr << "Unsupported Platform, Program Will Now Terminate." << endl;
             PAUSE;
             exit(2);
+        case 3:
+            cerr << "Cannot create necessary threads(initdraw)." << endl;
+            PAUSE;
+            exit(3);
+        case 4:
+            cerr << "Cannot create necessary threads(othelloMain)." << endl;
+            PAUSE;
+            exit(3);
         default:
             exit(233);
     }

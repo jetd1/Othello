@@ -2,8 +2,8 @@
 
 DIR = bin
 BIN = $(DIR)/Othello
-OBJ = $(DIR)/main.o $(DIR)/AI.o $(DIR)/error.o $(DIR)/init.o $(DIR)/IO.o $(DIR)/operations.o $(DIR)/UI.o $(DIR)/declarations.o $(DIR)/board.o
-LIB = -Lfreeglut -Wl,-Bstatic -lglut -Wl,-Bdynamic -lGL -lX11 -lXxf86vm -g3
+OBJ = $(DIR)/main.o $(DIR)/AI.o $(DIR)/error.o $(DIR)/init.o $(DIR)/IO.o $(DIR)/operations.o $(DIR)/draw.o $(DIR)/declarations.o $(DIR)/board.o
+LIB = -Lfreeglut -Wl,-Bstatic -lglut -Wl,-Bdynamic -lGL -lX11 -lXxf86vm -g3 -lXi -lpthread
 CXX = g++
 CXXFLAGS = -I"freeglut_l/include" -Wall -g3 -std=c++0x
 
@@ -22,7 +22,7 @@ AIbase.h : base.h
 
 elements.h : base.h
 
-$(DIR)/main.o : main.cpp elements.h
+$(DIR)/main.o : main.cpp elements.h draw.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(DIR)/AI.o : AI.cpp elements.h AIbase.h
@@ -40,7 +40,7 @@ $(DIR)/IO.o : IO.cpp elements.h
 $(DIR)/operations.o : operations.cpp elements.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/UI.o : UI.cpp elements.h
+$(DIR)/draw.o : draw.cpp elements.h draw.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(DIR)/declarations.o : declarations.cpp elements.h

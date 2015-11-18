@@ -21,17 +21,17 @@ Coord input() //For human input
     inputFlag = false;
 
     ////Echo
-    if (modeFlag == AI_MODE) 
+    if (modeFlag == AI_MODE)
         cout << "Your Turn:__\b\b";
     else
     {
-        if (sideFlag) 
+        if (sideFlag)
             cout << "Black(X) Turn:__\b\b";
-        else 
+        else
             cout << "White(X) Turn:__\b\b";
     }
 
-    ////Input conversion
+    //Input conversion
     string input;
     Coord tmpCoord{};
     cin >> input;
