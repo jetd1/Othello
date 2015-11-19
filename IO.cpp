@@ -174,7 +174,7 @@ void loadGame()
 
     for (int i = 0; i < movesCount; i++)
     {
-        Coord tmpCoord;
+        Coord tmpCoord{};
         load >> tmpCoord.x;
         load >> tmpCoord.y;
         gameBoard.movesRecord.push_back(tmpCoord);

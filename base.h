@@ -15,7 +15,7 @@
 //Platform auto detect
 #ifdef _WIN32
 #include <windows.h>
-#include "freeglut_w/include/GL/freeglut.h"
+#include "freeglut/include/GL/freeglut.h"
 #ifdef _WIN64
 #pragma comment(lib, "freeglut64.lib")
 #else
@@ -26,7 +26,7 @@
 
 #elif defined __linux__
 #include <unistd.h>
-#include "freeglut_l/include/GL/freeglut.h"
+#include "freeglut/include/GL/freeglut.h"
 #define CLS system("clear")
 #define SLP(X) usleep(1000*X)
 

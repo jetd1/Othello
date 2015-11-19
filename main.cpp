@@ -47,7 +47,6 @@ void getCoord(getType T);
 
 //In operations.cpp
 void judge();
-bool inline inRange(int p, int q);
 
 //In AI.cpp
 Coord JetAI(Board &board);
