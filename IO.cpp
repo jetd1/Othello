@@ -11,7 +11,8 @@ extern Board gameBoard;
 extern Coord inputCoord;
 extern short maxDepth, diff;
 
-extern void menu();
+extern void menu(), init(), initAI(short diff);
+extern void multiThread(int argc, char **argv);
 extern Coord AI(Board &board, short depth);
 extern void fatalError(unsigned ErrorCode);
 Coord keyboardInput(string &input);
@@ -23,7 +24,7 @@ void printVersion()
     cout << "Othello Main Version " << MAIN_VERSION << endl;
     cout << "AI Version " << AI_VERSION << endl << endl ;
     cout << "Copyleft 2015" << endl;
-    cout << endl << endl << endl;
+    cout << endl << endl;
 }
 
 // Mouse Callback
@@ -156,23 +157,32 @@ void loadGame()
     }
     load.close();
     hload.close();
-    
+
+    init();
+
     load.open("Othello.save");
-    cin.rdbuf(load.rdbuf());
-    cin >> assistFlag;
-    cin >> playerSide;
-    cin >> AIFlag;
+    load >> AIFlag;
+    load >> assistFlag;
+    load >> playerSide;
+    load >> diff;
+
+    initAI(diff);
 
     int movesCount;
-    cin >> movesCount;
+    load >> movesCount;
     gameBoard.movesRecord.clear();
 
     for (int i = 0; i < movesCount; i++)
     {
         Coord tmpCoord;
-        cin >> tmpCoord.x;
-        cin >> tmpCoord.y;
+        load >> tmpCoord.x;
+        load >> tmpCoord.y;
         gameBoard.movesRecord.push_back(tmpCoord);
     }
+    load.close();
 
+    for (int i = 0; i < movesCount; i++)
+        gameBoard.move(gameBoard.movesRecord[i]);
+
+    multiThread(0, nullptr);
 }

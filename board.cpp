@@ -3,10 +3,11 @@
 #include <sstream>
 #include <algorithm>
 
-extern bool inRange(int p, int q);
+inline bool inRange(int p, int q);
 extern bool cmpCoordC(const Coord &A, const Coord &B);
 extern void fatalError(unsigned ErrorCode);
 
+extern short diff;
 extern Cell NULLCELL;
 extern short passCount;
 extern short dir[8][2];
@@ -174,26 +175,27 @@ void Board::setValidFor(bool side)
 
 void Board::move(Coord &pos)
 {
-    for (int i = 0; i < 8; i++)
-    {
-        int dx = dir[i][0], dy = dir[i][1];
-
-        if (cell[pos.x + dx][pos.y + dy].stat == !sideFlag)
+    if (pos.x != -1)
+        for (int i = 0; i < 8; i++)
         {
-            for (int p = pos.x + dx, q = pos.y + dy; inRange(p, q); p += dx, q += dy)
-            {
-                if (cell[p][q].stat >= Empty) break;
-                if (cell[p][q].stat == status(sideFlag))
-                {
-                    cell[pos.x][pos.y].stat = status(sideFlag);
+            int dx = dir[i][0], dy = dir[i][1];
 
-                    for (int r = p - dx, s = q - dy; cell[r][s].stat != status(sideFlag); r -= dx, s -= dy)
-                        cell[r][s].stat = status(sideFlag);
-                    break;
+            if (cell[pos.x + dx][pos.y + dy].stat == !sideFlag)
+            {
+                for (int p = pos.x + dx, q = pos.y + dy; inRange(p, q); p += dx, q += dy)
+                {
+                    if (cell[p][q].stat >= Empty) break;
+                    if (cell[p][q].stat == status(sideFlag))
+                    {
+                        cell[pos.x][pos.y].stat = status(sideFlag);
+
+                        for (int r = p - dx, s = q - dy; cell[r][s].stat != status(sideFlag); r -= dx, s -= dy)
+                            cell[r][s].stat = status(sideFlag);
+                        break;
+                    }
                 }
             }
         }
-    }
     flipSide();
     setValid();
     count();
@@ -328,9 +330,10 @@ bool Board::save()
         return false;
     }
 
+    save << AIFlag << endl;
     save << assistFlag << endl;
     save << playerSide << endl;
-    save << AIFlag << endl << endl;
+    save << diff << endl << endl;
     save << movesRecord.size() << endl;
     for (int i = 0; i < movesRecord.size(); i++)
         save << movesRecord[i].x << ' '
@@ -361,5 +364,4 @@ bool Board::save()
     return true;
 }
 
-
-
+inline bool inRange(int p, int q) { return p >= 1 && p <= SIDE_LENGTH && q >= 1 && q <= SIDE_LENGTH; }

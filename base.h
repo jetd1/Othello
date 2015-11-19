@@ -2,7 +2,7 @@
 #define BASE_H
 
 ////Cross-platform implement
-#define PAUSE cin.get();cin.get()
+#define PAUSE cin.clear();cin.sync();cin.get();cin.get()
 
 //OpenGL flaw fix
 #ifndef NDEBUG
@@ -62,7 +62,7 @@ using namespace std;
 ////Macro Arguments
 
 //Version Information
-#define MAIN_VERSION "1.0"
+#define MAIN_VERSION "1.1"
 #define AI_VERSION "1.0"
 #define PRINT_VERSION true
 

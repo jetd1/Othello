@@ -1,10 +1,10 @@
 #include "elements.h"
-#include "UI.h"
 #include <cmath>
 
 const double M_PI = 3.14159265358979323846;
+int CIRCLE_MAX = 50;
 
-const int CIRCLE_MAX = 500;
+//const int CIRCLE_MAX = 7;
 
 int screenSize = 400;
 bool drawable = true;
@@ -31,6 +31,7 @@ void initDisplay()
 
 void drawCircle(double x, double y, double r, status stat)
 {
+    
     switch (stat)
     {
         case Black:
@@ -44,9 +45,7 @@ void drawCircle(double x, double y, double r, status stat)
     }
     glBegin(GL_POLYGON);
     for (int i = 0; i < CIRCLE_MAX; ++i)
-    {
         glVertex2d(x + r*cos(2 * M_PI*i / CIRCLE_MAX), y + r*sin(2 * M_PI*i / CIRCLE_MAX));
-    }
     glEnd();
 }
 

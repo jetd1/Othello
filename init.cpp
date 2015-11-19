@@ -1,6 +1,8 @@
 #include "elements.h"
 #include "AIbase.h"
 
+short diff;
+
 void menu();
 void init();
 void selectSide();
@@ -13,7 +15,7 @@ extern void printVersion();
 extern void fatalError(unsigned ErrorCode);
 extern void multiThread(int argc, char **argv);
 
-extern bool assistFlag, AIFlag, playerSide;
+extern bool assistFlag, AIFlag, UIFlag, playerSide;
 extern short passCount;
 extern Board gameBoard;
 extern short maxDepth;
@@ -28,10 +30,19 @@ void menu()
 
     string in;
 
+    if (UIFlag)
+        cout << "GUI Mode On" << endl << endl;
+    else
+        cout << endl;
+
     cout << "1.Play with Friends" << endl;
     cout << "2.Play with AI" << endl;
     cout << "3.Load Game" << endl;
-    cout << "4.Exit" << endl;
+    if (UIFlag)
+        cout << "4.Turn Off GUI" << endl;
+    else
+        cout << "4.Turn On GUI" << endl;
+    cout << "5.Exit" << endl;
     cout << endl;
     cout << "Input:_\b";
 
@@ -43,10 +54,12 @@ void menu()
         {
             case '1':
                 AIFlag = NON_AI_MODE;
+                isAssistMode();
                 init();
                 multiThread(0,nullptr);
             case '2':
                 AIFlag = AI_MODE;
+                isAssistMode();
                 init();
                 selectSide();
                 selectDiff();
@@ -55,6 +68,9 @@ void menu()
                 loadGame();
                 break;
             case '4':
+                UIFlag^=1;
+                menu();
+            case '5':
                 exit(0);
         }
 
@@ -66,7 +82,6 @@ void menu()
 void init()
 {
     gameBoard.clear();
-    isAssistMode();
     for (int i = 0; i < SAFE_LENGTH; i++) 
         for (int j = 0; j < SAFE_LENGTH; j++)
         {
@@ -103,7 +118,6 @@ void selectSide()
 
 void selectDiff()
 {
-    short diff;
     CLS;
 
     if (PRINT_VERSION)
@@ -182,7 +196,7 @@ void initAI(short diff)
             break;
         case 3:
             AIType = AB;
-            maxDepth = 3;
+            maxDepth = 2;
             break;
         case 4:
             AIType = AB;
@@ -190,7 +204,7 @@ void initAI(short diff)
             break;
         case 5:
             AIType = AB;
-            maxDepth = 8;
+            maxDepth = 7;
             break;
         default:
             fatalError(1);

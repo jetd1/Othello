@@ -2,13 +2,7 @@
 
 extern Board gameBoard;
 
-extern bool assistFlag, AIFlag, playerSide;
-
-
-bool inRange(int p, int q)
-{
-    return p >= 1 && p <= SIDE_LENGTH && q >= 1 && q <= SIDE_LENGTH;
-}
+extern bool AIFlag, playerSide;
 
 void judge()
 {

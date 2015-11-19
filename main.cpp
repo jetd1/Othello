@@ -1,9 +1,8 @@
 /*
 Othello For Term Task
-Version 1.0
+Version 1.1
 */
 #include "elements.h"
-#include "UI.h"
 #include <thread>
 
 short maxDepth;
@@ -17,6 +16,8 @@ Coord inputCoord;
 Board gameBoard;
 
 aiType AIType;
+
+Coord passCoord = {-1, -1};
 
 extern bool drawable;
 
@@ -56,6 +57,7 @@ double BoardEval(Board &board);
 double AlphaBetaAI(Board &board, short depth, double alpha, double beta, Coord &bestCoord);
 
 //In UI.cpp
+void initUI(int argc, char **argv);
 
 
 int main(int argc, char **argv)
@@ -93,7 +95,7 @@ void othelloMain()
     gameBoard.print();
     while (gameBoard.statusCount[Empty] && passCount < 2 && gameBoard.statusCount[Black] && gameBoard.statusCount[White])
     {
-        if(UIFlag)
+        if (UIFlag)
             while (drawable)
             {
                 SLP(100);
@@ -108,6 +110,7 @@ void othelloMain()
                 cout << "Computer Passed, Enter to Your Turn!";
             PAUSE;
 
+            gameBoard.movesRecord.push_back(passCoord);
             passCount++;
             gameBoard.flipSide();
             gameBoard.setValid();
@@ -124,7 +127,7 @@ void othelloMain()
             {
 
                 if (inputFlag) 
-                    cout << "Invalid Position! Your input is " << inputCoord.x << " " << inputCoord.y << endl;
+                    cout << "Invalid Position! Your input is " << inputCoord.x << char(inputCoord.y + '@') << endl;
                 else if(!saveError)
                     cout << "Invalid Input!" << endl;
 

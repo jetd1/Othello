@@ -9,10 +9,9 @@ Version 1.0
 //Even Block Estimate
 //Position Estimate
 //Mobility Significance
-#include <cmath>
-
 #include "elements.h"
 #include "AIbase.h"
+#include <cmath>
 #include <algorithm>
 
 extern short maxDepth;
@@ -224,7 +223,6 @@ double BoardEval(Board &board)
     return Eval;
 
 }
-
 
 bool cmpBoard(const Board &A, const Board &B) { return A > B; }
 bool rcmpBoard(const Board &A, const Board &B) { return A < B; }
