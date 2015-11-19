@@ -21,6 +21,8 @@ Coord passCoord = {-1, -1};
 
 extern bool drawable;
 
+extern double ABReturn[4];
+
 //in main.cpp
 void multiThread(int argc, char **argv);
 void othelloMain();
@@ -51,7 +53,7 @@ void judge();
 //In AI.cpp
 Coord JetAI(Board &board);
 Coord RandomAI(Board &board);
-Coord AI(Board &board, short depth);
+Coord AI(Board &board);
 double BoardEval(Board &board);
 double AlphaBetaAI(Board &board, short depth, double alpha, double beta, Coord &bestCoord);
 
@@ -137,6 +139,9 @@ void othelloMain()
 
         gameBoard.move(inputCoord);   //Move will auto flip side and refresh the board
         gameBoard.print();
+        if(debugFlag)
+            for (int i = 0; i < 3; i++)
+                cout << ABReturn[i] << endl;
         passCount = 0;
         if (UIFlag)
         {

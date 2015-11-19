@@ -13,7 +13,7 @@ extern short maxDepth, diff;
 
 extern void menu(), init(), initAI(short diff);
 extern void multiThread(int argc, char **argv);
-extern Coord AI(Board &board, short depth);
+extern Coord AI(Board &board);
 extern void fatalError(unsigned ErrorCode);
 Coord keyboardInput(string &input);
 
@@ -115,7 +115,7 @@ void getCoord(getType T)
                 inputCoord = keyboardInput();
             break;
         case Computer:
-            inputCoord = AI(gameBoard, maxDepth);
+            inputCoord = AI(gameBoard);
             break;
         default:
             fatalError(1);

@@ -1,6 +1,6 @@
 /*
 AI by Jet
-Version 1.0
+Version 1.5
 */
 
 //Make Pass
@@ -12,16 +12,20 @@ Version 1.0
 #include "elements.h"
 #include "AIbase.h"
 #include <cmath>
+#include <thread>
 #include <algorithm>
 
 extern short maxDepth;
-extern bool debugFlag;
+extern bool debugFlag, playerSide;
 extern Board gameBoard;
 extern aiType AIType;
 
 extern void fatalError(unsigned ErrorCode);
 
-double AlphaBetaAI(Board &board, short depth, double alpha, double beta, Coord &bestCoord)
+double ABReturn[3];
+Coord bestCoord[3];
+
+double AlphaBetaAI(Board &board, short depth, double alpha, double beta, short r)
 {
     if (!depth)
         return BoardEval(board);
@@ -31,21 +35,22 @@ double AlphaBetaAI(Board &board, short depth, double alpha, double beta, Coord &
     {
         Board tmpBoard = board;
         tmpBoard.move(board.validCoord[i]);
-        Eval = -AlphaBetaAI(tmpBoard, depth - 1, -beta, -alpha, bestCoord);
+
+        Eval = - AlphaBetaAI(tmpBoard, depth - 1, -beta, -alpha, r);
         if (Eval >= beta)
         {
             if (depth == maxDepth)
-                bestCoord = board.validCoord[i];
-            return beta;
+                bestCoord[r] = board.validCoord[i];
+            return (ABReturn[r] = beta);
         }
         if (Eval > alpha)
         {
             alpha = Eval;
             if (depth == maxDepth)
-                bestCoord = board.validCoord[i];
+                bestCoord[r] = board.validCoord[i];
         }
     }
-    return alpha;
+    return (ABReturn[r] = alpha);
 }
 
 Coord RandomAI(Board &board)
@@ -73,7 +78,22 @@ Coord JetAI(Board &board)
 
 }
 
-Coord AI(Board &board, short depth)
+Coord multiThreadABSearch(Board &board)
+{
+    ABReturn[0] = ABReturn[1] = ABReturn[2] = ALPHA;
+    thread AB1(AlphaBetaAI, board, maxDepth, ALPHA, LOWERA1, 0);
+    thread AB2(AlphaBetaAI, board, maxDepth, LOWERA1, LOWERB1, 1);
+    thread AB3(AlphaBetaAI, board, maxDepth, LOWERB1, BETA, 2);
+    AB1.join();
+    AB2.join();
+    AB3.join();
+
+    for (int i = 0; i < 3; i++)
+        if (ABReturn[i] && ABReturn[i] != LOWERA1 && ABReturn[i] != LOWERB1)
+            return bestCoord[i];
+}
+
+Coord AI(Board &board)
 {
     switch (AIType)
     {
@@ -82,11 +102,14 @@ Coord AI(Board &board, short depth)
         case Jet:
             return JetAI(board);
         case AB:
-            Coord bestCoord;
-            AlphaBetaAI(board, depth, ALPHA, BETA, bestCoord);
-            return bestCoord;
+            Coord tmpCoord;
+            tmpCoord = multiThreadABSearch(board);
+            if(gameBoard.isValid(tmpCoord,!playerSide))
+                return multiThreadABSearch(board);
+            return JetAI(board);
         default:
             fatalError(1);
+            return{};
     }
 }
 
@@ -200,13 +223,13 @@ double BoardEval(Board &board)
 
     //Weighed Evaluation
     double Eval =
-        (8 * BWRateEval) +
+        ((8 * BWRateEval) +
         (800 * CornerEval) +
         (380 * DCornerEval) +
         (80 * MobEval) +
         (70 * FrontierRateEval) +
         (9 * CharaEval) +
-        (100000 * loseFlag);
+        (100000 * loseFlag))/100;
 
     if (debugFlag)
     {
