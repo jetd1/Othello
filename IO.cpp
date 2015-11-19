@@ -6,13 +6,15 @@ int mouseMove = 0;
 short xBuffer[10], yBuffer[10];
 bool mouseInputAvalable = false;
 
-extern bool UIFlag, debugFlag, inputFlag, assistFlag, AIFlag, playerSide;
+extern bool UIFlag, debugFlag, inputFlag, assistFlag, AIFlag, playerSide, saveError;
 extern Board gameBoard;
 extern Coord inputCoord;
+extern short maxDepth, diff;
 
 extern void menu();
-extern Coord AI(Board &board, bool AIside);
+extern Coord AI(Board &board, short depth);
 extern void fatalError(unsigned ErrorCode);
+Coord keyboardInput(string &input);
 
 extern int screenSize;
 
@@ -28,8 +30,8 @@ void printVersion()
 void mouseKey(int button, int state, int x, int y){
     if (!mouseInputAvalable) return;
     if (state != GLUT_DOWN) return;
-    yBuffer[mouseMove] = (x / (screenSize / 8)) + 1;
-    xBuffer[mouseMove] = (y / (screenSize / 8)) + 1;
+    yBuffer[mouseMove] = (x / (screenSize / SIDE_LENGTH)) + 1;
+    xBuffer[mouseMove] = (y / (screenSize / SIDE_LENGTH)) + 1;
     mouseMove++;
     mouseInputAvalable = false;
     return;
@@ -58,21 +60,19 @@ Coord keyboardInput()
         if (gameBoard.sideFlag == Black)
             cout << "Black(X) Turn:__\b\b";
         else
-            cout << "White(X) Turn:__\b\b";
+            cout << "White(O) Turn:__\b\b";
     }
 
-    ////Input conversion
     string input;
-    Coord tmpCoord{};
-
     cin >> input;
 
     transform(input.begin(), input.end(), input.begin(), ::toupper);
 
-    if (input == "RESTART") menu();
+    if (input == "EXIT") exit(0);
+    if (input == "MENU") menu();
     if (input == "SAVE")
     {
-        if (gameBoard.save())
+        if (saveError = gameBoard.save())
         {
             cout << "Game Successfully Saved!" << endl;
             cout << "Press Any Key to Main Menu..." << endl;
@@ -80,8 +80,10 @@ Coord keyboardInput()
             PAUSE;
             menu();
         }
+        else return keyboardInput();
     }
 
+    Coord tmpCoord{};
     inputFlag = false;
 
     if (input.length() == 2)
@@ -112,7 +114,7 @@ void getCoord(getType T)
                 inputCoord = keyboardInput();
             break;
         case Computer:
-            inputCoord = AI(gameBoard, !playerSide);
+            inputCoord = AI(gameBoard, maxDepth);
             break;
         default:
             fatalError(1);
@@ -152,6 +154,25 @@ void loadGame()
         PAUSE;
         menu();
     }
+    load.close();
+    hload.close();
+    
+    load.open("Othello.save");
+    cin.rdbuf(load.rdbuf());
+    cin >> assistFlag;
+    cin >> playerSide;
+    cin >> AIFlag;
 
+    int movesCount;
+    cin >> movesCount;
+    gameBoard.movesRecord.clear();
+
+    for (int i = 0; i < movesCount; i++)
+    {
+        Coord tmpCoord;
+        cin >> tmpCoord.x;
+        cin >> tmpCoord.y;
+        gameBoard.movesRecord.push_back(tmpCoord);
+    }
 
 }

@@ -14,11 +14,11 @@ void fatalError(unsigned ErrorCode)
             PAUSE;
             exit(2);
         case 3:
-            cerr << "Cannot create necessary threads(initdraw)." << endl;
+            cerr << "Cannot create necessary threads(UI)." << endl;
             PAUSE;
             exit(3);
         case 4:
-            cerr << "Cannot create necessary threads(othelloMain)." << endl;
+            cerr << "Cannot create necessary threads(gameMain)." << endl;
             PAUSE;
             exit(3);
         default:

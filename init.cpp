@@ -1,18 +1,12 @@
 #include "elements.h"
 #include "AIbase.h"
 
-/*
-* Initialize the game:
-* 1.Choose mode(AI or non-AI);
-* 2.Choose side(Blacck or White);
-* 3.Choose with assistance or without;
-* 4.Place four stones;
-*/
-
 void menu();
 void init();
 void selectSide();
+void selectDiff();
 void isAssistMode();
+void initAI(short diff);
 
 extern void loadGame();
 extern void printVersion();
@@ -20,8 +14,10 @@ extern void fatalError(unsigned ErrorCode);
 extern void multiThread(int argc, char **argv);
 
 extern bool assistFlag, AIFlag, playerSide;
-extern short passCount, turnCount;
+extern short passCount;
 extern Board gameBoard;
+extern short maxDepth;
+extern aiType AIType;
 
 void menu()
 {
@@ -52,6 +48,8 @@ void menu()
             case '2':
                 AIFlag = AI_MODE;
                 init();
+                selectSide();
+                selectDiff();
                 multiThread(0,nullptr);
             case '3':
                 loadGame();
@@ -68,8 +66,6 @@ void menu()
 void init()
 {
     gameBoard.clear();
-
-    selectSide();
     isAssistMode();
     for (int i = 0; i < SAFE_LENGTH; i++) 
         for (int j = 0; j < SAFE_LENGTH; j++)
@@ -81,29 +77,78 @@ void init()
         }
     gameBoard[SIDE_LENGTH/2][SIDE_LENGTH/2].stat = gameBoard[SIDE_LENGTH/2+1][SIDE_LENGTH/2+1].stat = White;
     gameBoard[SIDE_LENGTH/2][SIDE_LENGTH/2+1].stat = gameBoard[SIDE_LENGTH/2+1][SIDE_LENGTH/2].stat = Black;
-    passCount = turnCount = 0;
+    passCount = 0;
     gameBoard.count();
     gameBoard.setValid();
+    playerSide = Black;
 }
 
 void selectSide()
 {
-    if (AIFlag==AI_MODE)
+    string in;
+    string qst = "Play Black or White?(B/W):_\b";
+    string rpt = "Invalid Input!(Sorry that I'm dumb)";
+    cout << qst;
+    cin >> in;
+    in[0] = toupper(in[0]);
+    while ((in != "B") && (in != "W"))
     {
-        string in;
-        string qst = "Play Black or White?(B/W):_\b";
-        string rpt = "Invalid Input!(Sorry that I'm dumb)";
+        cout << rpt << endl;
         cout << qst;
         cin >> in;
         in[0] = toupper(in[0]);
-        while((in!="B")&&(in!="W"))
+    }
+    playerSide = ((in == "W") ? White : Black);
+}
+
+void selectDiff()
+{
+    short diff;
+    CLS;
+
+    if (PRINT_VERSION)
+        printVersion();
+
+    string in;
+
+    cout << "1.Dumb Mode" << endl;
+    cout << "2.Easy Mode" << endl;
+    cout << "3.Normal Mode" << endl;
+    cout << "4.Hard Mode" << endl;
+    cout << "5.Call Police Mode" << endl;
+    cout << endl;
+    cout << "Input:_\b";
+
+    cin >> in;
+    cout << endl;
+
+    if (in.length() == 1 && in[0] >= '1'&&in[0] <= '5')
+    {
+        switch (in[0])
         {
-            cout << rpt << endl;
-            cout << qst;
-            cin >> in;
-            in[0] = toupper(in[0]);
+            case '1':
+                diff = 1;
+                break;
+            case '2':
+                diff = 2;
+                break;
+            case '3':
+                diff = 3;
+                break;
+            case '4':
+                diff = 4;
+                break;
+            case '5':
+                diff = 5;
+                break;
         }
-        playerSide = ((in=="W") ? White : Black);
+        initAI(diff);
+    }
+    else
+    {
+        cout << "Invalid Input!!!" << endl;
+        PAUSE;
+        selectDiff();
     }
 }
 
@@ -123,4 +168,31 @@ void isAssistMode()
         in[0] = toupper(in[0]);
     }
     assistFlag = ((in=="Y") ? true : false);
+}
+
+void initAI(short diff)
+{
+    switch (diff)
+    {
+        case 1:
+            AIType = Random;
+            break;
+        case 2:
+            AIType = Jet;
+            break;
+        case 3:
+            AIType = AB;
+            maxDepth = 3;
+            break;
+        case 4:
+            AIType = AB;
+            maxDepth = 5;
+            break;
+        case 5:
+            AIType = AB;
+            maxDepth = 8;
+            break;
+        default:
+            fatalError(1);
+    }
 }

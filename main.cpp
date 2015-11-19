@@ -1,18 +1,22 @@
 /*
 Othello For Term Task
-Version 0.9.9.9
+Version 1.0
 */
 #include "elements.h"
 #include "UI.h"
 #include <thread>
 
-short passCount, turnCount;
+short maxDepth;
 
-bool UIFlag, debugFlag, AIFlag, assistFlag, inputFlag, playerSide;
+short passCount;
+
+bool UIFlag, debugFlag, AIFlag, assistFlag, inputFlag, playerSide, saveError;
 
 Coord inputCoord;
 
 Board gameBoard;
+
+aiType AIType;
 
 extern bool drawable;
 
@@ -25,6 +29,7 @@ void menu();
 void init();
 void selectSide();
 void isAssistMode();
+void initAI(short diff);
 
 //In error.cpp
 void fatalError(unsigned ErrorCode);
@@ -35,6 +40,7 @@ void othelloMain();
 //In IO.cpp
 void loadGame();
 Coord mouseInput();
+string keyboardInputEcho();
 Coord keyboardInput();
 void getCoord(getType T);
 
@@ -43,7 +49,11 @@ void judge();
 bool inline inRange(int p, int q);
 
 //In AI.cpp
-Coord AI(Board &board, bool AIside);
+Coord JetAI(Board &board);
+Coord RandomAI(Board &board);
+Coord AI(Board &board, short depth);
+double BoardEval(Board &board);
+double AlphaBetaAI(Board &board, short depth, double alpha, double beta, Coord &bestCoord);
 
 //In UI.cpp
 
@@ -69,9 +79,9 @@ void multiThread(int argc, char **argv)
 {
     if (UIFlag)
     {
-        thread draw(initdraw, argc, argv);
+        thread UI(initUI, argc, argv);
         thread game(othelloMain);
-        draw.join();
+        UI.join();
         game.join();
     }
     else
@@ -115,7 +125,7 @@ void othelloMain()
 
                 if (inputFlag) 
                     cout << "Invalid Position! Your input is " << inputCoord.x << " " << inputCoord.y << endl;
-                else 
+                else if(!saveError)
                     cout << "Invalid Input!" << endl;
 
                 getCoord(Player);
@@ -125,6 +135,7 @@ void othelloMain()
 
         gameBoard.move(inputCoord);   //Move will auto flip side and refresh the board
         gameBoard.print();
+        passCount = 0;
         if (UIFlag)
         {
             drawable = true;

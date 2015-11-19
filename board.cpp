@@ -8,6 +8,7 @@ extern bool cmpCoordC(const Coord &A, const Coord &B);
 extern void fatalError(unsigned ErrorCode);
 
 extern Cell NULLCELL;
+extern short passCount;
 extern short dir[8][2];
 extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
 extern bool debugFlag, assistFlag, AIFlag, playerSide;
@@ -239,10 +240,16 @@ void Board::print()
         }
         if (i - SIDE_LENGTH) cout << endl;
     }
-    cout << endl << left 
-         << "Black(X):" << setw(2) << statusCount[Black]
-         << "  White(O):" << setw(2) << statusCount[White] 
-         << endl << endl;
+    cout << endl << left
+         << "Black(X):" << setw(2) << statusCount[Black] << "  "
+         << "White(O):" << setw(2) << statusCount[White] << endl ;
+
+    if (movesRecord.size()&&AIFlag == AI_MODE&&sideFlag == playerSide&&!passCount)
+        cout << "AI Just Placed a Stone at "
+             << movesRecord[movesRecord.size() - 1].x
+             << char(movesRecord[movesRecord.size() - 1].y + '@');
+
+    cout << endl << endl;
 }
 
 double Board::validEval(bool side) //Evaluation for valid coordinates of side
@@ -320,9 +327,10 @@ bool Board::save()
         PAUSE;
         return false;
     }
+
     save << assistFlag << endl;
     save << playerSide << endl;
-    save << AI_MODE << endl << endl;
+    save << AIFlag << endl << endl;
     save << movesRecord.size() << endl;
     for (int i = 0; i < movesRecord.size(); i++)
         save << movesRecord[i].x << ' '

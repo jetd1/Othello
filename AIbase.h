@@ -12,10 +12,7 @@ bool rcmpCoordV(const Coord &A, const Coord &B);
 bool cmpCoordC(const Coord &A, const Coord &B);
 bool rcmpCoordC(const Coord &A, const Coord &B);
 
-double MixedBoardEval(Coord &validMove, Board &tmpBoard, bool side);
-double ClassicBoardEval(Board &tmpBoard, bool side);
-inline double JetBoardEval(Coord &validMove, Board &tmpBoard, bool side);
-
+double BoardEval(Board &tmpBoard);
 
 
 #endif 
