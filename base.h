@@ -5,6 +5,9 @@
 #define PAUSE cin.clear();cin.sync();cin.get();cin.get()
 
 //OpenGL flaw fix
+//#ifndef FREEGLUT_STATIC
+//#define FREEGLUT_STATIC
+//#endif
 #ifndef NDEBUG
 #define NDEBUG
 #endif
@@ -35,7 +38,6 @@
 #include <OpenGL/gl.h> 
 #include <OpenGL/glu.h> 
 #include <GLUT/glut.h> 
-#pragma comment(lib, "freeglut.lib")
 #define CLS system("clear")
 #define SLP(X) usleep(1000*X)
 
