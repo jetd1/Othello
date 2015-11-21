@@ -11,7 +11,7 @@ extern Board gameBoard;
 extern Coord inputCoord;
 extern short maxDepth, diff;
 
-extern void menu(), init(), initAI(short diff);
+extern void menu(), init(), JacobInit(short diff);
 extern void multiThread(int argc, char **argv);
 extern Coord AI(Board &board);
 extern void fatalError(unsigned ErrorCode);
@@ -22,7 +22,7 @@ extern int screenSize;
 void printVersion()
 {
     cout<<"Othello Main Version "<<MAIN_VERSION<<endl;
-    cout<<"AI Version "<<AI_VERSION<<endl<<endl;
+    cout<<"Jacob Version "<<JACOB_VERSION<<endl<<endl;
     cout<<"Copyleft 2015"<<endl;
     cout<<endl<<endl;
 }
@@ -167,7 +167,7 @@ void loadGame()
     load>>playerSide;
     load>>diff;
 
-    initAI(diff);
+    JacobInit(diff);
 
     int movesCount;
     load>>movesCount;

@@ -1,4 +1,4 @@
-#include "elements.h"
+#include "elements.h" 
 
 extern Board gameBoard;
 
@@ -9,11 +9,11 @@ void judge()
     if (AIFlag==AI_MODE)
     {
         if (gameBoard.statusCount[playerSide]>gameBoard.statusCount[!playerSide])
-            cout<<"You Defeated Computer! Congratulations!"<<endl<<endl;
+            cout<<"You Defeated Jacob! Congratulations!"<<endl<<endl;
         else if (gameBoard.statusCount[playerSide]<gameBoard.statusCount[!playerSide])
             cout<<"Too Young too Simple!"<<endl<<endl;
         else
-            cout<<"Tie! But Liangchen Want to Play Again With You."<<endl<<endl;
+            cout<<"Tie! Jacob Want to Play Again With You."<<endl<<endl;
     }
     else
     {

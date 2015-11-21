@@ -1,6 +1,8 @@
 /*
-AI by Jet
-Version 1.6
+Jacob
+A Powerful Othello AI
+By Jet
+Version 1.6.2
 */
 
 //Make Pass
@@ -26,10 +28,13 @@ extern void fatalError(unsigned ErrorCode);
 double ABReturn[3];
 Coord bestCoord[3];
 
-double AlphaBetaAI(Board &board, short depth, double alpha, double beta, short r)
+clock_t startTime;
+
+double ABJacob(Board &board, short depth, double alpha, double beta, short r)
 {
-    if (!depth||!board.statusCount[Empty]||!board.statusCount[Valid])
+    if (!depth || !board.statusCount[Empty] || !board.statusCount[Valid] || clock() - startTime > TIME_OUT)
         return BoardEval(board);
+
 
     double Eval;
     for (int i=0; i<board.validCoord.size(); i++)
@@ -37,7 +42,7 @@ double AlphaBetaAI(Board &board, short depth, double alpha, double beta, short r
         Board tmpBoard=board;
         tmpBoard.move(board.validCoord[i]);
 
-        Eval=-AlphaBetaAI(tmpBoard, depth-1, -beta, -alpha, r);
+        Eval=-ABJacob(tmpBoard, depth-1, -beta, -alpha, r);
         if (Eval>=beta)
         {
             if (depth==maxDepth)
@@ -54,29 +59,10 @@ double AlphaBetaAI(Board &board, short depth, double alpha, double beta, short r
     return (ABReturn[r]=alpha);
 }
 
-Coord RandomAI(Board &board)
+Coord RandomJacob(Board &board)
 {
     random_shuffle(board.validCoord.begin(), board.validCoord.end());
     return board.validCoord[0];
-}
-
-Coord JetAI(Board &board)
-{
-    Board *tmpBoard=new Board[board.statusCount[Valid]];
-
-    for (int i=0; i<board.statusCount[Valid]; i++)
-    {
-        tmpBoard[i]=board;
-        tmpBoard[i].move(board.validCoord[i]);
-        board.validCoord[i].value=BoardEval(tmpBoard[i]);
-    }
-
-    delete[] tmpBoard;
-
-    sort(board.validCoord.begin(), board.validCoord.end(), rcmpCoordV);
-
-    return board.validCoord[0];
-
 }
 
 Coord multiThreadABSearch(Board &board)
@@ -84,9 +70,9 @@ Coord multiThreadABSearch(Board &board)
     if (MULTI_THREAD)
     {
         ABReturn[0] = ABReturn[1] = ABReturn[2] = ALPHA;
-        thread AB1(AlphaBetaAI, board, maxDepth, ALPHA, LOWERA, 0);
-        thread AB2(AlphaBetaAI, board, maxDepth, LOWERA, LOWERB, 1);
-        thread AB3(AlphaBetaAI, board, maxDepth, LOWERB, BETA, 2);
+        thread AB1(ABJacob, board, maxDepth, ALPHA, LOWERA, 0);
+        thread AB2(ABJacob, board, maxDepth, LOWERA, LOWERB, 1);
+        thread AB3(ABJacob, board, maxDepth, LOWERB, BETA, 2);
         AB1.join();
         AB2.join();
         AB3.join();
@@ -99,25 +85,24 @@ Coord multiThreadABSearch(Board &board)
             if (ABReturn[i] != LOWERA && ABReturn[i] != LOWERB && board.isValid(bestCoord[i], !playerSide))
                 return bestCoord[i];
 
-        return JetAI(board);
+        ABJacob(board, 3, ALPHA, BETA, 0);
+        return bestCoord[0];
     }
     else
     {
-        AlphaBetaAI(board, maxDepth, ALPHA, BETA, 0);
+        ABJacob(board, maxDepth, ALPHA, BETA, 0);
         return bestCoord[0];
     }
 }
 
 Coord AI(Board &board)
 {
+    startTime = clock();
     switch (AIType)
     {
         case Random:
-            return RandomAI(board);
-        case Jet:
-            return JetAI(board);
-        case AB:
-            Coord tmpCoord;
+            return RandomJacob(board);
+        case Jacob:
             return multiThreadABSearch(board);
         default:
             fatalError(1);

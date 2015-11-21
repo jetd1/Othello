@@ -87,7 +87,7 @@ void drawCell(double x, double y, status s)
 void drawBoard()
 {
     //Draw background
-    glClearColor(0.54, 0.14, 0.0, 0.8);
+    glClearColor(0.54f, 0.14f, 0.0f, 0.8f);
     glClear(GL_COLOR_BUFFER_BIT);
     glColor3d(0.0, 0.0, 0.0);
     glLineWidth(3);

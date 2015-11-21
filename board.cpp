@@ -11,6 +11,7 @@ extern short diff;
 extern Cell NULLCELL;
 extern short passCount;
 extern short dir[8][2];
+extern clock_t startTime;
 extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
 extern bool debugFlag, assistFlag, AIFlag, playerSide;
 
@@ -249,12 +250,25 @@ void Board::print()
         <<"Black(X):"<<setw(2)<<statusCount[Black]<<"  "
         <<"White(O):"<<setw(2)<<statusCount[White]<<endl;
 
-    if (movesRecord.size()&&AIFlag==AI_MODE&&sideFlag==playerSide&&!passCount)
-        cout<<"AI Just Placed a Stone at "
-        <<movesRecord[movesRecord.size()-1].x
-        <<char(movesRecord[movesRecord.size()-1].y+'@');
+    if (movesRecord.size() && AIFlag == AI_MODE&&sideFlag == playerSide&&!passCount)
+    {
+        ofstream out("timecsm.txt", ios::app);
+        if(debugFlag)
+            out << "Jacob Just Placed a Stone at "
+                << movesRecord[movesRecord.size() - 1].x
+                << char(movesRecord[movesRecord.size() - 1].y + '@')
+                << endl
+                << (clock() - startTime) / 1000.0 << " Seconds Consumed."
+                << endl << endl;
 
-    cout<<endl<<endl;
+        cout << "Jacob Just Placed a Stone at "
+             << movesRecord[movesRecord.size() - 1].x
+             << char(movesRecord[movesRecord.size() - 1].y + '@')
+             << endl
+             << (clock() - startTime) / 1000.0 << " Seconds Consumed."
+             << endl << endl;
+    }
+    else cout << endl << endl;
 }
 
 double Board::validEval(bool side) //Evaluation for valid coordinates of side

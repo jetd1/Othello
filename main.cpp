@@ -1,6 +1,6 @@
 /*
 Othello For Term Task
-Version 1.2
+Version 1.2.2
 */
 #include "elements.h"
 #include <thread>
@@ -9,7 +9,7 @@ short maxDepth;
 
 short passCount;
 
-bool UIFlag, debugFlag, AIFlag, assistFlag, inputFlag, playerSide, saveError;
+bool UIFlag, debugFlag, AIFlag, assistFlag, inputFlag, playerSide, saveError, manualFlag;
 
 Coord inputCoord;
 
@@ -17,7 +17,7 @@ Board gameBoard;
 
 aiType AIType;
 
-Coord passCoord={-1, -1};
+Coord passCoord = {-1, -1};
 
 extern bool drawable;
 
@@ -32,18 +32,14 @@ void menu();
 void init();
 void selectSide();
 void isAssistMode();
-void initAI(short diff);
+void JacobInit(short diff);
 
 //In error.cpp
 void fatalError(unsigned ErrorCode);
 
-//In main.cpp
-void othelloMain();
-
 //In IO.cpp
 void loadGame();
 Coord mouseInput();
-string keyboardInputEcho();
 Coord keyboardInput();
 void getCoord(getType T);
 
@@ -51,11 +47,10 @@ void getCoord(getType T);
 void judge();
 
 //In AI.cpp
-Coord JetAI(Board &board);
-Coord RandomAI(Board &board);
 Coord AI(Board &board);
 double BoardEval(Board &board);
-double AlphaBetaAI(Board &board, short depth, double alpha, double beta, Coord &bestCoord);
+Coord RandomJacob(Board &board);
+double ABJacob(Board &board, short depth, double alpha, double beta, short r);
 
 //In UI.cpp
 void initUI(int argc, char **argv);
@@ -63,17 +58,20 @@ void initUI(int argc, char **argv);
 
 int main(int argc, char **argv)
 {
-    UIFlag=false;
-    debugFlag=false;
-    for (int i=1; i<argc; i++)
+    manualFlag = false;
+    UIFlag = false;
+    debugFlag = false;
+    for (int i = 1; i < argc; i++)
     {
-        if (argv[i][1]=='c')
-            UIFlag=false;
-        if (argv[i][1]=='d')
-            debugFlag=true;
+        if (argv[i][1] == 'c')
+            UIFlag = false;
+        if (argv[i][1] == 'd')
+            debugFlag = true;
     }
 
     menu();
+
+
 
     multiThread(argc, argv);
 }
@@ -94,7 +92,7 @@ void multiThread(int argc, char **argv)
 void othelloMain()
 {
     gameBoard.print();
-    while (gameBoard.statusCount[Empty]&&passCount<2&&gameBoard.statusCount[Black]&&gameBoard.statusCount[White])
+    while (gameBoard.statusCount[Empty] && passCount < 2 && gameBoard.statusCount[Black] && gameBoard.statusCount[White])
     {
         if (UIFlag)
             while (drawable)
@@ -103,10 +101,10 @@ void othelloMain()
         //No-valid situation handle
         if (!gameBoard.statusCount[Valid])
         {
-            if (AIFlag==NON_AI_MODE||(AIFlag==AI_MODE &&gameBoard.sideFlag==playerSide))
-                cout<<"No Possible Move, Enter to Pass!";
+            if (AIFlag == NON_AI_MODE || (AIFlag == AI_MODE &&gameBoard.sideFlag == playerSide))
+                cout << "No Possible Move, Enter to Pass!";
             else
-                cout<<"Computer Passed, Enter to Your Turn!";
+                cout << "Jacob Passed, Enter to Your Turn!";
             PAUSE;
 
             gameBoard.movesRecord.push_back(passCoord);
@@ -119,16 +117,16 @@ void othelloMain()
         }
 
         ////Get input
-        if (AIFlag==NON_AI_MODE||gameBoard.sideFlag==playerSide)
+        if (AIFlag == NON_AI_MODE || gameBoard.sideFlag == playerSide)
         {
             getCoord(Player);
-            while (!inputFlag||gameBoard[inputCoord.x][inputCoord.y].stat!=Valid)
+            while (!inputFlag || gameBoard[inputCoord.x][inputCoord.y].stat != Valid)
             {
 
                 if (inputFlag)
-                    cout<<"Invalid Position! Your input is "<<inputCoord.x<<char(inputCoord.y+'@')<<endl;
+                    cout << "Invalid Position! Your input is " << inputCoord.x << char(inputCoord.y + '@') << endl;
                 else if (!saveError)
-                    cout<<"Invalid Input!"<<endl;
+                    cout << "Invalid Input!" << endl;
 
                 getCoord(Player);
             }
@@ -140,17 +138,17 @@ void othelloMain()
         if (debugFlag)
         {
             ios::sync_with_stdio(false);
-            for (int i=0; i<3; i++)
-                cout<<ABReturn[i]<<endl;
+            for (int i = 0; i < 3; i++)
+                cout << ABReturn[i] << endl;
         }
 
-        passCount=0;
+        passCount = 0;
 
         if (UIFlag)
         {
-            drawable=true;
+            drawable = true;
             glutPostRedisplay();
-            passCount=0;
+            passCount = 0;
         }
     }
 
