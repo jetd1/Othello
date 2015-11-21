@@ -1,10 +1,10 @@
 #include "elements.h"
 
-short dir[8][2] = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
+short dir[8][2]={{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
 
 
 #if SIDE_LENGTH==8
-short coordChara[SAFE_LENGTH][SAFE_LENGTH] =
+short coordChara[SAFE_LENGTH][SAFE_LENGTH]=
 {
     {-8,-8,-8,-8,-8,-8,-8,-8,-8,-8},
     {-8,20,-3,11, 8, 8,11,-3,20,-8},
@@ -21,5 +21,10 @@ short coordChara[SAFE_LENGTH][SAFE_LENGTH] =
 #else
 short coordChara[SAFE_LENGTH][SAFE_LENGTH]{};
 #endif
+
+double ALPHA=-2000;
+double LOWERA=-10;
+double LOWERB=100;
+double BETA=2000;
 
 Cell NULLCELL{};
