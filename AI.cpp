@@ -28,7 +28,7 @@ Coord bestCoord[3];
 
 double AlphaBetaAI(Board &board, short depth, double alpha, double beta, short r)
 {
-    if (!depth||!board.validCoord.size())
+    if (!depth||!board.statusCount[Empty]||!board.statusCount[Valid])
         return BoardEval(board);
 
     double Eval;
