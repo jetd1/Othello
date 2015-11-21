@@ -1,6 +1,6 @@
 #include <algorithm>
 #include "elements.h"
-#include "AIbase.h"
+#include "Jacob.h"
 
 short diff;
 
@@ -18,7 +18,7 @@ extern void printVersion();
 extern void fatalError(unsigned ErrorCode);
 extern void multiThread(int argc, char **argv);
 
-extern bool assistFlag, AIFlag, UIFlag, playerSide, manualFlag;
+extern bool assistFlag, AIFlag, UIFlag, playerSide, manualFlag, randomFlag;
 extern short passCount;
 extern Board gameBoard;
 extern short maxDepth;
@@ -256,6 +256,10 @@ void debugMenu()
         AIType = Jacob;
         cin >> maxDepth;
         manualFlag = true;
+    }
+    else if (in == "RANDOM")
+    {
+        randomFlag = true;
     }
     else
         cout << "^&$^%#*$" << endl;

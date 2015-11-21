@@ -9,7 +9,7 @@ short maxDepth;
 
 short passCount;
 
-bool UIFlag, debugFlag, AIFlag, assistFlag, inputFlag, playerSide, saveError, manualFlag;
+bool UIFlag, debugFlag, AIFlag, assistFlag, inputFlag, playerSide, saveError, manualFlag, randomFlag;
 
 Coord inputCoord;
 
@@ -58,20 +58,20 @@ void initUI(int argc, char **argv);
 
 int main(int argc, char **argv)
 {
+    randomFlag = false;
     manualFlag = false;
     UIFlag = false;
     debugFlag = false;
+
     for (int i = 1; i < argc; i++)
     {
-        if (argv[i][1] == 'c')
-            UIFlag = false;
+        if (argv[i][1] == 'u')
+            UIFlag = true;
         if (argv[i][1] == 'd')
             debugFlag = true;
     }
 
     menu();
-
-
 
     multiThread(argc, argv);
 }

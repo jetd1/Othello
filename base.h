@@ -65,7 +65,7 @@ using namespace std;
 
 //Version Information
 #define MAIN_VERSION "1.2.2"
-#define JACOB_VERSION "1.6.2"
+#define JACOB_VERSION "1.6.3"
 #define PRINT_VERSION true
 
 //Not Changeable
@@ -85,6 +85,8 @@ using namespace std;
 #define POSFACTOR2 400
 
 #define TIME_OUT 800
+
+#define RANDFACTOR 16
 
 #define MULTI_THREAD false
 
