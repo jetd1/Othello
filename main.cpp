@@ -1,63 +1,14 @@
 /*
 Othello For Term Task
-Version 1.2.2
+Version 1.5
 */
-#include "elements.h"
+#include "main.h"
 #include <thread>
-
-short maxDepth;
-
-short passCount;
-
-bool UIFlag, debugFlag, AIFlag, assistFlag, inputFlag, playerSide, saveError, manualFlag, randomFlag;
-
-Coord inputCoord;
-
-Board gameBoard;
-
-aiType AIType;
-
-Coord passCoord = {-1, -1};
-
-extern bool drawable;
-
-extern double ABReturn[3];
-
-//in main.cpp
-void multiThread(int argc, char **argv);
-void othelloMain();
-
-//In init.cpp
-void menu();
-void init();
-void selectSide();
-void isAssistMode();
-void JacobInit(short diff);
-
-//In error.cpp
-void fatalError(unsigned ErrorCode);
-
-//In IO.cpp
-void loadGame();
-Coord mouseInput();
-Coord keyboardInput();
-void getCoord(getType T);
-
-//In operations.cpp
-void judge();
-
-//In AI.cpp
-Coord AI(Board &board);
-double BoardEval(Board &board);
-Coord RandomJacob(Board &board);
-double ABJacob(Board &board, short depth, double alpha, double beta, short r);
-
-//In UI.cpp
-void initUI(int argc, char **argv);
 
 
 int main(int argc, char **argv)
 {
+    cPass = false;
     randomFlag = false;
     manualFlag = false;
     UIFlag = false;
@@ -92,19 +43,25 @@ void multiThread(int argc, char **argv)
 void othelloMain()
 {
     gameBoard.print();
-    while (gameBoard.statusCount[Empty] && passCount < 2 && gameBoard.statusCount[Black] && gameBoard.statusCount[White])
+    while (gameBoard(Empty) && passCount < 2 && gameBoard(Black) && gameBoard(White))
     {
         if (UIFlag)
             while (drawable)
                 SLP(100);
 
         //No-valid situation handle
-        if (!gameBoard.statusCount[Valid])
+        if (!gameBoard(Valid))
         {
-            if (AIFlag == NON_AI_MODE || (AIFlag == AI_MODE &&gameBoard.sideFlag == playerSide))
-                cout << "No Possible Move, Enter to Pass!";
+            CLS;
+            gameBoard.print();
+
+            if (AIFlag == NON_AI_MODE || (AIFlag == AI_MODE &&~gameBoard == playerSide))
+                cout << "      No Possible Move, Enter to Pass!";
             else
-                cout << "Jacob Passed, Enter to Your Turn!";
+            {
+                cout << "      Jacob Passed, Enter to Your Turn!";
+                cPass = true;
+            }
             PAUSE;
 
             gameBoard.movesRecord.push_back(passCoord);
@@ -117,16 +74,16 @@ void othelloMain()
         }
 
         ////Get input
-        if (AIFlag == NON_AI_MODE || gameBoard.sideFlag == playerSide)
+        if (AIFlag == NON_AI_MODE || ~gameBoard == playerSide)
         {
             getCoord(Player);
             while (!inputFlag || gameBoard[inputCoord.x][inputCoord.y].stat != Valid)
             {
 
                 if (inputFlag)
-                    cout << "Invalid Position! Your input is " << inputCoord.x << char(inputCoord.y + '@') << endl;
+                    cout << "       Invalid Position! Your input is " << inputCoord.x << char(inputCoord.y + '@') << endl;
                 else if (!saveError)
-                    cout << "Invalid Input!" << endl;
+                    cout << "                Invalid Input!" << endl;
 
                 getCoord(Player);
             }
@@ -135,14 +92,16 @@ void othelloMain()
 
         gameBoard.move(inputCoord);   //Move will auto flip side and refresh the board
         gameBoard.print();
+
+        if (AIFlag == AI_MODE&&~gameBoard == !playerSide)
+            cout << "          Jacob Thinking ...";
+
         if (debugFlag)
-        {
-            ios::sync_with_stdio(false);
             for (int i = 0; i < 3; i++)
                 cout << ABReturn[i] << endl;
-        }
 
         passCount = 0;
+        cPass = false;
 
         if (UIFlag)
         {
@@ -154,4 +113,32 @@ void othelloMain()
 
     judge();
     menu();
+}
+
+void judge()
+{
+    CLS;
+    gameBoard.print();
+    if (AIFlag == AI_MODE)
+    {
+        if (gameBoard(playerSide) > gameBoard(!playerSide))
+            cout << "    You Defeated Jacob! Congratulations!" << endl << endl;
+        else if (gameBoard(playerSide) < gameBoard(!playerSide))
+            cout << "           Too Young too Simple!" << endl << endl;
+        else
+            cout << "   Tie! Jacob Want to Play Again With You." << endl << endl;
+    }
+    else
+    {
+        if (gameBoard(Black) > gameBoard(White))
+            cout << "        Black Win!" << endl << endl;
+        else if (gameBoard(Black) < gameBoard(White))
+            cout << "        White Win!" << endl << endl;
+        else
+            cout << "           Tie!" << endl << endl;
+    }
+
+    cout << endl << "       Press Any Key to Main Menu...";
+
+    PAUSE;
 }

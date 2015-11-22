@@ -64,8 +64,8 @@ using namespace std;
 ////Macro Arguments
 
 //Version Information
-#define MAIN_VERSION "1.2.2"
-#define JACOB_VERSION "1.6.3"
+#define MAIN_VERSION "1.5"
+#define JACOB_VERSION "1.6.5"
 #define PRINT_VERSION true
 
 //Not Changeable
@@ -81,13 +81,11 @@ using namespace std;
 #define START_COORD_Y 'A'
 #define END_COORD_Y '@'+SIDE_LENGTH
 
-#define POSFACTOR1 8
-#define POSFACTOR2 400
-
-#define TIME_OUT 800
+#define TIME_OUT 100000
 
 #define RANDFACTOR 16
 
 #define MULTI_THREAD false
 
 #endif
+

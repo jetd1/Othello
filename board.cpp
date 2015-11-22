@@ -1,19 +1,7 @@
-#include "elements.h"
+﻿#include "board.h"
 #include <iomanip>
 #include <sstream>
 #include <algorithm>
-
-inline bool inRange(int p, int q);
-extern bool cmpCoordC(const Coord &A, const Coord &B);
-extern void fatalError(unsigned ErrorCode);
-
-extern short diff;
-extern Cell NULLCELL;
-extern short passCount;
-extern short dir[8][2];
-extern clock_t startTime;
-extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
-extern bool debugFlag, assistFlag, AIFlag, playerSide;
 
 //construct function
 Board::Board()  //need to rewrite
@@ -22,7 +10,7 @@ Board::Board()  //need to rewrite
         for (short j = 0; j < SAFE_LENGTH; j++)
         {
             cell[i][j] = {
-                {i, j, coordChara[i][j], 0},
+                {i, j, coordChara[i][j]},
                 Empty};
         }
 
@@ -41,12 +29,14 @@ Board::Board()  //need to rewrite
 
 //overload operators
 Cell* Board::operator [](int i) { return cell[i]; }
+short Board::operator ()(Status stat) { return statusCount[stat]; }
+short Board::operator ()(bool flag) { return statusCount[flag]; }
 bool Board::operator >(const Board &board)const { return vValue > board.vValue; }
 bool Board::operator <(const Board &board)const { return vValue < board.vValue; }
 bool Board::operator ==(const Board &board)const { return vValue == board.vValue; }
+bool Board::operator ==(const Status &stat)const { return int(sideFlag) == stat; }
 bool Board::operator >=(const Board &board)const { return vValue >= board.vValue; }
 bool Board::operator <=(const Board &board)const { return vValue <= board.vValue; }
-
 void Board::operator =(Board &board)     //need to rewrite
 {
     board.count();
@@ -58,7 +48,7 @@ void Board::operator =(Board &board)     //need to rewrite
     movesRecord = board.movesRecord;
 
     for (int i = 0; i < 4; i++)
-        statusCount[i] = board.statusCount[i];
+        statusCount[i] = board(Status(i));
 
     vValue = board.vValue;
 
@@ -66,6 +56,8 @@ void Board::operator =(Board &board)     //need to rewrite
     aValue[Black] = board.aValue[Black];
     sideFlag = board.sideFlag;
 }
+Status Board::operator ~()const { return Status(sideFlag); }
+Status Board::operator !()const { return Status(!sideFlag); }
 
 
 //member functions
@@ -75,7 +67,7 @@ void Board::clear()
         for (short j = 0; j < SAFE_LENGTH; j++)
         {
             cell[i][j] = {
-                {i, j, coordChara[i][j], 0},
+                {i, j, coordChara[i][j]},
                 Empty};
         }
 
@@ -107,16 +99,16 @@ void Board::count()
         }
 }
 
-short Board::count(status stat)
-{
-    statusCount[stat] = 0;
-
-    for (int i = 1; i <= SIDE_LENGTH; i++)
-        for (int j = 1; j <= SIDE_LENGTH; j++)
-            statusCount[stat] += (cell[i][j].stat == stat);
-
-    return statusCount[stat];
-}
+//short Board::count(Status stat)
+//{
+//    statusCount[stat] = 0;
+//
+//    for (int i = 1; i <= SIDE_LENGTH; i++)
+//        for (int j = 1; j <= SIDE_LENGTH; j++)
+//            statusCount[stat] += (cell[i][j].stat == stat);
+//
+//    return statusCount[stat];
+//}
 
 bool Board::isValid(Coord &pos, bool side)
 {
@@ -148,14 +140,15 @@ void Board::setValid()
         {
             if (cell[i][j].stat <= Black) continue;
 
-            if (isValid(cell[i][j].pos, sideFlag))
+            if (isValid(cell[i][j].coord, sideFlag))
             {
                 cell[i][j].stat = Valid;
                 statusCount[Valid]++;
-                validCoord.push_back(cell[i][j].pos);
+                validCoord.push_back(cell[i][j].coord);
             }
             else cell[i][j].stat = Empty;
         }
+    sort(validCoord.begin(), validCoord.end(), cmpCoordV);
 }
 
 void Board::setValidFor(bool side)
@@ -167,11 +160,11 @@ void Board::setValidFor(bool side)
         {
             if (cell[i][j].stat <= Black) continue;
 
-            if (isValid(cell[i][j].pos, side))
+            if (isValid(cell[i][j].coord, side))
             {
                 cell[i][j].stat = Valid;
                 statusCount[Valid]++;
-                validCoord.push_back(cell[i][j].pos);
+                validCoord.push_back(cell[i][j].coord);
             }
             else cell[i][j].stat = Empty;
         }
@@ -189,12 +182,12 @@ void Board::move(Coord &pos)
                 for (int p = pos.x + dx, q = pos.y + dy; inRange(p, q); p += dx, q += dy)
                 {
                     if (cell[p][q].stat >= Empty) break;
-                    if (cell[p][q].stat == status(sideFlag))
+                    if (cell[p][q].stat == Status(sideFlag))
                     {
-                        cell[pos.x][pos.y].stat = status(sideFlag);
+                        cell[pos.x][pos.y].stat = Status(sideFlag);
 
-                        for (int r = p - dx, s = q - dy; cell[r][s].stat != status(sideFlag); r -= dx, s -= dy)
-                            cell[r][s].stat = status(sideFlag);
+                        for (int r = p - dx, s = q - dy; cell[r][s].stat != Status(sideFlag); r -= dx, s -= dy)
+                            cell[r][s].stat = Status(sideFlag);
                         break;
                     }
                 }
@@ -212,77 +205,68 @@ void Board::print()
         SLP(100);
         CLS;
     }
-
-    cout << " ";
+    wcout << endl;
+    wcout << "      ";
     for (int i = 1; i <= SIDE_LENGTH; i++)
-        cout << ' ' << char('@' + i);
-    cout << endl;
-    char outTmp;
+        wcout << char('@' + i) << "   ";
+    cout << endl << "    ┌─┬─┬─┬─┬─┬─┬─┬─┐" << endl;
+
     for (int i = 1; i <= SIDE_LENGTH; i++)
     {
-        cout << i;
+        wcout << "   " << i << "│";
         for (int j = 1; j <= SIDE_LENGTH; j++)
         {
             switch (cell[i][j].stat)
             {
                 case Black:
-                    outTmp = 'X';
+                    wcout << "●│";
                     break;
                 case White:
-                    outTmp = 'O';
+                    wcout << "○│";
                     break;
                 case Empty:
-                    outTmp = ' ';
+                    wcout << "  │";
                     break;
                 case Valid:
                     if (assistFlag && ((AIFlag == AI_MODE&&sideFlag == playerSide) || (AIFlag == NON_AI_MODE)))
-                        outTmp = '*';
-                    else outTmp = ' ';
+                        wcout << "+ │";
+                    else wcout << "  │";
                     break;
                 default:
                     fatalError(1);
             }
-            cout << ' ' << outTmp;
         }
+        if(i-SIDE_LENGTH)
+            cout << endl << "    ├─┼─┼─┼─┼─┼─┼─┼─┤";
+        else
+            cout << endl << "    └─┴─┴─┴─┴─┴─┴─┴─┘";
         if (i - SIDE_LENGTH) cout << endl;
     }
-    cout << endl << left
-        << "Black(X):" << setw(2) << statusCount[Black] << "  "
-        << "White(O):" << setw(2) << statusCount[White] << endl;
+    wcout << endl << left << "       "
+        << "Black(●):" << setw(2) << statusCount[Black] << "    "
+        << "White(○):" << setw(2) << statusCount[White] << endl;
 
-    if (movesRecord.size() && AIFlag == AI_MODE&&sideFlag == playerSide&&!passCount)
+    if (movesRecord.size()&&AIFlag == AI_MODE&&sideFlag == playerSide&&!cPass)
     {
-        ofstream out("timecsm.txt", ios::app);
         if (debugFlag)
-            out << "Jacob Just Placed a Stone at "
+        {
+            ofstream out("timecsm.txt", ios::app);
+            out << "Jacob Placed a Stone at "
+                << movesRecord[movesRecord.size() - 1].x
+                << char(movesRecord[movesRecord.size() - 1].y + '@')
+                << endl
+                << (clock() - startTime) / 1000.0 << " Seconds Consumed."
+                << endl << endl;
+        }
+        cout << endl << "        "  
+            << "Jacob Placed a Stone at "
             << movesRecord[movesRecord.size() - 1].x
             << char(movesRecord[movesRecord.size() - 1].y + '@')
-            << endl
-            << (clock() - startTime) / 1000.0 << " Seconds Consumed."
-            << endl << endl;
-
-        cout << "Jacob Just Placed a Stone at "
-            << movesRecord[movesRecord.size() - 1].x
-            << char(movesRecord[movesRecord.size() - 1].y + '@')
-            << endl
+            << endl << "          " 
             << (clock() - startTime) / 1000.0 << " Seconds Consumed."
             << endl << endl;
     }
     else cout << endl << endl;
-}
-
-double Board::validEval(bool side) //Evaluation for valid coordinates of side
-{
-    setValidFor(side);  //To be cautious, maybe not necessary
-
-    sort(validCoord.begin(), validCoord.end(), cmpCoordC);
-
-    int vval = 0;
-    for (size_t i = 0; i < validCoord.size(); i++)
-        vval += validCoord[i].chara;
-
-    vValue = vval;
-    return vValue;
 }
 
 double Board::allEval(bool side) //Evaluation for all coordinates of side
@@ -290,8 +274,8 @@ double Board::allEval(bool side) //Evaluation for all coordinates of side
     int aval = 0;
     for (int i = 0; i < SIDE_LENGTH; i++)
         for (int j = 0; j < SIDE_LENGTH; j++)
-            if (cell[i][j].stat == status(side))
-                aval += cell[i][j].pos.chara;
+            if (cell[i][j].stat == Status(side))
+                aval += cell[i][j].coord.value;
 
     aValue[side] = aval;
     return aValue[side];
@@ -302,7 +286,7 @@ short Board::frontierCount(bool side)
     short cnt = 0;
     for (short i = 1; i <= SIDE_LENGTH; i++)
         for (short j = 1; j <= SIDE_LENGTH; j++)
-            if (cell[i][j].stat == status(side))
+            if (cell[i][j].stat == Status(side))
                 for (int d = 0; d < 8; d++)
                 {
                     short x = i + dir[d][0];
@@ -313,14 +297,14 @@ short Board::frontierCount(bool side)
     return cnt;
 }
 
-double Board::aEvalRate(bool side) { return double(allEval(side)) / allEval(!side); }
-double Board::aEvalDiff(bool side) { return allEval(side) - allEval(!side); }
+//double Board::aEvalRate(bool side) { return double(allEval(side)) / allEval(!side); }
+//double Board::aEvalDiff(bool side) { return allEval(side) - allEval(!side); }
 
-double Board::CountRate(bool side) { return double(count(status(side))) / count(status(!side)); }
-double Board::CountDiff(bool side) { return count(status(side)) - count(status(!side)); }
+//double Board::CountRate(bool side) { return double(count(Status(side))) / count(Status(!side)); }
+//double Board::CountDiff(bool side) { return count(Status(side)) - count(Status(!side)); }
 
-double Board::frontierCountRate(bool side) { return double(frontierCount(side)) / frontierCount(!side); }
-double Board::frontierCountDiff(bool side) { return frontierCount(side) - frontierCount(!side); }
+//double Board::frontierCountRate(bool side) { return double(frontierCount(side)) / frontierCount(!side); }
+//double Board::frontierCountDiff(bool side) { return frontierCount(side) - frontierCount(!side); }
 
 short Board::countValidFor(bool side)
 {
@@ -342,7 +326,7 @@ bool Board::save()
     ofstream save("Othello.save");
     if (!save)
     {
-        cout << "Unable to Save, Game Will Now Resume!";
+        cout << "    Unable to Save, Game Will Now Resume!";
         PAUSE;
         return false;
     }

@@ -1,19 +1,5 @@
-#include "elements.h"
+#include "UI.h"
 #include <cmath>
-
-const double M_PI = 3.14159265358979323846;
-int CIRCLE_MAX = 50;
-
-//const int CIRCLE_MAX = 7;
-
-int screenSize = 400;
-bool drawable = true;
-
-extern Board gameBoard;
-extern bool AIFlag, assistFlag, inputFlag, playerSide;
-
-extern void fatalError(unsigned ErrorCode);
-extern void mouseKey(int button, int state, int x, int y);
 
 void initDisplay()
 {
@@ -29,7 +15,7 @@ void initDisplay()
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void drawCircle(double x, double y, double r, status stat)
+void drawCircle(double x, double y, double r, Status stat)
 {
 
     switch (stat)
@@ -61,9 +47,9 @@ void drawPlus(double x, double y, double r)
     glEnd();
 }
 
-void drawCell(double x, double y, status s)
+void drawCell(double x, double y, Status stat)
 {
-    switch (s)
+    switch (stat)
     {
         case Black:
             drawCircle(x, y, 0.085, Black);
@@ -74,7 +60,7 @@ void drawCell(double x, double y, status s)
         case Empty:
             break;
         case Valid:
-            if (assistFlag && ((AIFlag == AI_MODE&&gameBoard.sideFlag == playerSide) || (AIFlag == NON_AI_MODE)))
+            if (assistFlag && ((AIFlag == AI_MODE&&~gameBoard == playerSide) || (AIFlag == NON_AI_MODE)))
             {
                 drawPlus(x, y, 0.07);
             }
@@ -122,7 +108,7 @@ void drawStone()
                 case Empty:
                     break;
                 case Valid:
-                    if (assistFlag && ((AIFlag == AI_MODE&&gameBoard.sideFlag == playerSide) || (AIFlag == NON_AI_MODE)))
+                    if (assistFlag && ((AIFlag == AI_MODE&&~gameBoard == playerSide) || (AIFlag == NON_AI_MODE)))
                     {
                         drawCell(-1.125 + 0.25*j, 1.125 - 0.25*i, Valid);
                     }

@@ -1,28 +1,6 @@
+#include "init.h"
+#include <ctime>
 #include <algorithm>
-#include "elements.h"
-#include "Jacob.h"
-
-short diff;
-
-void menu();
-void init();
-void selectSide();
-void selectDiff();
-void isAssistMode();
-void JacobInit(short diff);
-void debugMenu();
-
-extern void help();
-extern void loadGame();
-extern void printVersion();
-extern void fatalError(unsigned ErrorCode);
-extern void multiThread(int argc, char **argv);
-
-extern bool assistFlag, AIFlag, UIFlag, playerSide, manualFlag, randomFlag;
-extern short passCount;
-extern Board gameBoard;
-extern short maxDepth;
-extern aiType AIType;
 
 void menu()
 {
@@ -46,7 +24,8 @@ void menu()
     else
         cout << "4.Turn On GUI" << endl;
     cout << "5.Instructions" << endl;
-    cout << "6.Exit" << endl;
+    cout << "6.Change Theme" << endl;
+    cout << "0.Exit" << endl;
     cout << endl;
     cout << "Input:_\b";
 
@@ -76,6 +55,8 @@ void menu()
             case '5':
                 help();
             case '6':
+                theme();
+            case '0':
                 exit(0);
         }
     else if (in == "ABAB")
@@ -93,9 +74,9 @@ void init()
         for (int j = 0; j < SAFE_LENGTH; j++)
         {
             gameBoard[i][j].stat = Empty;
-            gameBoard[i][j].pos.x = i;
-            gameBoard[i][j].pos.y = j;
-            if (AIFlag == AI_MODE) gameBoard[i][j].pos.chara = coordChara[i][j];
+            gameBoard[i][j].coord.x = i;
+            gameBoard[i][j].coord.y = j;
+            if (AIFlag == AI_MODE) gameBoard[i][j].coord.value = coordChara[i][j];
         }
     gameBoard[SIDE_LENGTH / 2][SIDE_LENGTH / 2].stat = gameBoard[SIDE_LENGTH / 2 + 1][SIDE_LENGTH / 2 + 1].stat = White;
     gameBoard[SIDE_LENGTH / 2][SIDE_LENGTH / 2 + 1].stat = gameBoard[SIDE_LENGTH / 2 + 1][SIDE_LENGTH / 2].stat = Black;
@@ -222,6 +203,101 @@ void JacobInit(short diff)
     }
 }
 
+void theme()
+{
+    CLS;
+    
+    cout << "Please Select Theme:" << endl << endl;
+    cout << "0.Default (White on Black)" << endl;  //07
+    cout << "1.Reverse (Black on White)" << endl;             //70
+    cout << "2.Borland (Yellow on Blue) " << endl;            //9e
+    cout << "3.BlueScreen (White on Blue)" << endl;          //9f
+    cout << "4.Geek (Green on Black)" << endl;            //0a
+    cout << "5.Glamorous (Blue on Purple)" << endl;      //5b
+    cout << "6.Pinky (Yellow on Pink)" << endl;         //de
+    cout << "7.Yima (White on Red)" << endl;            //cf
+    cout << "8.DiDiaoYiMa (Red on Black)" << endl;     //7c
+    cout << "9.Dragon (Yellow on Dark Red)" << endl; //4e
+    cout << "Input JET to Randomize the Theme." << endl;
+    cout << endl << endl;
+    cout << "Input:___\b\b\b";
+
+    string input;
+    cin >> input;
+
+    transform(input.begin(), input.end(), input.begin(), ::toupper);
+
+    string colorlist = "0123456789ABCDEF";
+
+    if (input == "JET")
+    {
+        short color[2];
+        srand(unsigned(time(NULL)));
+        color[0] = rand() % 16;
+        srand(unsigned(clock()));
+        color[1] = rand() % 16;
+        char colorCombine[10] = "color ";
+        srand(unsigned(clock()) + unsigned(time(NULL)));
+        int r = rand() % 2;
+        if (r)
+        {
+            colorCombine[6] = colorlist[color[0]];
+            colorCombine[7] = colorlist[color[1]];
+            colorCombine[8] = '\0';
+        }
+        else
+        {
+            colorCombine[6] = colorlist[color[1]];
+            colorCombine[7] = colorlist[color[0]];
+            colorCombine[8] = '\0';
+        }
+        system(colorCombine);
+    }
+    else if (input.length() == 1 && isdigit(input[0]))
+        switch (input[0])
+        {
+            case '0':
+                system("color 07");
+                break;
+            case '1':
+                system("color 70");
+                break;
+            case '2':
+                system("color 9E");
+                break;
+            case '3':
+                system("color 9F");
+                break;
+            case '4':
+                system("color 0A");
+                break;
+            case '5':
+                system("color 5B");
+                break;
+            case '6':
+                system("color DE");
+                break;
+            case '7':
+                system("color CF");
+                break;
+            case '8':
+                system("color 7C");
+                break;
+            case '9':
+                system("color 4E");
+                break;
+        }
+    else
+    {
+        cout << "Invalid Input!" << endl;
+        PAUSE;
+        theme();
+    }
+
+    cin.sync();
+    menu();
+}
+
 void debugMenu()
 {
     string in;
@@ -258,9 +334,9 @@ void debugMenu()
         manualFlag = true;
     }
     else if (in == "RANDOM")
-    {
         randomFlag = true;
-    }
+    else if (in == "DEBUG")
+        debugFlag = true;
     else
         cout << "^&$^%#*$" << endl;
     PAUSE;

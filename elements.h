@@ -4,7 +4,7 @@
 #include "base.h"
 
 enum getType { Player, Computer };
-enum status { White, Black, Empty, Valid };    //Then status<Empty: Have Stone on It, status>=Empty: Truly Empty
+enum Status { White, Black, Empty, Valid };    //Then status<Empty: Have Stone on It, status>=Empty: Truly Empty
                                                //White=false & Black=true
 
 enum aiType { Random, Jacob };
@@ -13,26 +13,28 @@ struct Coord
 {
     short x;
     short y;
-    short chara;    //Characteristic Value (Fixed to Position)
-    double value;    //Result of Evaluate (Related to Situation)
+    short value;     //Characteristic Value (Fixed to Position)
 };
 
 struct Cell
 {
-    Coord pos;
-    status stat;
+    Coord coord;
+    Status stat;
 };
 
 class Board
 {
-public:
+private:
+    bool sideFlag;
+    short statusCount[4];
     Cell cell[SAFE_LENGTH][SAFE_LENGTH];
+
+public:   
     vector<Coord> validCoord;
     vector<Coord> movesRecord;
-    short statusCount[4];
     double vValue;
     double aValue[2];
-    bool sideFlag;
+    
 
 public:
     Board();
@@ -41,19 +43,26 @@ public:
     bool operator >(const Board &board)const;
     bool operator <(const Board &board)const;
     bool operator ==(const Board &board)const;
+    bool operator ==(const Status &stat)const;
     bool operator >=(const Board &board)const;
     bool operator <=(const Board &board)const;
+    Status operator !()const;
+    Status operator ~()const;
     Cell* operator [](int i);
+    short operator ()(Status stat);
+    short operator ()(bool flag);
 
     void clear();
     void flipSide();
     void count();
-    short count(status stat);
+    short count(Status stat);
     bool isValid(Coord &pos, bool side);
     void setValid();
     void setValidFor(bool side);
     void move(Coord &pos);
     void print();
+
+
     double validEval(bool side);
     double allEval(bool side);
     short frontierCount(bool side);
@@ -66,7 +75,6 @@ public:
     double frontierCountDiff(bool side);
     short countValidFor(bool side);
     bool save();
-
 
     //todo
     void colorReverse();

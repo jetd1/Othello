@@ -27,4 +27,6 @@ double LOWERA = -10;
 double LOWERB = 100;
 double BETA = 2000;
 
+Coord passCoord = {-1, -1};
+
 Cell NULLCELL{};

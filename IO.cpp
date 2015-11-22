@@ -1,30 +1,15 @@
-#include "elements.h"
+#include "IO.h"
 #include <sstream>
 #include <algorithm>
 
-int mouseMove = 0;
-short xBuffer[10], yBuffer[10];
-bool mouseInputAvalable = false;
-
-extern bool UIFlag, debugFlag, inputFlag, assistFlag, AIFlag, playerSide, saveError;
-extern Board gameBoard;
-extern Coord inputCoord;
-extern short maxDepth, diff;
-
-extern void menu(), init(), JacobInit(short diff);
-extern void multiThread(int argc, char **argv);
-extern Coord AI(Board &board);
-extern void fatalError(unsigned ErrorCode);
-Coord keyboardInput(string &input);
-
-extern int screenSize;
 
 void printVersion()
 {
     cout << "Othello Main Version " << MAIN_VERSION << endl;
     cout << "Jacob Version " << JACOB_VERSION << endl << endl;
     cout << "Copyleft 2015" << endl;
-    cout << endl << endl;
+    cout << "By Jet" << endl;
+    cout << endl;
 }
 
 // Mouse Callback
@@ -56,13 +41,16 @@ Coord keyboardInput()
 {
     ////Echo
     if (AIFlag == AI_MODE)
-        cout << "Your Turn:__\b\b";
+        if(playerSide == Black)
+            cout << "            Your(¡ñ) Turn:__\b\b";
+        else
+            cout << "            Your(¡ð) Turn:__\b\b";
     else
     {
-        if (gameBoard.sideFlag == Black)
-            cout << "Black(X) Turn:__\b\b";
+        if (gameBoard == Black)
+            wcout << "           Black(¡ñ) Turn:__\b\b";
         else
-            cout << "White(O) Turn:__\b\b";
+            wcout << "           White(¡ð) Turn:__\b\b";
     }
 
     string input;
@@ -76,8 +64,8 @@ Coord keyboardInput()
     {
         if (saveError = gameBoard.save())
         {
-            cout << "Game Successfully Saved!" << endl;
-            cout << "Press Any Key to Main Menu..." << endl;
+            cout << "         Game Successfully Saved!" << endl;
+            cout << "       Press Any Key to Main Menu...";
 
             PAUSE;
             menu();
@@ -127,6 +115,7 @@ void getCoord(getType T)
 
 void loadGame()
 {
+    CLS;
     ifstream load("Othello.save");
     ifstream hload("Othello.hash");
     ostringstream sload, hsload;
@@ -167,7 +156,8 @@ void loadGame()
     load >> playerSide;
     load >> diff;
 
-    JacobInit(diff);
+    if(diff)
+        JacobInit(diff);
 
     int movesCount;
     load >> movesCount;
@@ -191,12 +181,26 @@ void loadGame()
 void help()
 {
     CLS;
-    cout << "YOU CAN USE THESE INSTRUCTIONS DURING THE GAME" << endl;
-    cout << "INSTEAD OF INPUTTING THE COORDINATE" << endl;
-    cout << endl << endl;
+    cout << "*****************************************************" << endl;
+    cout << endl;
+    cout << "ON THE BOARD OF COMMAND LINE MODE:" << endl;
+    cout << endl;
+    cout << "'¡ñ' STANDS FOR BLACK '¡ð' STANDS FOR WHITE" << endl;
+    cout << "'+' MEANS THE CELL IS VALID TO PLACE YOUR STONE" << endl;
+    cout << "' 'MEANS THE CELL IS CURRENT EMPTY AND INVALID" << endl;
+    cout << endl;
+    cout << "7A,A7,7a,a7 ARE ALL RECOGNIZABLE INPUTS" << endl;
+    cout << endl;
+
+    cout << "*****************************************************" << endl;
+    cout << endl;
+    cout << "YOU CAN INPUT THESE COMMAND DURING THE GAME" << endl;
+    cout << "INSTEAD OF INPUTTING THE COORDINATE:" << endl;
+    cout << endl;
     cout << "1.MENU: ABORT THE GAME AND GO BACK TO THE MAIN MENU." << endl << endl;
     cout << "2.EXIT: ABORT THE GAME AND EXIT." << endl << endl;
-    cout << "3.SAVE: SAVE THE GAME TO CURRENT FOLDER AND GO BACK TO THE MAIN MENU." << endl << endl;
+    cout << "3.SAVE: SAVE THE GAME AND GO BACK TO THE MAIN MENU." << endl << endl;
+    cout << "*****************************************************" << endl;
     cout << endl << endl << endl;
     PAUSE;
     menu();

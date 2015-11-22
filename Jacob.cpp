@@ -2,39 +2,20 @@
 Jacob
 A Powerful Othello AI
 By Jet
-Version 1.6.3
+Version 1.6.5
 */
 
-//Make Pass
-//C-squares and X-squares Awareness
-//Corner Tendency
 //Even Block Estimate
-//Position Estimate
-//Mobility Significance
+//Stability
+
 #include "elements.h"
 #include "Jacob.h"
-#include <cmath>
 #include <thread>
-#include <algorithm>
-
-extern short maxDepth;
-extern bool debugFlag, playerSide, randomFlag;
-extern Board gameBoard;
-extern aiType AIType;
-extern double ALPHA, BETA, LOWERA, LOWERB;
-
-extern void fatalError(unsigned ErrorCode);
-
-double ABReturn[3];
-Coord bestCoord[3];
-
-clock_t startTime;
 
 double ABJacob(Board &board, short depth, double alpha, double beta, short r)
 {
-    if (!depth || !board.statusCount[Empty] || !board.statusCount[Valid] || clock() - startTime > TIME_OUT)
+    if (!depth || !board[Empty] || !board[Valid] || clock() - startTime > TIME_OUT)
         return BoardEval(board);
-
 
     double Eval;
     for (int i = 0; i < board.validCoord.size(); i++)
@@ -61,13 +42,12 @@ double ABJacob(Board &board, short depth, double alpha, double beta, short r)
 
 Coord RandomJacob(Board &board)
 {
-    random_shuffle(board.validCoord.begin(), board.validCoord.end());
-    return board.validCoord[0];
+    return board.validCoord[rand()%board.validCoord.size()];
 }
 
 Coord multiThreadABSearch(Board &board)
 {
-    if (randomFlag&& !(rand() % RANDFACTOR))
+    if (randomFlag&&!(rand() % RANDFACTOR))
         return RandomJacob(board);
 
     if (MULTI_THREAD)
@@ -88,12 +68,12 @@ Coord multiThreadABSearch(Board &board)
             if (ABReturn[i] != LOWERA && ABReturn[i] != LOWERB && board.isValid(bestCoord[i], !playerSide))
                 return bestCoord[i];
 
-        ABJacob(board, 3, ALPHA, BETA, 0);
+        ABJacob(board, 3);
         return bestCoord[0];
     }
     else
     {
-        ABJacob(board, maxDepth, ALPHA, BETA, 0);
+        ABJacob(board);
         return bestCoord[0];
     }
 }
@@ -118,8 +98,8 @@ double BoardEval(Board &board)
     //Evaluation Based on Character Value
     double CharaEval;
 
-    double myChara = board.allEval(board.sideFlag);
-    double opChara = board.allEval(!board.sideFlag);
+    double myChara = board.allEval(~board);
+    double opChara = board.allEval(!board);
 
     CharaEval = myChara - opChara;
 
@@ -127,8 +107,8 @@ double BoardEval(Board &board)
     //Evaluation Based on Stone Rate
     double BWRateEval;
 
-    short myStoneCount = board.statusCount[board.sideFlag];
-    short opStoneCount = board.statusCount[!board.sideFlag];
+    short myStoneCount = board(~board);
+    short opStoneCount = board(!board);
 
     if (myStoneCount > opStoneCount)
         BWRateEval = 100.0 * myStoneCount / (myStoneCount + opStoneCount);
@@ -140,8 +120,8 @@ double BoardEval(Board &board)
     //Evaluation Based on Stone Frontier Rate
     double FrontierRateEval;
 
-    short myFrontierCount = board.frontierCount(board.sideFlag);
-    short opFrontierCount = board.frontierCount(!board.sideFlag);
+    short myFrontierCount = board.frontierCount(~board);
+    short opFrontierCount = board.frontierCount(!board);
 
     if (myFrontierCount > opFrontierCount)
         FrontierRateEval = -100.0 * myFrontierCount / (myFrontierCount + opFrontierCount);
@@ -154,16 +134,16 @@ double BoardEval(Board &board)
     double CornerEval;
 
     short myCornerCount =
-        (board[1][1].stat == status(board.sideFlag)) +
-        (board[1][SIDE_LENGTH].stat == status(board.sideFlag)) +
-        (board[SIDE_LENGTH][1].stat == status(board.sideFlag)) +
-        (board[SIDE_LENGTH][SIDE_LENGTH].stat == status(board.sideFlag));
+        (board[1][1].stat == ~board) +
+        (board[1][SIDE_LENGTH].stat == ~board) +
+        (board[SIDE_LENGTH][1].stat == ~board) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat == ~board);
 
     short opCornerCount =
-        (board[1][1].stat == status(!board.sideFlag)) +
-        (board[1][SIDE_LENGTH].stat == status(!board.sideFlag)) +
-        (board[SIDE_LENGTH][1].stat == status(!board.sideFlag)) +
-        (board[SIDE_LENGTH][SIDE_LENGTH].stat == status(!board.sideFlag));
+        (board[1][1].stat == !board) +
+        (board[1][SIDE_LENGTH].stat == !board) +
+        (board[SIDE_LENGTH][1].stat == !board) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat == !board);
 
     CornerEval = 25 * (myCornerCount - opCornerCount);
 
@@ -172,32 +152,32 @@ double BoardEval(Board &board)
     double DCornerEval;
 
     short myDCornerCount =
-        (board.cell[1][1].stat >= Empty) && (board.cell[1][2].stat == status(board.sideFlag)) +
-        (board.cell[1][1].stat >= Empty) && (board.cell[2][2].stat == status(board.sideFlag)) +
-        (board.cell[1][1].stat >= Empty) && (board.cell[2][1].stat == status(board.sideFlag)) +
-        (board.cell[1][SIDE_LENGTH].stat >= Empty) && (board.cell[1][SIDE_LENGTH - 1].stat == status(board.sideFlag)) +
-        (board.cell[1][SIDE_LENGTH].stat >= Empty) && (board.cell[2][SIDE_LENGTH - 1].stat == status(board.sideFlag)) +
-        (board.cell[1][SIDE_LENGTH].stat >= Empty) && (board.cell[2][SIDE_LENGTH].stat == status(board.sideFlag)) +
-        (board.cell[SIDE_LENGTH][1].stat >= Empty) && (board.cell[SIDE_LENGTH][2].stat == status(board.sideFlag)) +
-        (board.cell[SIDE_LENGTH][1].stat >= Empty) && (board.cell[SIDE_LENGTH - 1][1].stat == status(board.sideFlag)) +
-        (board.cell[SIDE_LENGTH][1].stat >= Empty) && (board.cell[SIDE_LENGTH - 1][2].stat == status(board.sideFlag)) +
-        (board.cell[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board.cell[SIDE_LENGTH][SIDE_LENGTH - 1].stat == status(board.sideFlag)) +
-        (board.cell[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board.cell[SIDE_LENGTH - 1][SIDE_LENGTH - 1].stat == status(board.sideFlag)) +
-        (board.cell[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board.cell[SIDE_LENGTH - 1][SIDE_LENGTH].stat == status(board.sideFlag));
+        (board[1][1].stat >= Empty) && (board[1][2].stat == ~board) +
+        (board[1][1].stat >= Empty) && (board[2][2].stat == ~board) +
+        (board[1][1].stat >= Empty) && (board[2][1].stat == ~board) +
+        (board[1][SIDE_LENGTH].stat >= Empty) && (board[1][SIDE_LENGTH - 1].stat == ~board) +
+        (board[1][SIDE_LENGTH].stat >= Empty) && (board[2][SIDE_LENGTH - 1].stat == ~board) +
+        (board[1][SIDE_LENGTH].stat >= Empty) && (board[2][SIDE_LENGTH].stat == ~board) +
+        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH][2].stat == ~board) +
+        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH - 1][1].stat == ~board) +
+        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH - 1][2].stat == ~board) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH][SIDE_LENGTH - 1].stat == ~board) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH - 1][SIDE_LENGTH - 1].stat == ~board) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH - 1][SIDE_LENGTH].stat == ~board);
 
     short opDCornerCount =
-        (board.cell[1][1].stat >= Empty) && (board.cell[1][2].stat == status(!board.sideFlag)) +
-        (board.cell[1][1].stat >= Empty) && (board.cell[2][2].stat == status(!board.sideFlag)) +
-        (board.cell[1][1].stat >= Empty) && (board.cell[2][1].stat == status(!board.sideFlag)) +
-        (board.cell[1][SIDE_LENGTH].stat >= Empty) && (board.cell[1][SIDE_LENGTH - 1].stat == status(!board.sideFlag)) +
-        (board.cell[1][SIDE_LENGTH].stat >= Empty) && (board.cell[2][SIDE_LENGTH - 1].stat == status(!board.sideFlag)) +
-        (board.cell[1][SIDE_LENGTH].stat >= Empty) && (board.cell[2][SIDE_LENGTH].stat == status(!board.sideFlag)) +
-        (board.cell[SIDE_LENGTH][1].stat >= Empty) && (board.cell[SIDE_LENGTH][2].stat == status(!board.sideFlag)) +
-        (board.cell[SIDE_LENGTH][1].stat >= Empty) && (board.cell[SIDE_LENGTH - 1][1].stat == status(!board.sideFlag)) +
-        (board.cell[SIDE_LENGTH][1].stat >= Empty) && (board.cell[SIDE_LENGTH - 1][2].stat == status(!board.sideFlag)) +
-        (board.cell[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board.cell[SIDE_LENGTH][SIDE_LENGTH - 1].stat == status(!board.sideFlag)) +
-        (board.cell[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board.cell[SIDE_LENGTH - 1][SIDE_LENGTH - 1].stat == status(!board.sideFlag)) +
-        (board.cell[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board.cell[SIDE_LENGTH - 1][SIDE_LENGTH].stat == status(!board.sideFlag));
+        (board[1][1].stat >= Empty) && (board[1][2].stat == !board) +
+        (board[1][1].stat >= Empty) && (board[2][2].stat == !board) +
+        (board[1][1].stat >= Empty) && (board[2][1].stat == !board) +
+        (board[1][SIDE_LENGTH].stat >= Empty) && (board[1][SIDE_LENGTH - 1].stat == !board) +
+        (board[1][SIDE_LENGTH].stat >= Empty) && (board[2][SIDE_LENGTH - 1].stat == !board) +
+        (board[1][SIDE_LENGTH].stat >= Empty) && (board[2][SIDE_LENGTH].stat == !board) +
+        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH][2].stat == !board) +
+        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH - 1][1].stat == !board) +
+        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH - 1][2].stat == !board) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH][SIDE_LENGTH - 1].stat == !board) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH - 1][SIDE_LENGTH - 1].stat == !board) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH - 1][SIDE_LENGTH].stat == !board);
 
 
     DCornerEval = -12.5 * (myDCornerCount - opDCornerCount);
@@ -206,13 +186,13 @@ double BoardEval(Board &board)
     //Evaluation Based on Mobility
     double MobEval;
 
-    short myValidCount = board.countValidFor(board.sideFlag);
-    short opValidCount = board.countValidFor(!board.sideFlag);
+    short myValidCount = board.countValidFor(~board);
+    short opValidCount = board.countValidFor(!board);
 
     if (!opValidCount)
-        MobEval = 250;
+        MobEval = 150;
     else if (!myValidCount)
-        MobEval = -250;
+        MobEval = -300;
     else if (myValidCount > opValidCount)
         MobEval = (100.0 * myValidCount) / (myValidCount + opValidCount);
     else if (myValidCount < opValidCount)
@@ -220,14 +200,14 @@ double BoardEval(Board &board)
     else MobEval = 0;
 
     int loseFlag = 0;
-    if (board.statusCount[board.sideFlag] == 0)
+    if (board[~board] == 0)
         loseFlag = -1;
-    else if (board.statusCount[!board.sideFlag] == 0)
+    else if (board[!board] == 0)
         loseFlag = 1;
 
     //Weighed Evaluation
     double Eval =
-        (0.8*BWRateEval) +
+        (1.3*BWRateEval) +
         (8.0*CornerEval) +
         (3.8*DCornerEval) +
         (0.8*MobEval) +
@@ -243,5 +223,3 @@ bool cmpBoard(const Board &A, const Board &B) { return A > B; }
 bool rcmpBoard(const Board &A, const Board &B) { return A < B; }
 bool cmpCoordV(const Coord &A, const Coord &B) { return A.value > B.value; }
 bool rcmpCoordV(const Coord &A, const Coord &B) { return A.value < B.value; }
-bool cmpCoordC(const Coord &A, const Coord &B) { return A.chara > B.chara; }
-bool rcmpCoordC(const Coord &A, const Coord &B) { return A.chara < B.chara; }
