@@ -20,6 +20,7 @@ extern void multiThread(int, char**);
 
 short diff;
 
+extern double BWFACTOR;
 extern aiType AIType;
 extern Board gameBoard;
 extern short maxDepth, passCount;

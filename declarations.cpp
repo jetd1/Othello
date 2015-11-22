@@ -22,10 +22,10 @@ short coordChara[SAFE_LENGTH][SAFE_LENGTH] =
 short coordChara[SAFE_LENGTH][SAFE_LENGTH]{};
 #endif
 
-double ALPHA = -2000;
+double ALPHA = -2500;
 double LOWERA = -10;
 double LOWERB = 100;
-double BETA = 2000;
+double BETA = 2500;
 
 Coord passCoord = {-1, -1};
 

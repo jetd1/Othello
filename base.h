@@ -64,8 +64,8 @@ using namespace std;
 ////Macro Arguments
 
 //Version Information
-#define MAIN_VERSION "1.5"
-#define JACOB_VERSION "1.6.5"
+#define MAIN_VERSION "1.5.2"
+#define JACOB_VERSION "1.7"
 #define PRINT_VERSION true
 
 //Not Changeable

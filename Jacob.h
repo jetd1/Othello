@@ -7,6 +7,7 @@
 double ABReturn[3];
 Coord bestCoord[3];
 clock_t startTime;
+double BWFACTOR;
 
 extern short maxDepth;
 extern Board gameBoard;

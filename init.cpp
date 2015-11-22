@@ -177,6 +177,7 @@ void isAssistMode()
 
 void JacobInit(short diff)
 {
+    BWFACTOR = (playerSide == Black) ? 0.65 : 0.55;
     switch (diff)
     {
         case 1:
@@ -196,7 +197,7 @@ void JacobInit(short diff)
             break;
         case 5:
             AIType = Jacob;
-            maxDepth = 10;
+            maxDepth = 12;
             break;
         default:
             fatalError(1);

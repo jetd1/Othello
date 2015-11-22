@@ -2,7 +2,7 @@
 Jacob
 A Powerful Othello AI
 By Jet
-Version 1.6.5
+Version 1.7
 */
 
 //Even Block Estimate
@@ -12,9 +12,18 @@ Version 1.6.5
 #include "Jacob.h"
 #include <thread>
 
+inline bool isWin(bool side, Board &board)
+{
+    return !board(!side) || (!(board(Empty) + board(Valid)) && board(side) > board(!side));
+}
+
 double ABJacob(Board &board, short depth, double alpha, double beta, short r)
 {
-    if (!depth || !board[Empty] || !board[Valid] || clock() - startTime > TIME_OUT)
+    if (isWin(!playerSide, board))
+        return BETA - 1;
+    if (isWin(playerSide, board))
+        return ALPHA + 1;
+    if (!depth || !board[Valid] || clock() - startTime > TIME_OUT)
         return BoardEval(board);
 
     double Eval;
@@ -74,7 +83,11 @@ Coord multiThreadABSearch(Board &board)
     else
     {
         ABJacob(board);
-        return bestCoord[0];
+
+        if(bestCoord[0].x)
+            return bestCoord[0];
+
+        return RandomJacob(board);
     }
 }
 
@@ -200,19 +213,19 @@ double BoardEval(Board &board)
     else MobEval = 0;
 
     int loseFlag = 0;
-    if (board[~board] == 0)
+    if (!board[~board])
         loseFlag = -1;
-    else if (board[!board] == 0)
+    else if (!board[!board])
         loseFlag = 1;
 
     //Weighed Evaluation
     double Eval =
-        (1.3*BWRateEval) +
-        (8.0*CornerEval) +
-        (3.8*DCornerEval) +
-        (0.8*MobEval) +
-        (0.7*FrontierRateEval) +
-        (0.1*CharaEval) +
+        (BWFACTOR*BWRateEval) +
+        (9.50*CornerEval) +
+        (3.70*DCornerEval) +
+        (0.80*MobEval) +
+        (1.00*FrontierRateEval) +
+        (0.13*CharaEval) +
         (1000 * loseFlag);
 
     return Eval;
