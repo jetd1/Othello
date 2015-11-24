@@ -85,6 +85,23 @@ void Board::clear()
     sideFlag = Black;
 }
 
+void Board::cellclear()
+{
+    for (short i = 0; i < SAFE_LENGTH; i++)
+        for (short j = 0; j < SAFE_LENGTH; j++)
+        {
+            cell[i][j] = {
+                {i, j, coordChara[i][j]},
+                Empty};
+        }
+
+    validCoord.clear();
+
+    vValue = 0;
+
+    sideFlag = Black;
+}
+
 void Board::flipSide() { sideFlag ^= 1; }
 
 void Board::count()
@@ -193,6 +210,7 @@ void Board::move(Coord &pos)
                 }
             }
         }
+
     flipSide();
     setValid();
     count();
@@ -205,6 +223,8 @@ void Board::print()
         SLP(100);
         CLS;
     }
+    wcout << endl;
+    wcout << "            Round " << movesRecord.size() + 1 << (sideFlag ? ", Black" : ", White") << " Turn" << endl;
     wcout << endl;
     wcout << "      ";
     for (int i = 1; i <= SIDE_LENGTH; i++)
@@ -321,9 +341,9 @@ short Board::countValidFor(bool side)
     return cnt;
 }
 
-bool Board::save()
+bool Board::save(string saveName)
 {
-    ofstream save("Othello.save");
+    ofstream save(saveName+".save");
     if (!save)
     {
         cout << "    Unable to Save, Game Will Now Resume!";
@@ -341,12 +361,10 @@ bool Board::save()
         << movesRecord[i].y << endl << endl;
     save.close();
 
-    ifstream load("Othello.save");
-    ofstream hsave("Othello.hash");
+    ifstream load(saveName + ".save");
+    ofstream hsave(saveName + ".hash");
     if (!load || !hsave)
     {
-        remove("Othello.save");
-        remove("Othello.hash");
         cout << "Unable to Save, Game Will Now Resume!";
         PAUSE;
         return false;

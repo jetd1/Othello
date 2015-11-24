@@ -7,8 +7,6 @@ enum getType { Player, Computer };
 enum Status { White, Black, Empty, Valid };    //Then status<Empty: Have Stone on It, status>=Empty: Truly Empty
                                                //White=false & Black=true
 
-enum aiType { Random, Jacob };
-
 struct Coord
 {
     short x;
@@ -53,6 +51,7 @@ public:
     short operator ()(bool flag);
 
     void clear();
+    void cellclear();
     void flipSide();
     void count();
     short count(Status stat);
@@ -74,7 +73,7 @@ public:
     double frontierCountRate(bool side);
     double frontierCountDiff(bool side);
     short countValidFor(bool side);
-    bool save();
+    bool save(string saveName = "Othello");
 
     //todo
     void colorReverse();

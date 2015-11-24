@@ -2,7 +2,7 @@
 Jacob
 A Powerful Othello AI
 By Jet
-Version 1.7
+Version 1.7.2
 */
 
 //Even Block Estimate
@@ -12,27 +12,98 @@ Version 1.7
 #include "Jacob.h"
 #include <thread>
 
-inline bool isWin(bool side, Board &board)
-{
-    return !board(!side) || (!(board(Empty) + board(Valid)) && board(side) > board(!side));
-}
+//inline bool isWin(bool side, Board &board)
+//{
+//    return !board(!side) || (!(board(Empty) + board(Valid)) && board(side) > board(!side));
+//}
+
+//double ABJacob(Board &board, short depth, double alpha, double beta, short r)
+//{
+//    if (maxDepth == 0)
+//    {
+//        bestCoord[r] = RandomJacob(board);
+//        return r;
+//    }
+//
+//    if (isWin(!playerSide, board))
+//        return BETA - 1;
+//    if (isWin(playerSide, board))
+//        return ALPHA + 1;
+//    if (!depth || !board(Valid) || clock() - startTime > TIME_OUT)
+//        return BoardEval(board);
+//
+//    double Eval;
+//
+//    for (int i = 0; i < board.validCoord.size(); i++) //i=1(PVS)
+//    {
+//        Board tmpBoard = board;
+//        tmpBoard.move(board.validCoord[i]);
+//
+//        Eval = -ABJacob(tmpBoard, depth - 1, -beta, -alpha, r);
+//        if (Eval >= beta)
+//        {
+//            if (depth == maxDepth)
+//                bestCoord[r] = board.validCoord[i];
+//            return (ABReturn[r] = beta);
+//        }
+//        if (Eval > alpha)
+//        {
+//            alpha = Eval;
+//            if (depth == maxDepth)
+//                bestCoord[r] = board.validCoord[i];
+//        }
+//    }
+//    return (ABReturn[r] = alpha);
+//}
 
 double ABJacob(Board &board, short depth, double alpha, double beta, short r)
 {
-    if (isWin(!playerSide, board))
-        return BETA - 1;
-    if (isWin(playerSide, board))
-        return ALPHA + 1;
-    if (!depth || !board[Valid] || clock() - startTime > TIME_OUT)
+    if (maxDepth == 0)
+    {
+        bestCoord[r] = RandomJacob(board);
+        return r;
+    }
+
+    //if (isWin(!playerSide, board))
+    //    return BETA - 1;
+    //if (isWin(playerSide, board))
+    //    return ALPHA + 1;
+
+    if (!depth || !board(Valid) || clock() - startTime > TIME_OUT)
         return BoardEval(board);
 
     double Eval;
-    for (int i = 0; i < board.validCoord.size(); i++)
+
+    //PVS START
+    Board mainTmp = board;
+    mainTmp.move(board.validCoord[0]);
+
+    Eval = -ABJacob(mainTmp, depth - 1, -beta, -alpha, r);
+    if (Eval >= beta)
+    {
+        if (depth == maxDepth)
+            bestCoord[r] = board.validCoord[0];
+        return (ABReturn[r] = beta);
+    }
+    if (Eval > alpha)
+    {
+        alpha = Eval;
+        if (depth == maxDepth)
+            bestCoord[r] = board.validCoord[0];
+    }
+    //PVS END
+
+    for (int i = 1; i < board.validCoord.size(); i++) //i=1(PVS)
     {
         Board tmpBoard = board;
         tmpBoard.move(board.validCoord[i]);
 
-        Eval = -ABJacob(tmpBoard, depth - 1, -beta, -alpha, r);
+        Eval = -ABJacob(tmpBoard, depth - 1, -alpha - MINWINDOW , -alpha, r);
+        
+        if (Eval > alpha&&Eval < beta)
+        {
+            Eval = -ABJacob(tmpBoard, depth - 1, -beta, -alpha - MINWINDOW , r);
+        }
         if (Eval >= beta)
         {
             if (depth == maxDepth)
@@ -59,6 +130,21 @@ Coord multiThreadABSearch(Board &board)
     if (randomFlag&&!(rand() % RANDFACTOR))
         return RandomJacob(board);
 
+    if(gameBoard.movesRecord.size() == 1)
+        switch (inputCoord.x)
+        {
+            case 3:
+            case 4:
+                return{3,3};
+                break;
+            case 5:
+            case 6:
+                return{6,6};
+                break;
+            default:
+                fatalError(1);
+        }
+
     if (MULTI_THREAD)
     {
         ABReturn[0] = ABReturn[1] = ABReturn[2] = ALPHA;
@@ -71,21 +157,30 @@ Coord multiThreadABSearch(Board &board)
 
         for (int i = 0; i < 3; i++)
             if (ABReturn[i] && ABReturn[i] != LOWERA && ABReturn[i] != LOWERB && board.isValid(bestCoord[i], !playerSide))
+            {
+                ABLast = ABReturn[i];
                 return bestCoord[i];
+            }
 
         for (int i = 0; i < 3; i++)
             if (ABReturn[i] != LOWERA && ABReturn[i] != LOWERB && board.isValid(bestCoord[i], !playerSide))
+            {
+                ABLast = ABReturn[i];
                 return bestCoord[i];
+            }
 
-        ABJacob(board, 3);
+        ABLast = ABJacob(board, 4);
         return bestCoord[0];
     }
     else
     {
         ABJacob(board);
 
-        if(bestCoord[0].x)
+        if (bestCoord[0].x)
+        {
+            ABLast = ABReturn[0];
             return bestCoord[0];
+        }
 
         return RandomJacob(board);
     }
@@ -94,16 +189,7 @@ Coord multiThreadABSearch(Board &board)
 Coord AI(Board &board)
 {
     startTime = clock();
-    switch (AIType)
-    {
-        case Random:
-            return RandomJacob(board);
-        case Jacob:
-            return multiThreadABSearch(board);
-        default:
-            fatalError(1);
-            return{};
-    }
+    return multiThreadABSearch(board);
 }
 
 double BoardEval(Board &board)
@@ -195,6 +281,9 @@ double BoardEval(Board &board)
 
     DCornerEval = -12.5 * (myDCornerCount - opDCornerCount);
 
+    //Evaluation Based on Stabilitrons
+    //double stab
+
 
     //Evaluation Based on Mobility
     double MobEval;
@@ -205,28 +294,32 @@ double BoardEval(Board &board)
     if (!opValidCount)
         MobEval = 150;
     else if (!myValidCount)
-        MobEval = -300;
+        MobEval = -400;
     else if (myValidCount > opValidCount)
         MobEval = (100.0 * myValidCount) / (myValidCount + opValidCount);
     else if (myValidCount < opValidCount)
         MobEval = -(100.0 * opValidCount) / (myValidCount + opValidCount);
     else MobEval = 0;
 
+
+
+
     int loseFlag = 0;
-    if (!board[~board])
+    if (board(!playerSide) == 0)
         loseFlag = -1;
-    else if (!board[!board])
+    else if (board(playerSide) == 0)
         loseFlag = 1;
+
 
     //Weighed Evaluation
     double Eval =
         (BWFACTOR*BWRateEval) +
-        (9.50*CornerEval) +
-        (3.70*DCornerEval) +
-        (0.80*MobEval) +
-        (1.00*FrontierRateEval) +
-        (0.13*CharaEval) +
-        (1000 * loseFlag);
+        (CNFACTOR*CornerEval) +
+        (DCFACTOR*DCornerEval) +
+        (1.10*MobEval) +
+        (0.80*FrontierRateEval) +
+        (0.10*CharaEval) +
+        (200 * loseFlag);
 
     return Eval;
 

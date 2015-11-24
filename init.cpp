@@ -37,11 +37,13 @@ void menu()
         {
             case '1':
                 AIFlag = NON_AI_MODE;
+                gameBoard.clear();
                 isAssistMode();
                 init();
                 multiThread(0, nullptr);
             case '2':
                 AIFlag = AI_MODE;
+                gameBoard.clear();
                 isAssistMode();
                 init();
                 selectSide();
@@ -62,14 +64,16 @@ void menu()
     else if (in == "ABAB")
         debugMenu();
 
-    cout << "Invalid Input!!!" << endl;
+    if (!debugCalled)
+        debugCalled = false;
+    else
+        cout << "Invalid Input!!!" << endl;
     PAUSE;
     menu();
 }
 
-void init()
+void init() //must gameBoard.clear() or cellclear() before init;
 {
-    gameBoard.clear();
     for (int i = 0; i < SAFE_LENGTH; i++)
         for (int j = 0; j < SAFE_LENGTH; j++)
         {
@@ -177,27 +181,25 @@ void isAssistMode()
 
 void JacobInit(short diff)
 {
-    BWFACTOR = (playerSide == Black) ? 0.65 : 0.55;
+    BWFACTOR = (playerSide == Black) ? 0.80 : 0.70;
+    CNFACTOR = (playerSide == Black) ? 11.0 : 10.0;
+    DCFACTOR = (playerSide == Black) ? 3.80 : 3.70;
     switch (diff)
     {
         case 1:
-            AIType = Random;
+            maxDepth = 0;
             break;
         case 2:
-            AIType = Jacob;
             maxDepth = 1;
             break;
         case 3:
-            AIType = Jacob;
             maxDepth = 3;
             break;
         case 4:
-            AIType = Jacob;
             maxDepth = 5;
             break;
         case 5:
-            AIType = Jacob;
-            maxDepth = 12;
+            maxDepth = 9;
             break;
         default:
             fatalError(1);
@@ -301,6 +303,7 @@ void theme()
 
 void debugMenu()
 {
+    debugCalled = true;
     string in;
     cin >> in;
     transform(in.begin(), in.end(), in.begin(), ::toupper);
@@ -330,7 +333,6 @@ void debugMenu()
     }
     else if (in == "SETDEPTH")
     {
-        AIType = Jacob;
         cin >> maxDepth;
         manualFlag = true;
     }
@@ -338,8 +340,24 @@ void debugMenu()
         randomFlag = true;
     else if (in == "DEBUG")
         debugFlag = true;
+    else if (in == "NDEBUG")
+        debugFlag = false;
+    else if (in == "FLIP")
+    {
+        playerSide ^= 1;
+        multiThread(0, nullptr);
+    }
+    else if (in == "WIN")
+    {
+        for (int i = 1; i <= SIDE_LENGTH; i++)
+            for (int j = 1; j <= SIDE_LENGTH; j++)
+                gameBoard[i][j].stat = Status(playerSide);
+        gameBoard.count();
+        cPass = true;
+        gameBoard.movesRecord.resize(63);
+        multiThread(0, nullptr);
+    }
     else
         cout << "^&$^%#*$" << endl;
     PAUSE;
-    menu();
 }

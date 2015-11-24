@@ -3,7 +3,8 @@
 
 #include "elements.h"
 
-aiType AIType;
+Coord passCoord = {-1, -1};
+
 Coord inputCoord;
 Board gameBoard;
 short maxDepth, passCount;
@@ -11,7 +12,7 @@ bool UIFlag, debugFlag, AIFlag, assistFlag, inputFlag, playerSide, saveError, ma
 
 extern Coord passCoord;
 extern int ALPHA, BETA;
-extern bool drawable;
+extern bool drawable,debugCalled;
 extern double ABReturn[3];
 
 int main(int, char**);

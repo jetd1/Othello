@@ -15,10 +15,10 @@ extern bool UIFlag, debugFlag, inputFlag, assistFlag, AIFlag, playerSide, saveEr
 Coord mouseInput();
 Coord keyboardInput();
 void help();
-void loadGame();
 void printVersion();
 void getCoord(getType);
 void mouseKey(int, int, int, int);
+void loadGame(string loadName = "Othello", int undoSteps = 0);
 
 extern Coord AI(Board&);
 extern void menu();
@@ -26,6 +26,7 @@ extern void init();
 extern void JacobInit(short);
 extern void multiThread(int, char**);
 extern void fatalError(unsigned);
+extern void debugMenu();
 
 
 

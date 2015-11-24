@@ -1,6 +1,6 @@
 /*
 Othello For Term Task
-Version 1.5.2
+Version 1.6
 */
 #include "main.h"
 #include <thread>
@@ -43,7 +43,7 @@ void multiThread(int argc, char **argv)
 void othelloMain()
 {
     gameBoard.print();
-    while (gameBoard(Empty) && passCount < 2 && gameBoard(Black) && gameBoard(White))
+    while ((gameBoard(Empty) + gameBoard(Valid)) && passCount < 2 && gameBoard(Black) && gameBoard(White))
     {
         if (UIFlag)
             while (drawable)
@@ -82,8 +82,10 @@ void othelloMain()
 
                 if (inputFlag)
                     cout << "       Invalid Position! Your input is " << inputCoord.x << char(inputCoord.y + '@') << endl;
-                else if (!saveError)
+                else if (!saveError&&!debugCalled)
                     cout << "                Invalid Input!" << endl;
+                else
+                    debugCalled = false;
 
                 getCoord(Player);
             }

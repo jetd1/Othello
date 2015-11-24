@@ -13,18 +13,18 @@ void debugMenu();
 void theme();
 
 extern void help();
-extern void loadGame();
 extern void printVersion();
 extern void fatalError(unsigned);
 extern void multiThread(int, char**);
+extern void loadGame(string loadName = "Othello", int undoSteps = 0);
 
 short diff;
+bool debugCalled = false;
 
-extern double BWFACTOR;
-extern aiType AIType;
 extern Board gameBoard;
 extern short maxDepth, passCount;
 extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
-extern bool assistFlag, AIFlag, UIFlag, playerSide, manualFlag, randomFlag, debugFlag;
+extern double BWFACTOR, CNFACTOR, DCFACTOR;
+extern bool assistFlag, AIFlag, UIFlag, playerSide, manualFlag, randomFlag, debugFlag, cPass;
 
 #endif

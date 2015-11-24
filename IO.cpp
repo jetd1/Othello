@@ -60,6 +60,11 @@ Coord keyboardInput()
 
     if (input == "EXIT") exit(0);
     if (input == "MENU") menu();
+    if (input == "UNDO")
+    {
+        gameBoard.save("undoTmp");
+        loadGame("undoTmp", AIFlag + 1);
+    }
     if (input == "SAVE")
     {
         if (saveError = gameBoard.save())
@@ -72,6 +77,8 @@ Coord keyboardInput()
         }
         else return keyboardInput();
     }
+    if (input == "ABAB")
+        debugMenu();
 
     Coord tmpCoord{};
     inputFlag = false;
@@ -110,14 +117,15 @@ void getCoord(getType T)
             fatalError(1);
     }
 
-    gameBoard.movesRecord.push_back(inputCoord);
+    if(inputFlag)
+        gameBoard.movesRecord.push_back(inputCoord);
 }
 
-void loadGame()
+void loadGame(string loadName, int undoSteps)
 {
     CLS;
-    ifstream load("Othello.save");
-    ifstream hload("Othello.hash");
+    ifstream load(loadName+".save");
+    ifstream hload(loadName + ".hash");
     ostringstream sload, hsload;
     if (!load || !hload || !sload)
     {
@@ -148,9 +156,11 @@ void loadGame()
     load.close();
     hload.close();
 
+    gameBoard.clear();
     init();
 
-    load.open("Othello.save");
+    load.open(loadName + ".save");
+
     load >> AIFlag;
     load >> assistFlag;
     load >> playerSide;
@@ -161,6 +171,7 @@ void loadGame()
 
     int movesCount;
     load >> movesCount;
+    movesCount -= undoSteps;
     gameBoard.movesRecord.clear();
 
     for (int i = 0; i < movesCount; i++)
@@ -197,9 +208,10 @@ void help()
     cout << "YOU CAN INPUT THESE COMMAND DURING THE GAME" << endl;
     cout << "INSTEAD OF INPUTTING THE COORDINATE:" << endl;
     cout << endl;
-    cout << "1.MENU: ABORT THE GAME AND GO BACK TO THE MAIN MENU." << endl << endl;
-    cout << "2.EXIT: ABORT THE GAME AND EXIT." << endl << endl;
+    cout << "1.EXIT: ABORT THE GAME AND EXIT." << endl << endl;
+    cout << "2.MENU: ABORT THE GAME AND GO BACK TO THE MAIN MENU." << endl << endl;
     cout << "3.SAVE: SAVE THE GAME AND GO BACK TO THE MAIN MENU." << endl << endl;
+    cout << "4.UNDO: UNDO YOUR (AND JACOB'S) LAST MOVE." << endl << endl;
     cout << "*****************************************************" << endl;
     cout << endl << endl << endl;
     PAUSE;

@@ -4,20 +4,52 @@
 #include "base.h"
 #include "ctime"
 
+#define MINWINDOW 10
+
+#define TIME_OUT 100000
+
+#define RANDFACTOR 16
+
+#define MULTI_THREAD false
+
+#if SIDE_LENGTH==8
+short coordChara[SAFE_LENGTH][SAFE_LENGTH] =
+{
+    {-8,-8,-8,-8,-8,-8,-8,-8,-8,-8},
+    {-8,20,-3,11, 8, 8,11,-3,20,-8},
+    {-8,-3,-7,-4, 1, 1,-4,-7,-3,-8},
+    {-8,11,-4, 2, 2, 2, 2,-4,11,-8},
+    {-8, 8, 1, 2,-3,-3, 2, 1, 8,-8},
+    {-8, 8, 1, 2,-3,-3, 2, 1, 8,-8},
+    {-8,11,-4, 2, 2, 2, 2,-4,11,-8},
+    {-8,-3,-7,-4, 1, 1,-4,-7,-3,-8},
+    {-8,20,-3,11, 8, 8,11,-3,20,-8},
+    {-8,-8,-8,-8,-8,-8,-8,-8,-8,-8}
+};
+
+#else
+short coordChara[SAFE_LENGTH][SAFE_LENGTH]{};
+#endif
+
+double ALPHA = -2500;
+double LOWERA = -10;
+double LOWERB = 100;
+double BETA = 2500;
+
 double ABReturn[3];
 Coord bestCoord[3];
 clock_t startTime;
-double BWFACTOR;
+double ABLast = 0;
+double BWFACTOR, CNFACTOR, DCFACTOR;
 
-extern short maxDepth;
+extern Coord inputCoord;
 extern Board gameBoard;
-extern aiType AIType;
+extern short maxDepth;
 extern double ALPHA, BETA, LOWERA, LOWERB;
 extern bool debugFlag, playerSide, randomFlag;
 extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
 
 extern void fatalError(unsigned);
-
 
 Coord RandomJacob(Board&);
 Coord multiThreadABSearch(Board&);
