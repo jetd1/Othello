@@ -1,6 +1,6 @@
 /*
 Othello For Term Task
-Version 1.7
+Version 1.8
 */
 #include "main.h"
 #include <thread>
@@ -10,9 +10,9 @@ int main(int argc, char **argv)
 {
 
 #ifdef WINDOWS_
-    system("title=JetOthello CMDL V1.7");
+    system("title=JetOthello V1.8");
     system("mode con cols=58 lines=34");
-    system("color 0F");
+    system("color 07");
 #endif
 
     cPass = false;

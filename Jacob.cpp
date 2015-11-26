@@ -2,7 +2,7 @@
 Jacob
 A Powerful Othello AI
 By Jet
-Version 1.7.3
+Version 1.7.4
 */
 
 //Even Block Estimate
