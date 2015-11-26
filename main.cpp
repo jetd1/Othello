@@ -1,6 +1,6 @@
 /*
 Othello For Term Task
-Version 1.6
+Version 1.7
 */
 #include "main.h"
 #include <thread>
@@ -8,6 +8,13 @@ Version 1.6
 
 int main(int argc, char **argv)
 {
+
+#ifdef WINDOWS_
+    system("title=JetOthello CMDL V1.7");
+    system("mode con cols=58 lines=34");
+    system("color 0F");
+#endif
+
     cPass = false;
     randomFlag = false;
     manualFlag = false;
@@ -22,10 +29,6 @@ int main(int argc, char **argv)
         if (argv[i][1] == 'd')
             debugFlag = true;
     }
-
-#ifdef WINDOWS_
-    system("title=JetOthello");
-#endif
 
     menu();
 

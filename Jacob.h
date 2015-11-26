@@ -4,13 +4,17 @@
 #include "base.h"
 #include "ctime"
 
+#define ALPHA -3000
+
+#define BETA 3000
+
 #define MINWINDOW 10
 
-#define TIME_OUT 100000
+#define TIME_OUT 100
 
 #define RANDFACTOR 16
 
-#define MULTI_THREAD false
+#define MULTI_THREAD true
 
 #if SIDE_LENGTH==8
 short coordChara[SAFE_LENGTH][SAFE_LENGTH] =
@@ -31,11 +35,6 @@ short coordChara[SAFE_LENGTH][SAFE_LENGTH] =
 short coordChara[SAFE_LENGTH][SAFE_LENGTH]{};
 #endif
 
-double ALPHA = -4000;
-double LOWERA = -10;
-double LOWERB = 100;
-double BETA = 4000;
-
 double ABReturn[3];
 Coord bestCoord[3];
 clock_t startTime;
@@ -45,7 +44,6 @@ double BWFACTOR, CNFACTOR, DCFACTOR;
 extern Coord inputCoord;
 extern Board gameBoard;
 extern short maxDepth, passCount;
-extern double ALPHA, BETA, LOWERA, LOWERB;
 extern bool debugFlag, playerSide, randomFlag;
 extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
 

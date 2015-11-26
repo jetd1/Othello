@@ -44,8 +44,8 @@ public:
     bool operator ==(const Status &stat)const;
     bool operator >=(const Board &board)const;
     bool operator <=(const Board &board)const;
-    Status operator !()const;
-    Status operator ~()const;
+    bool operator !()const;
+    bool operator ~()const;
     Cell* operator [](int i);
     short operator ()(Status stat);
     short operator ()(bool flag);

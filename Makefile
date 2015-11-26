@@ -1,11 +1,11 @@
-#Project Othello
+#Project JetOthello
 
 DIR = bin
-BIN = $(DIR)/Othello
-OBJ = $(DIR)/main.o $(DIR)/AI.o $(DIR)/error.o $(DIR)/init.o $(DIR)/IO.o $(DIR)/operations.o $(DIR)/draw.o $(DIR)/declarations.o $(DIR)/board.o
-LIB = -Lfreeglut -Wl,-Bstatic -lglut -Wl,-Bdynamic -lGL -lX11 -lXxf86vm -g3 -lXi -lpthread
+BIN = $(DIR)/JetOthello
+OBJ = $(DIR)/main.o $(DIR)/UI.o $(DIR)/error.o $(DIR)/init.o $(DIR)/IO.o $(DIR)/Jacob.o $(DIR)/board.o
+LIB = -Lfreeglut -Wl,-Bstatic -lglut -Wl,-Bdynamic -lXxf86vm -g3 -lpthread -lGL -lX11 -lXi -lXrandr
 CXX = g++
-CXXFLAGS = -I"freeglut_l/include" -Wall -g3 -std=c++0x
+CXXFLAGS = -I"freeglut/include" -Wall -g3 -ofast -std=c++11
 
 .PHONY: test clean cleanbackup cb win
 
@@ -18,35 +18,39 @@ $(DIR):
 test : $(BIN)
 	./$(BIN)
 
-AIbase.h : base.h
-
 elements.h : base.h
 
-$(DIR)/main.o : main.cpp elements.h draw.h
+board.h : elements.h
+
+init.h : elements.h
+
+IO.h : elements.h
+
+Jacob.h : base.h
+
+main.h : elements.h
+
+UI.h : elements.h
+
+$(DIR)/main.o : main.cpp main.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/AI.o : AI.cpp elements.h AIbase.h
+$(DIR)/UI.o : UI.cpp UI.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(DIR)/error.o : error.cpp base.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/init.o : init.cpp elements.h AIbase.h
+$(DIR)/init.o : init.cpp init.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/IO.o : IO.cpp elements.h
+$(DIR)/IO.o : IO.cpp IO.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/operations.o : operations.cpp elements.h
+$(DIR)/Jacob.o : Jacob.cpp elements.h Jacob.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/draw.o : draw.cpp elements.h draw.h
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(DIR)/declarations.o : declarations.cpp elements.h
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(DIR)/board.o : board.cpp elements.h
+$(DIR)/board.o : board.cpp board.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 

@@ -17,4 +17,4 @@ extern bool debugFlag, assistFlag, AIFlag, playerSide, cPass;
 
 short dir[8][2] = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
 
-#endif;
+#endif

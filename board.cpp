@@ -56,8 +56,8 @@ void Board::operator =(Board &board)     //need to rewrite
     aValue[Black] = board.aValue[Black];
     sideFlag = board.sideFlag;
 }
-Status Board::operator ~()const { return Status(sideFlag); }
-Status Board::operator !()const { return Status(!sideFlag); }
+bool Board::operator ~()const { return Status(sideFlag); }
+bool Board::operator !()const { return Status(!sideFlag); }
 
 
 //member functions
@@ -189,8 +189,9 @@ void Board::setValidFor(bool side)
 
 void Board::move(Coord &pos)
 {
-    if (passCount = 0)
+    if (pos.x == -1)
         passCount++;
+
     if (inRange(pos.x, pos.y))
         for (int i = 0; i < 8; i++)
         {
@@ -225,46 +226,79 @@ void Board::print()
         SLP(100);
         CLS;
     }
-    wcout << endl;
-    wcout << "            Round " << movesRecord.size() + 1 << (sideFlag ? ", Black" : ", White") << " Turn" << endl;
-    wcout << endl;
-    wcout << "      ";
+    cout << endl;
+    cout << "            Round " << movesRecord.size() + 1 << (sideFlag ? ", Black" : ", White") << " Turn" << endl;
+    cout << endl;
+    cout << "      ";
     for (int i = 1; i <= SIDE_LENGTH; i++)
-        wcout << char('@' + i) << "   ";
-    cout << endl << "    ┌─┬─┬─┬─┬─┬─┬─┬─┐" << endl;
+        cout << char('@' + i) << "   ";
+#ifdef WINDOWS_
+                    cout << endl << "    ┌─┬─┬─┬─┬─┬─┬─┬─┐" << endl;
+#else
+                    cout << endl << "    ┌───┬───┬───┬───┬───┬───┬───┬───┐" << endl;
+#endif
 
     for (int i = 1; i <= SIDE_LENGTH; i++)
     {
-        wcout << "   " << i << "│";
+        cout << "   " << i << "│";
         for (int j = 1; j <= SIDE_LENGTH; j++)
         {
             switch (cell[i][j].stat)
             {
                 case Black:
-                    wcout << "●│";
+#ifdef WINDOWS_
+                    cout << "●│";
+#else
+                    cout << " ● │";
+#endif
                     break;
                 case White:
-                    wcout << "○│";
+#ifdef WINDOWS_
+                    cout << "○│";
+#else
+                    cout << " ○ │";
+#endif
                     break;
                 case Empty:
-                    wcout << "  │";
+#ifdef WINDOWS_
+                    cout << "  │";
+#else
+                    cout << "   │";
+#endif
                     break;
                 case Valid:
                     if (assistFlag && ((AIFlag == AI_MODE&&sideFlag == playerSide) || (AIFlag == NON_AI_MODE)))
-                        wcout << "+ │";
-                    else wcout << "  │";
+#ifdef WINDOWS_
+                    cout << " +│";
+#else
+                    cout << " + │";
+#endif
+                    else
+#ifdef WINDOWS_
+                    cout << "  │";
+#else
+                    cout << "   │";
+#endif
                     break;
                 default:
                     fatalError(1);
             }
         }
         if(i-SIDE_LENGTH)
-            cout << endl << "    ├─┼─┼─┼─┼─┼─┼─┼─┤";
+#ifdef WINDOWS_
+                    cout << endl << "    ├─┼─┼─┼─┼─┼─┼─┼─┤";
+#else
+                    cout << endl << "    ├───┼───┼───┼───┼───┼───┼───┼───┤";
+#endif
         else
-            cout << endl << "    └─┴─┴─┴─┴─┴─┴─┴─┘";
+#ifdef WINDOWS_
+                    cout << endl << "    └─┴─┴─┴─┴─┴─┴─┴─┘";
+#else
+                    cout << endl << "    └───┴───┴───┴───┴───┴───┴───┴───┘";
+#endif
         if (i - SIDE_LENGTH) cout << endl;
     }
-    wcout << endl << left << "       "
+    cout << endl << left << "       "
         << "Black(●):" << setw(2) << statusCount[Black] << "    "
         << "White(○):" << setw(2) << statusCount[White] << endl;
 
@@ -277,7 +311,7 @@ void Board::print()
                 << movesRecord[movesRecord.size() - 1].x
                 << char(movesRecord[movesRecord.size() - 1].y + '@')
                 << endl
-                << (clock() - startTime) / 1000.0 << " Seconds Consumed."
+                << double(clock() - startTime) / CLOCKS_PER_SEC << " Seconds Consumed."
                 << endl << endl;
         }
         cout << endl << "        "  
@@ -285,7 +319,7 @@ void Board::print()
             << movesRecord[movesRecord.size() - 1].x
             << char(movesRecord[movesRecord.size() - 1].y + '@')
             << endl << "          " 
-            << (clock() - startTime) / 1000.0 << " Seconds Consumed."
+            << double(clock() - startTime) / CLOCKS_PER_SEC << " Seconds Consumed."
             << endl << endl;
     }
     else cout << endl << endl;
@@ -356,10 +390,9 @@ bool Board::save(string saveName)
     save << AIFlag << endl;
     save << assistFlag << endl;
     save << playerSide << endl;
-    save << passCount << endl;
     save << diff << endl << endl;
     save << movesRecord.size() << endl;
-    for (int i = 0; i < movesRecord.size(); i++)
+    for (unsigned i = 0; i < movesRecord.size(); i++)
         save << movesRecord[i].x << ' '
         << movesRecord[i].y << endl << endl;
     save.close();

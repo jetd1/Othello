@@ -19,6 +19,8 @@
 #define NDEBUG
 #include "freeglut/include/GL/freeglut.h"
 #undef NDEBUG
+#else
+#include "freeglut/include/GL/freeglut.h"
 #endif
 #ifdef _WIN64
 #pragma comment(lib, "freeglut64.lib")
@@ -31,7 +33,13 @@
 
 #elif defined __linux__
 #include <unistd.h>
+#ifndef NDEBUG
+#define NDEBUG
 #include "freeglut/include/GL/freeglut.h"
+#undef NDEBUG
+#else
+#include "freeglut/include/GL/freeglut.h"
+#endif
 #define CLS system("clear")
 #define SLP(X) usleep(1000*X)
 
@@ -66,8 +74,8 @@ using namespace std;
 ////Macro Arguments
 
 //Version Information
-#define MAIN_VERSION "1.6"
-#define JACOB_VERSION "1.7.2"
+#define MAIN_VERSION "1.7"
+#define JACOB_VERSION "1.7.3"
 #define PRINT_VERSION true
 
 //Not Changeable
@@ -82,8 +90,6 @@ using namespace std;
 #define END_COORD_X '0'+SIDE_LENGTH
 #define START_COORD_Y 'A'
 #define END_COORD_Y '@'+SIDE_LENGTH
-
-#define NAIVE void
 
 
 #endif

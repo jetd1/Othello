@@ -41,16 +41,16 @@ Coord keyboardInput()
 {
     ////Echo
     if (AIFlag == AI_MODE)
-        if(playerSide == Black)
+        if (playerSide == Black)
             cout << "            Your(¡ñ) Turn:__\b\b";
         else
             cout << "            Your(¡ð) Turn:__\b\b";
     else
     {
         if (gameBoard == Black)
-            wcout << "           Black(¡ñ) Turn:__\b\b";
+            cout << "           Black(¡ñ) Turn:__\b\b";
         else
-            wcout << "           White(¡ð) Turn:__\b\b";
+            cout << "           White(¡ð) Turn:__\b\b";
     }
 
     string input;
@@ -67,7 +67,7 @@ Coord keyboardInput()
     }
     if (input == "SAVE")
     {
-        if (saveError = gameBoard.save())
+        if ((saveError = gameBoard.save()))
         {
             cout << "         Game Successfully Saved!" << endl;
             cout << "       Press Any Key to Main Menu...";
@@ -117,14 +117,14 @@ void getCoord(getType T)
             fatalError(1);
     }
 
-    if(inputFlag)
+    if (inputFlag)
         gameBoard.movesRecord.push_back(inputCoord);
 }
 
 void loadGame(string loadName, int undoSteps)
 {
     CLS;
-    ifstream load(loadName+".save");
+    ifstream load(loadName + ".save");
     ifstream hload(loadName + ".hash");
     ostringstream sload, hsload;
     if (!load || !hload || !sload)
@@ -164,10 +164,9 @@ void loadGame(string loadName, int undoSteps)
     load >> AIFlag;
     load >> assistFlag;
     load >> playerSide;
-    load >> passCount;
     load >> diff;
 
-    if(diff)
+    if (diff)
         JacobInit(diff);
 
     int movesCount;
@@ -193,18 +192,18 @@ void loadGame(string loadName, int undoSteps)
 void help()
 {
     CLS;
-    cout << "*****************************************************" << endl;
+    cout << "***************************************************" << endl;
     cout << endl;
     cout << "ON THE BOARD OF COMMAND LINE MODE:" << endl;
     cout << endl;
-    cout << "'¡ñ' STANDS FOR BLACK '¡ð' STANDS FOR WHITE" << endl;
+    cout << "'¡ñ' STANDS FOR BLACK  '¡ð' STANDS FOR WHITE" << endl;
     cout << "'+' MEANS THE CELL IS VALID TO PLACE YOUR STONE" << endl;
-    cout << "' 'MEANS THE CELL IS CURRENT EMPTY AND INVALID" << endl;
+    cout << "' ' MEANS THE CELL IS CURRENT EMPTY AND INVALID" << endl;
     cout << endl;
     cout << "7A,A7,7a,a7 ARE ALL RECOGNIZABLE INPUTS" << endl;
     cout << endl;
 
-    cout << "*****************************************************" << endl;
+    cout << "***************************************************" << endl;
     cout << endl;
     cout << "YOU CAN INPUT THESE COMMAND DURING THE GAME" << endl;
     cout << "INSTEAD OF INPUTTING THE COORDINATE:" << endl;
@@ -213,7 +212,7 @@ void help()
     cout << "2.MENU: ABORT THE GAME AND GO BACK TO THE MAIN MENU." << endl << endl;
     cout << "3.SAVE: SAVE THE GAME AND GO BACK TO THE MAIN MENU." << endl << endl;
     cout << "4.UNDO: UNDO YOUR (AND JACOB'S) LAST MOVE." << endl << endl;
-    cout << "*****************************************************" << endl;
+    cout << "***************************************************" << endl;
     cout << endl << endl << endl;
     PAUSE;
     menu();

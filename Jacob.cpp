@@ -2,7 +2,7 @@
 Jacob
 A Powerful Othello AI
 By Jet
-Version 1.7.2
+Version 1.7.3
 */
 
 //Even Block Estimate
@@ -69,7 +69,7 @@ double ABJacob(Board &board, short depth, double alpha, double beta, short r)
     //if (isWin(playerSide, board))
     //    return ALPHA + 1;
 
-    if (!depth || !board(Valid) || clock() - startTime > TIME_OUT)
+    if (!depth || !board(Valid) || clock() - startTime > TIME_OUT * CLOCKS_PER_SEC)
         return BoardEval(board);
 
     double Eval;
@@ -93,7 +93,7 @@ double ABJacob(Board &board, short depth, double alpha, double beta, short r)
     }
     //PVS END
 
-    for (int i = 1; i < board.validCoord.size(); i++) //i=1(PVS)
+    for (unsigned i = 1; i < board.validCoord.size(); i++) //i=1(PVS)
     {
         Board tmpBoard = board;
         tmpBoard.move(board.validCoord[i]);
@@ -145,12 +145,12 @@ Coord multiThreadABSearch(Board &board)
                 fatalError(1);
         }
 
-    if (MULTI_THREAD)
+   /* if (MULTI_THREAD)
     {
         ABReturn[0] = ABReturn[1] = ABReturn[2] = ALPHA;
-        thread AB1(ABJacob, board, maxDepth, ALPHA, LOWERA, 0);
-        thread AB2(ABJacob, board, maxDepth, LOWERA, LOWERB, 1);
-        thread AB3(ABJacob, board, maxDepth, LOWERB, BETA, 2);
+        thread AB1(ABJacob, ref(board), maxDepth, ALPHA, LOWERA, 0);
+        thread AB2(ABJacob, ref(board), maxDepth, LOWERA, LOWERB, 1);
+        thread AB3(ABJacob, ref(board), maxDepth, LOWERB, BETA, 2);
         AB1.join();
         AB2.join();
         AB3.join();
@@ -172,7 +172,7 @@ Coord multiThreadABSearch(Board &board)
         ABLast = ABJacob(board, 4);
         return bestCoord[0];
     }
-    else
+    else*/
     {
         ABJacob(board);
 
@@ -236,16 +236,16 @@ double BoardEval(Board &board)
     double CornerEval;
 
     short myCornerCount =
-        (board[1][1].stat == ~board) +
-        (board[1][SIDE_LENGTH].stat == ~board) +
-        (board[SIDE_LENGTH][1].stat == ~board) +
-        (board[SIDE_LENGTH][SIDE_LENGTH].stat == ~board);
+        (board[1][1].stat == Status(~board)) +
+        (board[1][SIDE_LENGTH].stat == Status(~board)) +
+        (board[SIDE_LENGTH][1].stat == Status(~board)) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat == Status(~board));
 
     short opCornerCount =
-        (board[1][1].stat == !board) +
-        (board[1][SIDE_LENGTH].stat == !board) +
-        (board[SIDE_LENGTH][1].stat == !board) +
-        (board[SIDE_LENGTH][SIDE_LENGTH].stat == !board);
+        (board[1][1].stat == Status(!board)) +
+        (board[1][SIDE_LENGTH].stat == Status(!board)) +
+        (board[SIDE_LENGTH][1].stat == Status(!board)) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat == Status(!board));
 
     CornerEval = 25 * (myCornerCount - opCornerCount);
 
@@ -254,32 +254,32 @@ double BoardEval(Board &board)
     double DCornerEval;
 
     short myDCornerCount =
-        (board[1][1].stat >= Empty) && (board[1][2].stat == ~board) +
-        (board[1][1].stat >= Empty) && (board[2][2].stat == ~board) +
-        (board[1][1].stat >= Empty) && (board[2][1].stat == ~board) +
-        (board[1][SIDE_LENGTH].stat >= Empty) && (board[1][SIDE_LENGTH - 1].stat == ~board) +
-        (board[1][SIDE_LENGTH].stat >= Empty) && (board[2][SIDE_LENGTH - 1].stat == ~board) +
-        (board[1][SIDE_LENGTH].stat >= Empty) && (board[2][SIDE_LENGTH].stat == ~board) +
-        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH][2].stat == ~board) +
-        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH - 1][1].stat == ~board) +
-        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH - 1][2].stat == ~board) +
-        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH][SIDE_LENGTH - 1].stat == ~board) +
-        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH - 1][SIDE_LENGTH - 1].stat == ~board) +
-        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH - 1][SIDE_LENGTH].stat == ~board);
+        (board[1][1].stat >= Empty) && (board[1][2].stat == Status(~board)) +
+        (board[1][1].stat >= Empty) && (board[2][2].stat == Status(~board)) +
+        (board[1][1].stat >= Empty) && (board[2][1].stat == Status(~board)) +
+        (board[1][SIDE_LENGTH].stat >= Empty) && (board[1][SIDE_LENGTH - 1].stat == Status(~board)) +
+        (board[1][SIDE_LENGTH].stat >= Empty) && (board[2][SIDE_LENGTH - 1].stat == Status(~board)) +
+        (board[1][SIDE_LENGTH].stat >= Empty) && (board[2][SIDE_LENGTH].stat == Status(~board)) +
+        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH][2].stat == Status(~board)) +
+        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH - 1][1].stat == Status(~board)) +
+        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH - 1][2].stat == Status(~board)) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH][SIDE_LENGTH - 1].stat == Status(~board)) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH - 1][SIDE_LENGTH - 1].stat == Status(~board)) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH - 1][SIDE_LENGTH].stat == Status(~board));
 
     short opDCornerCount =
-        (board[1][1].stat >= Empty) && (board[1][2].stat == !board) +
-        (board[1][1].stat >= Empty) && (board[2][2].stat == !board) +
-        (board[1][1].stat >= Empty) && (board[2][1].stat == !board) +
-        (board[1][SIDE_LENGTH].stat >= Empty) && (board[1][SIDE_LENGTH - 1].stat == !board) +
-        (board[1][SIDE_LENGTH].stat >= Empty) && (board[2][SIDE_LENGTH - 1].stat == !board) +
-        (board[1][SIDE_LENGTH].stat >= Empty) && (board[2][SIDE_LENGTH].stat == !board) +
-        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH][2].stat == !board) +
-        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH - 1][1].stat == !board) +
-        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH - 1][2].stat == !board) +
-        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH][SIDE_LENGTH - 1].stat == !board) +
-        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH - 1][SIDE_LENGTH - 1].stat == !board) +
-        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH - 1][SIDE_LENGTH].stat == !board);
+        (board[1][1].stat >= Empty) && (board[1][2].stat == Status(!board)) +
+        (board[1][1].stat >= Empty) && (board[2][2].stat == Status(!board)) +
+        (board[1][1].stat >= Empty) && (board[2][1].stat == Status(!board)) +
+        (board[1][SIDE_LENGTH].stat >= Empty) && (board[1][SIDE_LENGTH - 1].stat == Status(!board)) +
+        (board[1][SIDE_LENGTH].stat >= Empty) && (board[2][SIDE_LENGTH - 1].stat == Status(!board)) +
+        (board[1][SIDE_LENGTH].stat >= Empty) && (board[2][SIDE_LENGTH].stat == Status(!board)) +
+        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH][2].stat == Status(!board)) +
+        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH - 1][1].stat == Status(!board)) +
+        (board[SIDE_LENGTH][1].stat >= Empty) && (board[SIDE_LENGTH - 1][2].stat == Status(!board)) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH][SIDE_LENGTH - 1].stat == Status(!board)) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH - 1][SIDE_LENGTH - 1].stat == Status(!board)) +
+        (board[SIDE_LENGTH][SIDE_LENGTH].stat >= Empty) && (board[SIDE_LENGTH - 1][SIDE_LENGTH].stat == Status(!board));
 
 
     DCornerEval = -12.5 * (myDCornerCount - opDCornerCount);

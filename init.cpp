@@ -24,7 +24,9 @@ void menu()
     else
         cout << "4.Turn On GUI" << endl;
     cout << "5.Instructions" << endl;
+#ifdef WINDOWS_
     cout << "6.Change Theme" << endl;
+#endif
     cout << "0.Exit" << endl;
     cout << endl;
     cout << "Input:_\b";
@@ -56,15 +58,17 @@ void menu()
                 menu();
             case '5':
                 help();
+#ifdef WINDOWS_
             case '6':
                 theme();
+#endif
             case '0':
                 exit(0);
         }
     else if (in == "ABAB")
         debugMenu();
 
-    if (!debugCalled)
+    if (debugCalled)
         debugCalled = false;
     else
         cout << "Invalid Input!!!" << endl;
@@ -197,13 +201,14 @@ void JacobInit(short diff)
             maxDepth = 5;
             break;
         case 5:
-            maxDepth = 9;
+            maxDepth = 8;
             break;
         default:
             fatalError(1);
     }
 }
 
+#ifdef WINDOWS_
 void theme()
 {
     CLS;
@@ -218,7 +223,7 @@ void theme()
     cout << "6.Pinky (Yellow on Pink)" << endl;         //de
     cout << "7.Yima (White on Red)" << endl;            //cf
     cout << "8.DiDiaoYiMa (Red on Black)" << endl;     //7c
-    cout << "9.Dragon (Yellow on Dark Red)" << endl; //4e
+    cout << "9.Dragon (Yellow on Dark Red)" << endl << endl; //4e
     cout << "Input JET to Randomize the Theme." << endl;
     cout << endl << endl;
     cout << "Input:___\b\b\b";
@@ -298,6 +303,7 @@ void theme()
     cin.sync();
     menu();
 }
+#endif
 
 void debugMenu()
 {
@@ -305,7 +311,7 @@ void debugMenu()
     string in;
     cin >> in;
     transform(in.begin(), in.end(), in.begin(), ::toupper);
-    if (in == "TSEN")
+/*    if (in == "TSEN")
     {
         double ALPHA = -2000;
         double LOWERA = 5;
@@ -329,7 +335,8 @@ void debugMenu()
         double BETA = 2000;
         cout << "UPUPDOWNDOWN" << endl;
     }
-    else if (in == "SETDEPTH")
+    else */
+    if (in == "SETDEPTH")
     {
         cin >> maxDepth;
         manualFlag = true;
