@@ -189,7 +189,7 @@ void Board::setValidFor(bool side)
 
 void Board::move(Coord &pos)
 {
-    if (passCount = 0)
+    if (passCount == 0)
         passCount++;
     if (inRange(pos.x, pos.y))
         for (int i = 0; i < 8; i++)
@@ -241,18 +241,18 @@ void Board::print()
             switch (cell[i][j].stat)
             {
                 case Black:
-                    wcout << "●│";
+                    cout << "●│";
                     break;
                 case White:
-                    wcout << "○│";
+                    cout << "○│";
                     break;
                 case Empty:
-                    wcout << "  │";
+                    cout << "  │";
                     break;
                 case Valid:
                     if (assistFlag && ((AIFlag == AI_MODE&&sideFlag == playerSide) || (AIFlag == NON_AI_MODE)))
-                        wcout << "+ │";
-                    else wcout << "  │";
+                        cout << "+ │";
+                    else cout << "  │";
                     break;
                 default:
                     fatalError(1);
@@ -359,7 +359,7 @@ bool Board::save(string saveName)
     save << passCount << endl;
     save << diff << endl << endl;
     save << movesRecord.size() << endl;
-    for (int i = 0; i < movesRecord.size(); i++)
+    for (unsigned int i = 0; i < movesRecord.size(); i++)
         save << movesRecord[i].x << ' '
         << movesRecord[i].y << endl << endl;
     save.close();

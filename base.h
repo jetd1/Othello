@@ -19,6 +19,8 @@
 #define NDEBUG
 #include "freeglut/include/GL/freeglut.h"
 #undef NDEBUG
+#else
+#include "freeglut/include/GL/freeglut.h"
 #endif
 #ifdef _WIN64
 #pragma comment(lib, "freeglut64.lib")
@@ -31,7 +33,13 @@
 
 #elif defined __linux__
 #include <unistd.h>
+#ifndef NDEBUG
+#define NDEBUG
 #include "freeglut/include/GL/freeglut.h"
+#undef NDEBUG
+#else
+#include "freeglut/include/GL/freeglut.h"
+#endif
 #define CLS system("clear")
 #define SLP(X) usleep(1000*X)
 

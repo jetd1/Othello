@@ -67,7 +67,7 @@ Coord keyboardInput()
     }
     if (input == "SAVE")
     {
-        if (saveError = gameBoard.save())
+        if (( saveError = gameBoard.save() ))
         {
             cout << "         Game Successfully Saved!" << endl;
             cout << "       Press Any Key to Main Menu...";

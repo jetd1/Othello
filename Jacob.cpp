@@ -93,7 +93,7 @@ double ABJacob(Board &board, short depth, double alpha, double beta, short r)
     }
     //PVS END
 
-    for (int i = 1; i < board.validCoord.size(); i++) //i=1(PVS)
+    for (unsigned int i = 1; i < board.validCoord.size(); i++) //i=1(PVS)
     {
         Board tmpBoard = board;
         tmpBoard.move(board.validCoord[i]);
@@ -148,9 +148,9 @@ Coord multiThreadABSearch(Board &board)
     if (MULTI_THREAD)
     {
         ABReturn[0] = ABReturn[1] = ABReturn[2] = ALPHA;
-        thread AB1(ABJacob, board, maxDepth, ALPHA, LOWERA, 0);
-        thread AB2(ABJacob, board, maxDepth, LOWERA, LOWERB, 1);
-        thread AB3(ABJacob, board, maxDepth, LOWERB, BETA, 2);
+        thread AB1(ABJacob, ref(board), maxDepth, ALPHA, LOWERA, 0);
+        thread AB2(ABJacob, ref(board), maxDepth, LOWERA, LOWERB, 1);
+        thread AB3(ABJacob, ref(board), maxDepth, LOWERB, BETA, 2);
         AB1.join();
         AB2.join();
         AB3.join();
