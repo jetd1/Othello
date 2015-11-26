@@ -233,7 +233,7 @@ void Board::print()
     for (int i = 1; i <= SIDE_LENGTH; i++)
         cout << char('@' + i) << "   ";
 #ifdef WINDOWS_
-                    cout << endl << "    ┌─┬─┬─┬─┬─┬─┬─┬─┐" << endl;
+    cout << endl << "    ┌─┬─┬─┬─┬─┬─┬─┬─┐" << endl;
 #else
                     cout << endl << "    ┌───┬───┬───┬───┬───┬───┬───┬───┐" << endl;
 #endif
@@ -286,13 +286,13 @@ void Board::print()
         }
         if(i-SIDE_LENGTH)
 #ifdef WINDOWS_
-                    cout << endl << "    ├─┼─┼─┼─┼─┼─┼─┼─┤";
+            cout << endl << "    ├─┼─┼─┼─┼─┼─┼─┼─┤";
 #else
                     cout << endl << "    ├───┼───┼───┼───┼───┼───┼───┼───┤";
 #endif
         else
 #ifdef WINDOWS_
-                    cout << endl << "    └─┴─┴─┴─┴─┴─┴─┴─┘";
+            cout << endl << "    └─┴─┴─┴─┴─┴─┴─┴─┘";
 #else
                     cout << endl << "    └───┴───┴───┴───┴───┴───┴───┴───┘";
 #endif
