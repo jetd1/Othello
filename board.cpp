@@ -189,6 +189,8 @@ void Board::setValidFor(bool side)
 
 void Board::move(Coord &pos)
 {
+    if (passCount = 0)
+        passCount++;
     if (inRange(pos.x, pos.y))
         for (int i = 0; i < 8; i++)
         {
@@ -354,6 +356,7 @@ bool Board::save(string saveName)
     save << AIFlag << endl;
     save << assistFlag << endl;
     save << playerSide << endl;
+    save << passCount << endl;
     save << diff << endl << endl;
     save << movesRecord.size() << endl;
     for (int i = 0; i < movesRecord.size(); i++)

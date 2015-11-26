@@ -31,10 +31,10 @@ short coordChara[SAFE_LENGTH][SAFE_LENGTH] =
 short coordChara[SAFE_LENGTH][SAFE_LENGTH]{};
 #endif
 
-double ALPHA = -2500;
+double ALPHA = -4000;
 double LOWERA = -10;
 double LOWERB = 100;
-double BETA = 2500;
+double BETA = 4000;
 
 double ABReturn[3];
 Coord bestCoord[3];
@@ -44,7 +44,7 @@ double BWFACTOR, CNFACTOR, DCFACTOR;
 
 extern Coord inputCoord;
 extern Board gameBoard;
-extern short maxDepth;
+extern short maxDepth, passCount;
 extern double ALPHA, BETA, LOWERA, LOWERB;
 extern bool debugFlag, playerSide, randomFlag;
 extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];

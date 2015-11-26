@@ -7,11 +7,12 @@ Coord passCoord = {-1, -1};
 
 Coord inputCoord;
 Board gameBoard;
-short maxDepth, passCount;
+short maxDepth, sidePass;
 bool UIFlag, debugFlag, AIFlag, assistFlag, inputFlag, playerSide, saveError, manualFlag, randomFlag, cPass;
 
 extern Coord passCoord;
 extern int ALPHA, BETA;
+extern short passCount;
 extern bool drawable,debugCalled;
 extern double ABReturn[3];
 

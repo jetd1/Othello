@@ -164,6 +164,7 @@ void loadGame(string loadName, int undoSteps)
     load >> AIFlag;
     load >> assistFlag;
     load >> playerSide;
+    load >> passCount;
     load >> diff;
 
     if(diff)

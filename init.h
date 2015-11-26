@@ -18,11 +18,11 @@ extern void fatalError(unsigned);
 extern void multiThread(int, char**);
 extern void loadGame(string loadName = "Othello", int undoSteps = 0);
 
-short diff;
+short diff, passCount;
 bool debugCalled = false;
 
 extern Board gameBoard;
-extern short maxDepth, passCount;
+extern short maxDepth, sidePass;
 extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
 extern double BWFACTOR, CNFACTOR, DCFACTOR;
 extern bool assistFlag, AIFlag, UIFlag, playerSide, manualFlag, randomFlag, debugFlag, cPass;

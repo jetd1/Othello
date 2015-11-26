@@ -14,6 +14,7 @@ int main(int argc, char **argv)
     UIFlag = false;
     debugFlag = false;
 
+
     for (int i = 1; i < argc; i++)
     {
         if (argv[i][1] == 'u')
@@ -21,6 +22,10 @@ int main(int argc, char **argv)
         if (argv[i][1] == 'd')
             debugFlag = true;
     }
+
+#ifdef WINDOWS_
+    system("title=JetOthello");
+#endif
 
     menu();
 
@@ -39,11 +44,10 @@ void multiThread(int argc, char **argv)
     else
         othelloMain();
 }
-
 void othelloMain()
 {
     gameBoard.print();
-    while ((gameBoard(Empty) + gameBoard(Valid)) && passCount < 2 && gameBoard(Black) && gameBoard(White))
+    while ((gameBoard(Empty) + gameBoard(Valid)) && sidePass < 2 && gameBoard(Black) && gameBoard(White))
     {
         if (UIFlag)
             while (drawable)
@@ -54,6 +58,7 @@ void othelloMain()
         {
             CLS;
             gameBoard.print();
+            passCount++;
 
             if (AIFlag == NON_AI_MODE || (AIFlag == AI_MODE &&~gameBoard == playerSide))
                 cout << "      No Possible Move, Enter to Pass!";
@@ -65,7 +70,7 @@ void othelloMain()
             PAUSE;
 
             gameBoard.movesRecord.push_back(passCoord);
-            passCount++;
+            sidePass++;
             gameBoard.flipSide();
             gameBoard.setValid();
             gameBoard.count();
@@ -96,20 +101,20 @@ void othelloMain()
         gameBoard.print();
 
         if (AIFlag == AI_MODE&&~gameBoard == !playerSide)
-            cout << "          Jacob Thinking ...";
+            cout << "            Jacob Thinking ...";
 
         if (debugFlag)
             for (int i = 0; i < 3; i++)
                 cout << ABReturn[i] << endl;
 
-        passCount = 0;
+        sidePass = 0;
         cPass = false;
 
         if (UIFlag)
         {
             drawable = true;
             glutPostRedisplay();
-            passCount = 0;
+            sidePass = 0;
         }
     }
 
@@ -133,9 +138,9 @@ void judge()
     else
     {
         if (gameBoard(Black) > gameBoard(White))
-            cout << "        Black Win!" << endl << endl;
+            cout << "                Black Win!" << endl << endl;
         else if (gameBoard(Black) < gameBoard(White))
-            cout << "        White Win!" << endl << endl;
+            cout << "                White Win!" << endl << endl;
         else
             cout << "           Tie!" << endl << endl;
     }

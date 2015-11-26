@@ -10,8 +10,8 @@ extern void fatalError(unsigned);
 extern bool cmpCoordV(const Coord&, const Coord&);
 
 extern short diff;
-extern short passCount;
 extern clock_t startTime;
+extern short sidePass, passCount;
 extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
 extern bool debugFlag, assistFlag, AIFlag, playerSide, cPass;
 

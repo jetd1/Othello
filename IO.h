@@ -9,7 +9,7 @@ bool mouseInputAvalable = false;
 
 extern Board gameBoard;
 extern Coord inputCoord;
-extern short maxDepth, diff;
+extern short maxDepth, diff, passCount;
 extern bool UIFlag, debugFlag, inputFlag, assistFlag, AIFlag, playerSide, saveError;
 
 Coord mouseInput();

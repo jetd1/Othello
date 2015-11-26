@@ -84,6 +84,7 @@ void init() //must gameBoard.clear() or cellclear() before init;
         }
     gameBoard[SIDE_LENGTH / 2][SIDE_LENGTH / 2].stat = gameBoard[SIDE_LENGTH / 2 + 1][SIDE_LENGTH / 2 + 1].stat = White;
     gameBoard[SIDE_LENGTH / 2][SIDE_LENGTH / 2 + 1].stat = gameBoard[SIDE_LENGTH / 2 + 1][SIDE_LENGTH / 2].stat = Black;
+    sidePass = 0;
     passCount = 0;
     gameBoard.count();
     gameBoard.setValid();
@@ -181,9 +182,6 @@ void isAssistMode()
 
 void JacobInit(short diff)
 {
-    BWFACTOR = (playerSide == Black) ? 0.80 : 0.70;
-    CNFACTOR = (playerSide == Black) ? 11.0 : 10.0;
-    DCFACTOR = (playerSide == Black) ? 3.80 : 3.70;
     switch (diff)
     {
         case 1:

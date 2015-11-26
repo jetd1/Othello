@@ -188,6 +188,9 @@ Coord multiThreadABSearch(Board &board)
 
 Coord AI(Board &board)
 {
+    BWFACTOR = (playerSide == Black&&!(passCount % 2)) ? 0.80 : 0.70;
+    CNFACTOR = (playerSide == Black&&!(passCount % 2)) ? 11.0 : 10.0;
+    DCFACTOR = (playerSide == Black&&!(passCount % 2)) ? 3.80 : 3.70;
     startTime = clock();
     return multiThreadABSearch(board);
 }

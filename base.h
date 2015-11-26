@@ -8,9 +8,6 @@
 //#ifndef FREEGLUT_STATIC
 //#define FREEGLUT_STATIC
 //#endif
-#ifndef NDEBUG
-#define NDEBUG
-#endif
 #ifndef GLUT_DISABLE_ATEXIT_HACK
 #define GLUT_DISABLE_ATEXIT_HACK
 #endif
@@ -18,7 +15,11 @@
 //Platform auto detect
 #ifdef _WIN32
 #include <windows.h>
+#ifndef NDEBUG
+#define NDEBUG
 #include "freeglut/include/GL/freeglut.h"
+#undef NDEBUG
+#endif
 #ifdef _WIN64
 #pragma comment(lib, "freeglut64.lib")
 #else
@@ -26,6 +27,7 @@
 #endif
 #define CLS system("cls")
 #define SLP(X) Sleep(X)
+#define WINDOWS_
 
 #elif defined __linux__
 #include <unistd.h>
@@ -80,6 +82,8 @@ using namespace std;
 #define END_COORD_X '0'+SIDE_LENGTH
 #define START_COORD_Y 'A'
 #define END_COORD_Y '@'+SIDE_LENGTH
+
+#define NAIVE void
 
 
 #endif
