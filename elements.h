@@ -60,6 +60,7 @@ public:
     void setValidFor(bool side);
     void move(Coord &pos);
     void print();
+    void recordPrint();
 
 
     double validEval(bool side);

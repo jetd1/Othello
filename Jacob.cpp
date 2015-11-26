@@ -122,11 +122,13 @@ double ABJacob(Board &board, short depth, double alpha, double beta, short r)
 
 Coord RandomJacob(Board &board)
 {
+    srand(unsigned(clock()));
     return board.validCoord[rand()%board.validCoord.size()];
 }
 
 Coord multiThreadABSearch(Board &board)
 {
+    srand(unsigned(clock()));
     if (randomFlag&&!(rand() % RANDFACTOR))
         return RandomJacob(board);
 

@@ -214,6 +214,7 @@ void Board::move(Coord &pos)
             }
         }
 
+    movesRecord.push_back(pos);
     flipSide();
     setValid();
     count();
@@ -323,6 +324,17 @@ void Board::print()
             << endl << endl;
     }
     else cout << endl << endl;
+}
+
+void Board::recordPrint()
+{
+    cout << "Game Record:" << endl << endl;
+    for (unsigned i = 0; i < movesRecord.size(); i++)
+        if (movesRecord[i].x != -1)
+            cout << movesRecord[i].x << char(movesRecord[i].y + '@') << ' ';
+        else
+            cout << "Pass" << ' ';
+    cout << endl;
 }
 
 double Board::allEval(bool side) //Evaluation for all coordinates of side

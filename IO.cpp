@@ -116,9 +116,6 @@ void getCoord(getType T)
         default:
             fatalError(1);
     }
-
-    if (inputFlag)
-        gameBoard.movesRecord.push_back(inputCoord);
 }
 
 void loadGame(string loadName, int undoSteps)
@@ -179,14 +176,11 @@ void loadGame(string loadName, int undoSteps)
         Coord tmpCoord{};
         load >> tmpCoord.x;
         load >> tmpCoord.y;
-        gameBoard.movesRecord.push_back(tmpCoord);
+        gameBoard.move(gameBoard.movesRecord[i]);
     }
     load.close();
-
-    for (int i = 0; i < movesCount; i++)
-        gameBoard.move(gameBoard.movesRecord[i]);
-
-    multiThread(0, nullptr);
+        
+    gameThread(0, nullptr);
 }
 
 void help()

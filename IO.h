@@ -24,7 +24,7 @@ extern Coord AI(Board&);
 extern void menu();
 extern void init();
 extern void JacobInit(short);
-extern void multiThread(int, char**);
+extern void gameThread(int, char**);
 extern void fatalError(unsigned);
 extern void debugMenu();
 

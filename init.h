@@ -13,13 +13,14 @@ void debugMenu();
 void theme();
 
 extern void help();
+extern void autoPlay();
 extern void printVersion();
 extern void fatalError(unsigned);
-extern void multiThread(int, char**);
+extern void gameThread(int, char**);
 extern void loadGame(string loadName = "Othello", int undoSteps = 0);
 
 short diff, passCount;
-bool debugCalled = false;
+bool autoFlag = false, debugCalled = false;
 
 extern Board gameBoard;
 extern short maxDepth, sidePass;

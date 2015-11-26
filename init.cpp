@@ -18,14 +18,15 @@ void menu()
 
     cout << "1.Play with Friends" << endl;
     cout << "2.Play with Jacob" << endl;
-    cout << "3.Load Game" << endl;
+    cout << "3.Jacob Auto Play" << endl;
     if (UIFlag)
         cout << "4.Turn Off GUI" << endl;
     else
         cout << "4.Turn On GUI" << endl;
-    cout << "5.Instructions" << endl;
+    cout << "5.Load Game" << endl;
+    cout << "6.Instructions" << endl;
 #ifdef WINDOWS_
-    cout << "6.Change Theme" << endl;
+    cout << "7.Change Theme" << endl;
 #endif
     cout << "0.Exit" << endl;
     cout << endl;
@@ -42,7 +43,7 @@ void menu()
                 gameBoard.clear();
                 isAssistMode();
                 init();
-                multiThread(0, nullptr);
+                gameThread(0, nullptr);
             case '2':
                 AIFlag = AI_MODE;
                 gameBoard.clear();
@@ -50,16 +51,23 @@ void menu()
                 init();
                 selectSide();
                 selectDiff();
-                multiThread(0, nullptr);
+                gameThread(0, nullptr);
             case '3':
-                loadGame();
+                autoFlag = true;
+                AIFlag = NON_AI_MODE;
+                gameBoard.clear();
+                assistFlag = true;
+                init();
+                autoPlay();
             case '4':
                 UIFlag ^= 1;
                 menu();
             case '5':
+                loadGame();
+            case '6':
                 help();
 #ifdef WINDOWS_
-            case '6':
+            case '7':
                 theme();
 #endif
             case '0':
@@ -118,10 +126,13 @@ void selectDiff()
     if (manualFlag)
         return;
 
-    CLS;
+    if (!autoFlag)
+    {
+        CLS;
 
-    if (PRINT_VERSION)
-        printVersion();
+        if (PRINT_VERSION)
+            printVersion();
+    }
 
     string in;
 
@@ -156,7 +167,8 @@ void selectDiff()
                 diff = 5;
                 break;
         }
-        JacobInit(diff);
+        if (!autoFlag)
+            JacobInit(diff);
     }
     else
     {
@@ -350,7 +362,7 @@ void debugMenu()
     else if (in == "FLIP")
     {
         playerSide ^= 1;
-        multiThread(0, nullptr);
+        gameThread(0, nullptr);
     }
     else if (in == "WIN")
     {
@@ -360,7 +372,7 @@ void debugMenu()
         gameBoard.count();
         cPass = true;
         gameBoard.movesRecord.resize(63);
-        multiThread(0, nullptr);
+        gameThread(0, nullptr);
     }
     else
         cout << "^&$^%#*$" << endl;

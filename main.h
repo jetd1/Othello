@@ -12,16 +12,21 @@ bool UIFlag, debugFlag, AIFlag, assistFlag, inputFlag, playerSide, saveError, ma
 
 extern Coord passCoord;
 extern int ALPHA, BETA;
-extern short passCount;
+extern short passCount, diff;
 extern bool drawable,debugCalled;
 extern double ABReturn[3];
 
 int main(int, char**);
-void multiThread(int, char**);
+void gameThread(int, char**);
 void othelloMain();
+void autoPlay();
 void judge();
 
+inline bool gameEnd();
+
 extern void menu();
+extern void selectDiff();
+extern void JacobInit(short);
 extern void getCoord(getType);
 extern void initUI(int, char**);
 

@@ -2,8 +2,7 @@
 #define JACOB_H
 
 #include "base.h"
-#include "ctime"
-
+#include <ctime>
 #define ALPHA -3000
 
 #define BETA 3000
@@ -12,9 +11,9 @@
 
 #define TIME_OUT 100
 
-#define RANDFACTOR 16
+#define RANDFACTOR 24
 
-#define MULTI_THREAD true
+#define MULTI_THREAD false
 
 #if SIDE_LENGTH==8
 short coordChara[SAFE_LENGTH][SAFE_LENGTH] =

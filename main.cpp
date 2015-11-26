@@ -32,10 +32,10 @@ int main(int argc, char **argv)
 
     menu();
 
-    multiThread(argc, argv);
+    gameThread(argc, argv);
 }
 
-void multiThread(int argc, char **argv)
+void gameThread(int argc, char **argv)
 {
     if (UIFlag)
     {
@@ -47,10 +47,11 @@ void multiThread(int argc, char **argv)
     else
         othelloMain();
 }
+
 void othelloMain()
 {
     gameBoard.print();
-    while ((gameBoard(Empty) + gameBoard(Valid)) && sidePass < 2 && gameBoard(Black) && gameBoard(White))
+    while (!gameEnd())
     {
         if (UIFlag)
             while (drawable)
@@ -61,7 +62,6 @@ void othelloMain()
         {
             CLS;
             gameBoard.print();
-            passCount++;
 
             if (AIFlag == NON_AI_MODE || (AIFlag == AI_MODE &&~gameBoard == playerSide))
                 cout << "      No Possible Move, Enter to Pass!";
@@ -70,13 +70,12 @@ void othelloMain()
                 cout << "      Jacob Passed, Enter to Your Turn!";
                 cPass = true;
             }
+
             PAUSE;
 
-            gameBoard.movesRecord.push_back(passCoord);
+            passCount++;
             sidePass++;
-            gameBoard.flipSide();
-            gameBoard.setValid();
-            gameBoard.count();
+            gameBoard.move(passCoord);
             gameBoard.print();
             continue;
         }
@@ -125,6 +124,50 @@ void othelloMain()
     menu();
 }
 
+void autoPlay()
+{
+    randomFlag = true;
+    short delayDur = 300;
+
+    CLS;
+    inputFlag = true;
+
+    short aDiff[2]{};
+    cout << "Please Set Mode of Jacob Playing Black" << endl << endl;
+    selectDiff();
+    aDiff[Black] = diff;
+    CLS;
+    cout << "Please Set Mode of Jacob Playing White" << endl << endl;
+    selectDiff();
+    aDiff[White] = diff;
+
+    gameBoard.print();
+    SLP(500);
+    while (!gameEnd())
+    {
+        SLP(delayDur);
+        JacobInit(aDiff[~gameBoard]);
+        if (gameBoard(Valid))
+        {
+            getCoord(Computer);
+            sidePass = 0;
+        }
+        else
+        {
+            inputCoord = passCoord;
+            sidePass++;
+        }
+        gameBoard.move(inputCoord);
+        gameBoard.print();
+        gameBoard.recordPrint();
+    }
+
+    randomFlag = false;
+
+    judge();
+    menu();
+}
+
 void judge()
 {
     CLS;
@@ -147,8 +190,14 @@ void judge()
         else
             cout << "           Tie!" << endl << endl;
     }
+    gameBoard.recordPrint();
 
     cout << endl << "       Press Any Key to Main Menu...";
 
     PAUSE;
+}
+
+inline bool gameEnd()
+{
+    return !((gameBoard(Empty) + gameBoard(Valid)) && sidePass < 2 && gameBoard(Black) && gameBoard(White));
 }
