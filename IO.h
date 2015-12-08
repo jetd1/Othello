@@ -5,7 +5,7 @@
 
 volatile int mouseMove = 0;
 short xBuffer[10], yBuffer[10];
-bool mouseInputAvalable = false;
+bool mouseInputAvailable = false;
 
 extern Board gameBoard;
 extern Coord inputCoord;
@@ -24,7 +24,7 @@ extern Coord CallAI(Board&);
 extern void menu();
 extern void init();
 extern void AchillesInit(short);
-extern void gameThread(int, char**);
+extern void gameThread(playerType, playerType);
 extern void fatalError(unsigned);
 extern void debugMenu();
 

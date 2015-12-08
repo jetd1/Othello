@@ -6,18 +6,18 @@
 void menu();
 void init();
 void selectSide();
-void selectDiff();
 void isAssistMode();
 void AchillesInit(short);
 void debugMenu();
 void theme();
+short selectDiff();
 
 extern void help();
-extern void autoPlay();
+extern void autoPlay(short, short);
 extern void printVersion();
 extern void fatalError(unsigned);
-extern void gameThread(int, char**);
-extern void autoPlayThread(int, char**);
+extern void autoPlayThread(short, short);
+extern void gameThread(playerType, playerType);
 extern void loadGame(string loadName = "Othello", int undoSteps = 0);
 
 short diff;

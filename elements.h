@@ -44,6 +44,7 @@ private:
 
 public:   
     bool passFlag[2];
+    short validCountFor[2];
     short passCount;
     set<Coord> sideFrontier[2];
     set<Coord> allFrontier;
@@ -55,30 +56,27 @@ public:
 public:
     Board();
 
-    void operator =(Board &board);
-    bool operator ==(const Status &stat)const;
+    void operator =(Board&);
+    bool operator ==(const Status&)const;
     bool operator !()const;
     bool operator ~()const;
-    Cell* operator [](int i);
-    short operator ()(Status stat);
-    short operator ()(bool flag);
+    Cell* operator [](int);
+    short operator ()(Status);
+    short operator ()(bool);
 
     void clear();
     void flipSide();
     void count();
-    bool isValid(Coord &pos, bool side);
+    bool isValid(Coord&, bool);
     void setFrontier();
-    void setFrontierFor(bool side);
+    void setFrontierFor(bool);
     void setValid();
-    void move(Coord &pos);
+    void move(Coord&);
     void print();
     void recordPrint();
 
+    double allEvalFor(bool);
 
-    double validEval(bool side);
-    double allEval(bool side);
-
-    short countValidFor(bool side);
     bool save(string saveName = "Othello");
 
     //todo

@@ -160,8 +160,8 @@ double BoardEval(Board &board)
     //Evaluation Based on Character Value
     double CharaEval;
 
-    double myChara = board.allEval(~board);
-    double opChara = board.allEval(!board);
+    double myChara = board.allEvalFor(~board);
+    double opChara = board.allEvalFor(!board);
 
     CharaEval = myChara - opChara;
 
@@ -390,12 +390,11 @@ double BoardEval(Board &board)
 
     sideEval = 2.5 * (mySideCount - opSideCount);
 
-
     //Evaluation Based on Mobility
     double MobEval;
 
-    short myValidCount = board.countValidFor(~board);
-    short opValidCount = board.countValidFor(!board);
+    short myValidCount = board.validCountFor[~board];
+    short opValidCount = board.validCountFor[!board];
 
     if (!opValidCount)
         MobEval = 150;

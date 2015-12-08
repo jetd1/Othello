@@ -17,17 +17,18 @@ extern bool drawable,debugCalled,autoFlag;
 extern double ABReturn;
 
 int main(int, char**);
-void gameThread(int, char**);
-void othelloMain();
-void autoPlayThread(int, char**);
-void autoPlay();
+void gameThread(playerType, playerType);
+void othelloMain(playerType, playerType);
+void autoPlayThread(short, short);
+void autoPlay(short, short);
 void judge();
 
 extern void menu();
-extern void selectDiff();
+extern short selectDiff();
 extern void AchillesInit(short);
 extern void getCoord(playerType);
 extern void initUI(int, char**);
+extern void fatalError(unsigned);
 
 
 #endif // MAIN_H

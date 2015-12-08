@@ -15,12 +15,12 @@ void printVersion()
 // Mouse Callback
 void mouseKey(int button, int state, int x, int y)
 {
-    if (!mouseInputAvalable) return;
+    if (!mouseInputAvailable) return;
     if (state != GLUT_DOWN) return;
     yBuffer[mouseMove] = (x / (screenSize / SIDE_LENGTH)) + 1;
     xBuffer[mouseMove] = (y / (screenSize / SIDE_LENGTH)) + 1;
     mouseMove++;
-    mouseInputAvalable = false;
+    mouseInputAvailable = false;
     return;
 }
 
@@ -28,8 +28,9 @@ void mouseKey(int button, int state, int x, int y)
 Coord mouseInput()
 {
     inputFlag = false;
-    mouseInputAvalable = true;
-    while (mouseMove == 0) SLP(1);
+    mouseInputAvailable = true;
+    while (mouseMove == 0) 
+        SLP(10);
     Coord tmpCoord{xBuffer[mouseMove - 1], yBuffer[mouseMove - 1]};
     mouseMove--;
     inputFlag = true;
@@ -179,7 +180,15 @@ void loadGame(string loadName, int undoSteps)
     }
     load.close();
         
-    gameThread(0, nullptr);
+    if (AIFlag == AI_MODE)
+    {
+        if (playerSide == Black)
+            gameThread(Human, AI);
+        else
+            gameThread(AI, Human);
+    }
+    else
+        gameThread(Human, Human);
 }
 
 void help()

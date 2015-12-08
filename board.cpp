@@ -14,6 +14,7 @@ Board::Board()  //need to rewrite
                 {i, j, coordChara[i][j]},
                 Empty};
         }
+    validCountFor[Black] = validCountFor[White] = 0;
 
     passCount = 0;
     passFlag[Black] = passFlag[White] = false;
@@ -45,6 +46,9 @@ void Board::operator =(Board &board)     //need to rewrite
     for (int i = 0; i < SAFE_LENGTH; i++)
         for (int j = 0; j < SAFE_LENGTH; j++)
             cell[i][j] = board.cell[i][j];
+
+    validCountFor[Black] = board.validCountFor[Black];
+    validCountFor[White] = board.validCountFor[White];
 
     passCount = board.passCount;
     passFlag[Black] = board.passFlag[Black];
@@ -78,6 +82,7 @@ void Board::clear()
                 Empty};
         }
 
+    validCountFor[Black] = validCountFor[White] = 0;
     passCount = 0;
     passFlag[Black] = passFlag[White] = false;
 
@@ -109,17 +114,6 @@ void Board::count()
             statusCount[Empty] += (cell[i][j].stat >= Empty);
         }
 }
-
-//short Board::count(Status stat)
-//{
-//    statusCount[stat] = 0;
-//
-//    for (int i = 1; i <= SIDE_LENGTH; i++)
-//        for (int j = 1; j <= SIDE_LENGTH; j++)
-//            statusCount[stat] += (cell[i][j].stat == stat);
-//
-//    return statusCount[stat];
-//}
 
 void Board::setFrontierFor(bool side)
 {
@@ -172,6 +166,7 @@ void Board::setValid()
     setFrontier();
     validCoord.clear();
     statusCount[Valid] = 0;
+    validCountFor[Black] = validCountFor[White] = 0;
     for (auto itr = allFrontier.begin(); itr != allFrontier.end(); itr++)
     {
         Coord tmpCoord = *itr;
@@ -181,30 +176,18 @@ void Board::setValid()
         {
             cell[x][y].stat = Valid;
             statusCount[Valid]++;
+            validCountFor[sideFlag]++;
             validCoord.push_back(cell[x][y].coord);
         }
         else
+        {
             cell[x][y].stat = Empty;
+            if (isValid(tmpCoord, !sideFlag))
+                validCountFor[!sideFlag]++;
+        }
     }
         
     sort(validCoord.begin(), validCoord.end(), cmpCoord);
-}
-
-short Board::countValidFor(bool side)
-{
-    if (side = sideFlag)
-        return statusCount[Valid];
-
-    short cnt = 0;
-    for (int i = 1; i <= 8; i++)
-        for (int j = 1; j <= 8; j++)
-        {
-            Coord tmpCoord;
-            tmpCoord.x = i;
-            tmpCoord.y = j;
-            cnt += isValid(tmpCoord, side);
-        }
-    return cnt;
 }
 
 void Board::move(Coord &pos)
@@ -414,11 +397,11 @@ void Board::recordPrint()
     cout << endl;
 }
 
-double Board::allEval(bool side) //Evaluation for all coordinates of side
+double Board::allEvalFor(bool side) //Evaluation for all cells of the side
 {
     int aval = 0;
-    for (int i = 0; i < SIDE_LENGTH; i++)
-        for (int j = 0; j < SIDE_LENGTH; j++)
+    for (int i = 1; i <= SIDE_LENGTH; i++)
+        for (int j = 1; j <= SIDE_LENGTH; j++)
             if (cell[i][j].stat == Status(side))
                 aval += cell[i][j].coord.value;
 

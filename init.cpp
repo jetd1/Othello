@@ -42,20 +42,32 @@ void menu()
                 AIFlag = NON_AI_MODE;
                 isAssistMode();
                 init();
-                gameThread(0, nullptr);
+                gameThread(Human, Human);
             case '2':
                 AIFlag = AI_MODE;
                 isAssistMode();
                 init();
                 selectSide();
-                selectDiff();
-                gameThread(0, nullptr);
+                AchillesInit(diff = selectDiff());
+                if (playerSide == Black)
+                    gameThread(Human, AI);
+                else
+                    gameThread(AI, Human);
             case '3':
                 autoFlag = true;
                 AIFlag = NON_AI_MODE;
                 assistFlag = true;
                 init();
-                autoPlayThread(0, nullptr);
+
+                short diffB, diffW;
+                CLS;
+                cout << "Please Set Mode of Achilles Playing Black" << endl << endl;
+                diffB = selectDiff();
+                CLS;
+                cout << "Please Set Mode of Achilles Playing White" << endl << endl;
+                diffW = selectDiff();
+
+                autoPlayThread(diffB, diffW);
             case '4':
                 UIFlag ^= 1;
                 menu();
@@ -119,11 +131,12 @@ void selectSide()
     playerSide = ((in == "W") ? White : Black);
 }
 
-void selectDiff()
+short selectDiff()
 {
     if (manualFlag)
-        return;
+        return diff;
 
+    short diff;
     if (!autoFlag)
     {
         CLS;
@@ -165,8 +178,7 @@ void selectDiff()
                 diff = 5;
                 break;
         }
-        if (!autoFlag)
-            AchillesInit(diff);
+        return diff;
     }
     else
     {
@@ -340,12 +352,15 @@ void debugMenu()
         debugFlag = true;
     else if (in == "NDEBUG")
         debugFlag = false;
-    else if (in == "FLIP")
+    else if (in == "FLIP"&&AIFlag == AI_MODE)
     {
         playerSide ^= 1;
-        gameThread(0, nullptr);
+        if (playerSide == Black)
+            gameThread(Human, AI);
+        else 
+            gameThread(AI, Human);
     }
-    else if (in == "WIN")
+    else if (in == "WIN"&&AIFlag == AI_MODE)
     {
         for (int i = 1; i <= SIDE_LENGTH; i++)
             for (int j = 1; j <= SIDE_LENGTH; j++)
@@ -353,7 +368,10 @@ void debugMenu()
         gameBoard.count();
         cPass = true;
         gameBoard.movesRecord.resize(63);
-        gameThread(0, nullptr);
+        if (playerSide == Black)
+            gameThread(Human, AI);
+        else
+            gameThread(AI, Human);
     }
     else
         cout << "^&$^%#*$" << endl;
