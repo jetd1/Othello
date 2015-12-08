@@ -14,77 +14,86 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="头文件\freeglut">
-      <UniqueIdentifier>{7ea483a8-3570-4188-9eb9-a7fc1fe7c4da}</UniqueIdentifier>
+      <UniqueIdentifier>{de6263cd-7a8c-4ec8-8b12-7bde10c50e86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\AI.cpp">
+    <ClCompile Include="..\..\..\UI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\board.cpp">
+    <ClCompile Include="..\..\..\Achilles.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\declarations.cpp">
+    <ClCompile Include="..\..\..\board.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\error.cpp">
+    <ClCompile Include="..\..\..\error.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\init.cpp">
+    <ClCompile Include="..\..\..\init.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\IO.cpp">
+    <ClCompile Include="..\..\..\IO.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\operations.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI.cpp">
+    <ClCompile Include="..\..\..\main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\elements.h">
+    <ClInclude Include="..\..\..\UI.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\AIbase.h">
+    <ClInclude Include="..\..\..\Achilles.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\base.h">
+    <ClInclude Include="..\..\..\base.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\freeglut\include\GL\freeglut_ext.h">
+    <ClInclude Include="..\..\..\board.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\elements.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\init.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\IO.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\freeglut\include\GL\freeglut.h">
       <Filter>头文件\freeglut</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\freeglut\include\GL\freeglut_std.h">
+    <ClInclude Include="..\..\..\freeglut\include\GL\glut.h">
       <Filter>头文件\freeglut</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\freeglut\include\GL\glut.h">
+    <ClInclude Include="..\..\..\freeglut\include\GL\freeglut_std.h">
       <Filter>头文件\freeglut</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\freeglut\include\GL\freeglut.h">
+    <ClInclude Include="..\..\..\freeglut\include\GL\freeglut_ext.h">
       <Filter>头文件\freeglut</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Makefile">
+    <None Include="..\..\..\Makefile">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="..\..\.gitattributes">
+    <None Include="..\..\..\.gitignore">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="..\..\.gitignore">
+    <None Include="..\..\..\.gitattributes">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\..\freeglut\lib\freeglut.lib">
+    <Library Include="..\..\..\freeglut\lib\freeglut.lib">
       <Filter>资源文件</Filter>
     </Library>
-    <Library Include="..\..\freeglut\lib\freeglut64.lib">
+    <Library Include="..\..\..\freeglut\lib\freeglut64.lib">
       <Filter>资源文件</Filter>
     </Library>
   </ItemGroup>

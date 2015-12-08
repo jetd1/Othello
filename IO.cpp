@@ -6,7 +6,7 @@
 void printVersion()
 {
     cout << "Othello Main Version " << MAIN_VERSION << endl;
-    cout << "Jacob Version " << JACOB_VERSION << endl << endl;
+    cout << "Achilles Version " << ACHILLES_VERSION << endl << endl;
     cout << "Copyleft 2015" << endl;
     cout << "By Jet" << endl;
     cout << endl;
@@ -29,7 +29,7 @@ Coord mouseInput()
 {
     inputFlag = false;
     mouseInputAvalable = true;
-    while (mouseMove == 0) SLP(100);
+    while (mouseMove == 0) SLP(1);
     Coord tmpCoord{xBuffer[mouseMove - 1], yBuffer[mouseMove - 1]};
     mouseMove--;
     inputFlag = true;
@@ -100,18 +100,18 @@ Coord keyboardInput()
     return tmpCoord;
 }
 
-void getCoord(getType T)
+void getCoord(playerType T)
 {
     switch (T)
     {
-        case Player:
+        case Human:
             if (UIFlag)
                 inputCoord = mouseInput();
             else
                 inputCoord = keyboardInput();
             break;
-        case Computer:
-            inputCoord = AI(gameBoard);
+        case AI:
+                inputCoord = CallAI(gameBoard);
             break;
         default:
             fatalError(1);
@@ -153,7 +153,6 @@ void loadGame(string loadName, int undoSteps)
     load.close();
     hload.close();
 
-    gameBoard.clear();
     init();
 
     load.open(loadName + ".save");
@@ -164,7 +163,7 @@ void loadGame(string loadName, int undoSteps)
     load >> diff;
 
     if (diff)
-        JacobInit(diff);
+        AchillesInit(diff);
 
     int movesCount;
     load >> movesCount;
@@ -176,7 +175,7 @@ void loadGame(string loadName, int undoSteps)
         Coord tmpCoord{};
         load >> tmpCoord.x;
         load >> tmpCoord.y;
-        gameBoard.move(gameBoard.movesRecord[i]);
+        gameBoard.move(tmpCoord);
     }
     load.close();
         
@@ -205,7 +204,7 @@ void help()
     cout << "1.EXIT: ABORT THE GAME AND EXIT." << endl << endl;
     cout << "2.MENU: ABORT THE GAME AND GO BACK TO THE MAIN MENU." << endl << endl;
     cout << "3.SAVE: SAVE THE GAME AND GO BACK TO THE MAIN MENU." << endl << endl;
-    cout << "4.UNDO: UNDO YOUR (AND JACOB'S) LAST MOVE." << endl << endl;
+    cout << "4.UNDO: UNDO YOUR (AND Achilles'S) LAST MOVE." << endl << endl;
     cout << "***************************************************" << endl;
     cout << endl << endl << endl;
     PAUSE;

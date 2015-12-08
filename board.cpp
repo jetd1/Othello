@@ -1,6 +1,7 @@
 ﻿#include "board.h"
 #include <iomanip>
 #include <sstream>
+#include <iterator>
 #include <algorithm>
 
 //construct function
@@ -14,6 +15,13 @@ Board::Board()  //need to rewrite
                 Empty};
         }
 
+    passCount = 0;
+    passFlag[Black] = passFlag[White] = false;
+
+    sideFrontier[White].clear();
+    sideFrontier[Black].clear();
+    allFrontier.clear();
+
     validCoord.clear();
     movesRecord.clear();
 
@@ -21,7 +29,6 @@ Board::Board()  //need to rewrite
         statusCount[i] = 0;
 
     statusCount[2] = 64;
-    vValue = 0;
 
     aValue[White] = aValue[Black] = 0;
     sideFlag = Black;
@@ -31,12 +38,7 @@ Board::Board()  //need to rewrite
 Cell* Board::operator [](int i) { return cell[i]; }
 short Board::operator ()(Status stat) { return statusCount[stat]; }
 short Board::operator ()(bool flag) { return statusCount[flag]; }
-bool Board::operator >(const Board &board)const { return vValue > board.vValue; }
-bool Board::operator <(const Board &board)const { return vValue < board.vValue; }
-bool Board::operator ==(const Board &board)const { return vValue == board.vValue; }
 bool Board::operator ==(const Status &stat)const { return int(sideFlag) == stat; }
-bool Board::operator >=(const Board &board)const { return vValue >= board.vValue; }
-bool Board::operator <=(const Board &board)const { return vValue <= board.vValue; }
 void Board::operator =(Board &board)     //need to rewrite
 {
     board.count();
@@ -44,13 +46,18 @@ void Board::operator =(Board &board)     //need to rewrite
         for (int j = 0; j < SAFE_LENGTH; j++)
             cell[i][j] = board.cell[i][j];
 
+    passCount = board.passCount;
+    passFlag[Black] = board.passFlag[Black];
+    passFlag[White] = board.passFlag[White];
+
+    sideFrontier[White] = board.sideFrontier[White];
+    sideFrontier[Black] = board.sideFrontier[Black];
+    allFrontier = board.allFrontier;
     validCoord = board.validCoord;
     movesRecord = board.movesRecord;
 
     for (int i = 0; i < 4; i++)
         statusCount[i] = board(Status(i));
-
-    vValue = board.vValue;
 
     aValue[White] = board.aValue[White];
     aValue[Black] = board.aValue[Black];
@@ -71,6 +78,12 @@ void Board::clear()
                 Empty};
         }
 
+    passCount = 0;
+    passFlag[Black] = passFlag[White] = false;
+
+    sideFrontier[White].clear();
+    sideFrontier[Black].clear();
+    allFrontier.clear();
     validCoord.clear();
     movesRecord.clear();
 
@@ -79,26 +92,7 @@ void Board::clear()
 
     statusCount[2] = 64;
 
-    vValue = 0;
-
     aValue[White] = aValue[Black] = 0;
-    sideFlag = Black;
-}
-
-void Board::cellclear()
-{
-    for (short i = 0; i < SAFE_LENGTH; i++)
-        for (short j = 0; j < SAFE_LENGTH; j++)
-        {
-            cell[i][j] = {
-                {i, j, coordChara[i][j]},
-                Empty};
-        }
-
-    validCoord.clear();
-
-    vValue = 0;
-
     sideFlag = Black;
 }
 
@@ -127,6 +121,29 @@ void Board::count()
 //    return statusCount[stat];
 //}
 
+void Board::setFrontierFor(bool side)
+{
+    sideFrontier[side].clear();
+    for (short i = 1; i <= SIDE_LENGTH; i++)
+        for (short j = 1; j <= SIDE_LENGTH; j++)
+            if (cell[i][j].stat == Status(side))
+                for (int d = 0; d < 8; d++)
+                {
+                    short x = i + dir[d][0];
+                    short y = j + dir[d][1];
+                    if (inRange(x, y) && (cell[x][y].stat >= Empty))
+                        sideFrontier[Status(side)].insert(cell[x][y].coord);
+                }
+}
+
+void Board::setFrontier()
+{
+    setFrontierFor(sideFlag);
+    setFrontierFor(!sideFlag);
+    allFrontier.clear();
+    set_union(sideFrontier[sideFlag].begin(), sideFrontier[sideFlag].end(), sideFrontier[!sideFlag].begin(), sideFrontier[!sideFlag].end(), inserter(allFrontier, allFrontier.begin()));
+}
+
 bool Board::isValid(Coord &pos, bool side)
 {
     if (!inRange(pos.x, pos.y))
@@ -140,8 +157,10 @@ bool Board::isValid(Coord &pos, bool side)
         {
             for (int p = pos.x + dx, q = pos.y + dy; inRange(p, q); p += dx, q += dy)
             {
-                if (cell[p][q].stat >= Empty) break;
-                if (cell[p][q].stat == int(side)) return true;
+                if (cell[p][q].stat >= Empty) 
+                    break;
+                if (cell[p][q].stat == int(side)) 
+                    return true;
             }
         }
     }
@@ -150,49 +169,54 @@ bool Board::isValid(Coord &pos, bool side)
 
 void Board::setValid()
 {
+    setFrontier();
     validCoord.clear();
     statusCount[Valid] = 0;
-    for (int i = 1; i <= SIDE_LENGTH; i++)
-        for (int j = 1; j <= SIDE_LENGTH; j++)
+    for (auto itr = allFrontier.begin(); itr != allFrontier.end(); itr++)
+    {
+        Coord tmpCoord = *itr;
+        short x = tmpCoord.x;
+        short y = tmpCoord.y;
+        if (isValid(tmpCoord, sideFlag))
         {
-            if (cell[i][j].stat <= Black) continue;
-
-            if (isValid(cell[i][j].coord, sideFlag))
-            {
-                cell[i][j].stat = Valid;
-                statusCount[Valid]++;
-                validCoord.push_back(cell[i][j].coord);
-            }
-            else cell[i][j].stat = Empty;
+            cell[x][y].stat = Valid;
+            statusCount[Valid]++;
+            validCoord.push_back(cell[x][y].coord);
         }
-    sort(validCoord.begin(), validCoord.end(), cmpCoordV);
+        else
+            cell[x][y].stat = Empty;
+    }
+        
+    sort(validCoord.begin(), validCoord.end(), cmpCoord);
 }
 
-void Board::setValidFor(bool side)
+short Board::countValidFor(bool side)
 {
-    validCoord.clear();
-    statusCount[Valid] = 0;
-    for (int i = 1; i <= SIDE_LENGTH; i++)
-        for (int j = 1; j <= SIDE_LENGTH; j++)
-        {
-            if (cell[i][j].stat <= Black) continue;
+    if (side = sideFlag)
+        return statusCount[Valid];
 
-            if (isValid(cell[i][j].coord, side))
-            {
-                cell[i][j].stat = Valid;
-                statusCount[Valid]++;
-                validCoord.push_back(cell[i][j].coord);
-            }
-            else cell[i][j].stat = Empty;
+    short cnt = 0;
+    for (int i = 1; i <= 8; i++)
+        for (int j = 1; j <= 8; j++)
+        {
+            Coord tmpCoord;
+            tmpCoord.x = i;
+            tmpCoord.y = j;
+            cnt += isValid(tmpCoord, side);
         }
+    return cnt;
 }
 
 void Board::move(Coord &pos)
 {
-    if (pos.x == -1)
+    if (pos.x == -1 && pos.y == -1)
+    {
         passCount++;
+        passFlag[sideFlag] = true;
+    }
 
-    if (inRange(pos.x, pos.y))
+    else if (inRange(pos.x, pos.y))
+    {
         for (int i = 0; i < 8; i++)
         {
             int dx = dir[i][0], dy = dir[i][1];
@@ -201,7 +225,8 @@ void Board::move(Coord &pos)
             {
                 for (int p = pos.x + dx, q = pos.y + dy; inRange(p, q); p += dx, q += dy)
                 {
-                    if (cell[p][q].stat >= Empty) break;
+                    if (cell[p][q].stat >= Empty)
+                        break;
                     if (cell[p][q].stat == Status(sideFlag))
                     {
                         cell[pos.x][pos.y].stat = Status(sideFlag);
@@ -213,6 +238,10 @@ void Board::move(Coord &pos)
                 }
             }
         }
+        passFlag[sideFlag] = false;
+    }
+    else
+        fatalError(1);
 
     movesRecord.push_back(pos);
     flipSide();
@@ -220,11 +249,12 @@ void Board::move(Coord &pos)
     count();
 }
 
+#ifdef WINDOWS_
 void Board::print()
 {
     if (!debugFlag)
     {
-        SLP(100);
+        SLP(1);
         CLS;
     }
     cout << endl;
@@ -233,11 +263,8 @@ void Board::print()
     cout << "      ";
     for (int i = 1; i <= SIDE_LENGTH; i++)
         cout << char('@' + i) << "   ";
-#ifdef WINDOWS_
+
     cout << endl << "    ┌─┬─┬─┬─┬─┬─┬─┬─┐" << endl;
-#else
-                    cout << endl << "    ┌───┬───┬───┬───┬───┬───┬───┬───┐" << endl;
-#endif
 
     for (int i = 1; i <= SIDE_LENGTH; i++)
     {
@@ -247,84 +274,134 @@ void Board::print()
             switch (cell[i][j].stat)
             {
                 case Black:
-#ifdef WINDOWS_
                     cout << "●│";
-#else
-                    cout << " ● │";
-#endif
                     break;
                 case White:
-#ifdef WINDOWS_
                     cout << "○│";
-#else
-                    cout << " ○ │";
-#endif
                     break;
                 case Empty:
-#ifdef WINDOWS_
                     cout << "  │";
-#else
-                    cout << "   │";
-#endif
                     break;
                 case Valid:
                     if (assistFlag && ((AIFlag == AI_MODE&&sideFlag == playerSide) || (AIFlag == NON_AI_MODE)))
-#ifdef WINDOWS_
-                    cout << " +│";
-#else
-                    cout << " + │";
-#endif
+                        cout << " +│";
                     else
-#ifdef WINDOWS_
-                    cout << "  │";
-#else
-                    cout << "   │";
-#endif
+                        cout << "  │";
                     break;
                 default:
                     fatalError(1);
             }
         }
-        if(i-SIDE_LENGTH)
-#ifdef WINDOWS_
+        if (i - SIDE_LENGTH)
             cout << endl << "    ├─┼─┼─┼─┼─┼─┼─┼─┤";
-#else
-                    cout << endl << "    ├───┼───┼───┼───┼───┼───┼───┼───┤";
-#endif
         else
-#ifdef WINDOWS_
             cout << endl << "    └─┴─┴─┴─┴─┴─┴─┴─┘";
-#else
-                    cout << endl << "    └───┴───┴───┴───┴───┴───┴───┴───┘";
-#endif
         if (i - SIDE_LENGTH) cout << endl;
     }
     cout << endl << left << "       "
         << "Black(●):" << setw(2) << statusCount[Black] << "    "
         << "White(○):" << setw(2) << statusCount[White] << endl;
 
-    if (movesRecord.size()&&AIFlag == AI_MODE&&sideFlag == playerSide&&!cPass)
+    if (movesRecord.size() && AIFlag == AI_MODE&&sideFlag == playerSide&&!cPass)
     {
         if (debugFlag)
         {
             ofstream out("timecsm.txt", ios::app);
-            out << "Jacob Placed a Stone at "
+            out << "Achilles Placed a Stone at "
                 << movesRecord[movesRecord.size() - 1].x
                 << char(movesRecord[movesRecord.size() - 1].y + '@')
                 << endl
                 << double(clock() - startTime) / CLOCKS_PER_SEC << " Seconds Consumed."
                 << endl << endl;
         }
-        cout << endl << "        "  
-            << "Jacob Placed a Stone at "
+        cout << endl << "        "
+            << "Achilles Placed a Stone at "
             << movesRecord[movesRecord.size() - 1].x
             << char(movesRecord[movesRecord.size() - 1].y + '@')
-            << endl << "          " 
+            << endl << "          "
             << double(clock() - startTime) / CLOCKS_PER_SEC << " Seconds Consumed."
             << endl << endl;
     }
     else cout << endl << endl;
 }
+
+#else
+void Board::print()
+{
+    if (!debugFlag)
+    {
+        SLP(1);
+        CLS;
+    }
+    cout << endl;
+    cout << "            Round " << movesRecord.size() + 1 << (sideFlag ? ", Black" : ", White") << " Turn" << endl;
+    cout << endl;
+    cout << "      ";
+    for (int i = 1; i <= SIDE_LENGTH; i++)
+        cout << char('@' + i) << "   ";
+
+    cout << endl << "    ┌───┬───┬───┬───┬───┬───┬───┬───┐" << endl;
+
+    for (int i = 1; i <= SIDE_LENGTH; i++)
+    {
+        cout << "   " << i << "│";
+        for (int j = 1; j <= SIDE_LENGTH; j++)
+        {
+            switch (cell[i][j].stat)
+            {
+                case Black:
+                    cout << " ● │";
+                    break;
+                case White:
+                    cout << " ○ │";
+                    break;
+                case Empty:
+                    cout << "   │";
+                    break;
+                case Valid:
+                    if (assistFlag && ((AIFlag == AI_MODE&&sideFlag == playerSide) || (AIFlag == NON_AI_MODE)))
+                        cout << " + │";
+                    else
+                        cout << "   │";
+                    break;
+                default:
+                    fatalError(1);
+            }
+        }
+        if (i - SIDE_LENGTH)
+            cout << endl << "    ├───┼───┼───┼───┼───┼───┼───┼───┤";
+        else
+            cout << endl << "    └───┴───┴───┴───┴───┴───┴───┴───┘";
+        if (i - SIDE_LENGTH) cout << endl;
+    }
+    cout << endl << left << "       "
+        << "Black(●):" << setw(2) << statusCount[Black] << "    "
+        << "White(○):" << setw(2) << statusCount[White] << endl;
+
+    if (movesRecord.size() && AIFlag == AI_MODE&&sideFlag == playerSide&&!cPass)
+    {
+        if (debugFlag)
+        {
+            ofstream out("timecsm.txt", ios::app);
+            out << "Achilles Placed a Stone at "
+                << movesRecord[movesRecord.size() - 1].x
+                << char(movesRecord[movesRecord.size() - 1].y + '@')
+                << endl
+                << double(clock() - startTime) / CLOCKS_PER_SEC << " Seconds Consumed."
+                << endl << endl;
+        }
+        cout << endl << "        "
+            << "Achilles Placed a Stone at "
+            << movesRecord[movesRecord.size() - 1].x
+            << char(movesRecord[movesRecord.size() - 1].y + '@')
+            << endl << "          "
+            << double(clock() - startTime) / CLOCKS_PER_SEC << " Seconds Consumed."
+            << endl << endl;
+    }
+    else cout << endl << endl;
+}
+
+#endif
 
 void Board::recordPrint()
 {
@@ -333,7 +410,7 @@ void Board::recordPrint()
         if (movesRecord[i].x != -1)
             cout << movesRecord[i].x << char(movesRecord[i].y + '@') << ' ';
         else
-            cout << "Pass" << ' ';
+            cout << "PASS" << ' ';
     cout << endl;
 }
 
@@ -347,46 +424,6 @@ double Board::allEval(bool side) //Evaluation for all coordinates of side
 
     aValue[side] = aval;
     return aValue[side];
-}
-
-short Board::frontierCount(bool side)
-{
-    short cnt = 0;
-    for (short i = 1; i <= SIDE_LENGTH; i++)
-        for (short j = 1; j <= SIDE_LENGTH; j++)
-            if (cell[i][j].stat == Status(side))
-                for (int d = 0; d < 8; d++)
-                {
-                    short x = i + dir[d][0];
-                    short y = j + dir[d][1];
-                    cnt += (inRange(x, y) && (cell[x][y].stat >= Empty));
-                }
-
-    return cnt;
-}
-
-//double Board::aEvalRate(bool side) { return double(allEval(side)) / allEval(!side); }
-//double Board::aEvalDiff(bool side) { return allEval(side) - allEval(!side); }
-
-//double Board::CountRate(bool side) { return double(count(Status(side))) / count(Status(!side)); }
-//double Board::CountDiff(bool side) { return count(Status(side)) - count(Status(!side)); }
-
-//double Board::frontierCountRate(bool side) { return double(frontierCount(side)) / frontierCount(!side); }
-//double Board::frontierCountDiff(bool side) { return frontierCount(side) - frontierCount(!side); }
-
-short Board::countValidFor(bool side)
-{
-    short cnt = 0;
-    for (int i = 1; i <= SIDE_LENGTH; i++)
-        for (int j = 1; j <= SIDE_LENGTH; j++)
-        {
-            Coord tmpCoord{};
-            tmpCoord.x = i;
-            tmpCoord.y = j;
-            cnt += isValid(tmpCoord, side);
-        }
-
-    return cnt;
 }
 
 bool Board::save(string saveName)
@@ -430,5 +467,3 @@ bool Board::save(string saveName)
 
     return true;
 }
-
-inline bool inRange(int p, int q) { return p >= 1 && p <= SIDE_LENGTH && q >= 1 && q <= SIDE_LENGTH; }

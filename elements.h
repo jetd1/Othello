@@ -2,16 +2,30 @@
 #define ELMTS_H
 
 #include "base.h"
+#include <set>
 
-enum getType { Player, Computer };
+enum playerType { Human, AI };
 enum Status { White, Black, Empty, Valid };    //Then status<Empty: Have Stone on It, status>=Empty: Truly Empty
                                                //White=false & Black=true
 
-struct Coord
+class Coord
 {
+public:
     short x;
     short y;
     short value;     //Characteristic Value (Fixed to Position)
+    bool operator <(const Coord coord)const
+    {
+        if (*this == coord)
+            return false;
+        else if (value != coord.value)
+            return value > coord.value;
+        else if (x != coord.x)
+            return x > coord.x;
+        else
+            return y > coord.y;
+    }
+    bool operator ==(const Coord coord)const { return x == coord.x&&y == coord.y; }
 };
 
 struct Cell
@@ -19,6 +33,7 @@ struct Cell
     Coord coord;
     Status stat;
 };
+
 
 class Board
 {
@@ -28,9 +43,12 @@ private:
     Cell cell[SAFE_LENGTH][SAFE_LENGTH];
 
 public:   
+    bool passFlag[2];
+    short passCount;
+    set<Coord> sideFrontier[2];
+    set<Coord> allFrontier;
     vector<Coord> validCoord;
     vector<Coord> movesRecord;
-    double vValue;
     double aValue[2];
     
 
@@ -38,12 +56,7 @@ public:
     Board();
 
     void operator =(Board &board);
-    bool operator >(const Board &board)const;
-    bool operator <(const Board &board)const;
-    bool operator ==(const Board &board)const;
     bool operator ==(const Status &stat)const;
-    bool operator >=(const Board &board)const;
-    bool operator <=(const Board &board)const;
     bool operator !()const;
     bool operator ~()const;
     Cell* operator [](int i);
@@ -51,13 +64,12 @@ public:
     short operator ()(bool flag);
 
     void clear();
-    void cellclear();
     void flipSide();
     void count();
-    short count(Status stat);
     bool isValid(Coord &pos, bool side);
+    void setFrontier();
+    void setFrontierFor(bool side);
     void setValid();
-    void setValidFor(bool side);
     void move(Coord &pos);
     void print();
     void recordPrint();
@@ -65,20 +77,26 @@ public:
 
     double validEval(bool side);
     double allEval(bool side);
-    short frontierCount(bool side);
 
-    double aEvalRate(bool side);
-    double aEvalDiff(bool side);
-    double CountRate(bool side);
-    double CountDiff(bool side);
-    double frontierCountRate(bool side);
-    double frontierCountDiff(bool side);
     short countValidFor(bool side);
     bool save(string saveName = "Othello");
 
     //todo
     void colorReverse();
     void randomize();
+
+    inline bool Board::end()
+    {
+        return (!statusCount[Empty] || !statusCount[Black] || !statusCount[White] || (passFlag[Black] && passFlag[White]));
+    }
+
+    inline int Board::isWin(bool side)
+    {
+        return (end() && (statusCount[side] > statusCount[!side])) ? statusCount[side] - statusCount[!side] : 0;
+    }
+
+    inline bool Board::inRange(int p, int q) { return p >= 1 && p <= SIDE_LENGTH && q >= 1 && q <= SIDE_LENGTH; }
 };
+
 
 #endif

@@ -17,8 +17,8 @@ void menu()
         cout << endl;
 
     cout << "1.Play with Friends" << endl;
-    cout << "2.Play with Jacob" << endl;
-    cout << "3.Jacob Auto Play" << endl;
+    cout << "2.Play with Achilles" << endl;
+    cout << "3.Achilles Auto Play" << endl;
     if (UIFlag)
         cout << "4.Turn Off GUI" << endl;
     else
@@ -40,13 +40,11 @@ void menu()
         {
             case '1':
                 AIFlag = NON_AI_MODE;
-                gameBoard.clear();
                 isAssistMode();
                 init();
                 gameThread(0, nullptr);
             case '2':
                 AIFlag = AI_MODE;
-                gameBoard.clear();
                 isAssistMode();
                 init();
                 selectSide();
@@ -55,10 +53,9 @@ void menu()
             case '3':
                 autoFlag = true;
                 AIFlag = NON_AI_MODE;
-                gameBoard.clear();
                 assistFlag = true;
                 init();
-                autoPlay();
+                autoPlayThread(0, nullptr);
             case '4':
                 UIFlag ^= 1;
                 menu();
@@ -84,8 +81,11 @@ void menu()
     menu();
 }
 
-void init() //must gameBoard.clear() or cellclear() before init;
+void init()
 {
+    srand(unsigned(clock()));
+
+    gameBoard.clear();
     for (int i = 0; i < SAFE_LENGTH; i++)
         for (int j = 0; j < SAFE_LENGTH; j++)
         {
@@ -96,10 +96,8 @@ void init() //must gameBoard.clear() or cellclear() before init;
         }
     gameBoard[SIDE_LENGTH / 2][SIDE_LENGTH / 2].stat = gameBoard[SIDE_LENGTH / 2 + 1][SIDE_LENGTH / 2 + 1].stat = White;
     gameBoard[SIDE_LENGTH / 2][SIDE_LENGTH / 2 + 1].stat = gameBoard[SIDE_LENGTH / 2 + 1][SIDE_LENGTH / 2].stat = Black;
-    sidePass = 0;
-    passCount = 0;
-    gameBoard.count();
     gameBoard.setValid();
+    gameBoard.count();
     playerSide = Black;
 }
 
@@ -168,7 +166,7 @@ void selectDiff()
                 break;
         }
         if (!autoFlag)
-            JacobInit(diff);
+            AchillesInit(diff);
     }
     else
     {
@@ -196,7 +194,7 @@ void isAssistMode()
     assistFlag = ((in == "Y") ? true : false);
 }
 
-void JacobInit(short diff)
+void AchillesInit(short diff)
 {
     switch (diff)
     {
@@ -205,15 +203,23 @@ void JacobInit(short diff)
             break;
         case 2:
             maxDepth = 1;
+            finalSearch = false;
+            randomFlag = true;
             break;
         case 3:
             maxDepth = 3;
+            finalSearch = false;
+            randomFlag = true;
             break;
         case 4:
             maxDepth = 5;
+            finalSearch = false;
+            randomFlag = true;
             break;
         case 5:
             maxDepth = 8;
+            finalSearch = true;
+            randomFlag = false;
             break;
         default:
             fatalError(1);
@@ -323,31 +329,6 @@ void debugMenu()
     string in;
     cin >> in;
     transform(in.begin(), in.end(), in.begin(), ::toupper);
-/*    if (in == "TSEN")
-    {
-        double ALPHA = -2000;
-        double LOWERA = 5;
-        double LOWERB = 90;
-        double BETA = 2000;
-        cout << "UPUPDOWNDOWN" << endl;
-    }
-    else if (in == "ZEBRA")
-    {
-        double ALPHA = -2000;
-        double LOWERA = -80;
-        double LOWERB = 30;
-        double BETA = 2000;
-        cout << "UPUPDOWNDOWN" << endl;
-    }
-    else if (in == "DEFAULT" || in == "HUMAN")
-    {
-        double ALPHA = -2000;
-        double LOWERA = -10;
-        double LOWERB = 100;
-        double BETA = 2000;
-        cout << "UPUPDOWNDOWN" << endl;
-    }
-    else */
     if (in == "SETDEPTH")
     {
         cin >> maxDepth;

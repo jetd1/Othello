@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{32292A9C-2918-4BCF-8271-106EF7DBA9B3}</ProjectGuid>
+    <ProjectGuid>{962433A4-7D86-4B1A-8367-F43E4212E8AA}</ProjectGuid>
     <RootNamespace>JetOthello</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -118,33 +118,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\AI.cpp" />
-    <ClCompile Include="..\..\board.cpp" />
-    <ClCompile Include="..\..\declarations.cpp" />
-    <ClCompile Include="..\..\error.cpp" />
-    <ClCompile Include="..\..\init.cpp" />
-    <ClCompile Include="..\..\IO.cpp" />
-    <ClCompile Include="..\..\main.cpp" />
-    <ClCompile Include="..\..\operations.cpp" />
-    <ClCompile Include="..\..\UI.cpp" />
+    <ClCompile Include="..\..\..\Achilles.cpp" />
+    <ClCompile Include="..\..\..\board.cpp" />
+    <ClCompile Include="..\..\..\error.cpp" />
+    <ClCompile Include="..\..\..\init.cpp" />
+    <ClCompile Include="..\..\..\IO.cpp" />
+    <ClCompile Include="..\..\..\main.cpp" />
+    <ClCompile Include="..\..\..\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\AIbase.h" />
-    <ClInclude Include="..\..\base.h" />
-    <ClInclude Include="..\..\elements.h" />
-    <ClInclude Include="..\..\freeglut\include\GL\freeglut.h" />
-    <ClInclude Include="..\..\freeglut\include\GL\freeglut_ext.h" />
-    <ClInclude Include="..\..\freeglut\include\GL\freeglut_std.h" />
-    <ClInclude Include="..\..\freeglut\include\GL\glut.h" />
+    <ClInclude Include="..\..\..\Achilles.h" />
+    <ClInclude Include="..\..\..\base.h" />
+    <ClInclude Include="..\..\..\board.h" />
+    <ClInclude Include="..\..\..\elements.h" />
+    <ClInclude Include="..\..\..\freeglut\include\GL\freeglut.h" />
+    <ClInclude Include="..\..\..\freeglut\include\GL\freeglut_ext.h" />
+    <ClInclude Include="..\..\..\freeglut\include\GL\freeglut_std.h" />
+    <ClInclude Include="..\..\..\freeglut\include\GL\glut.h" />
+    <ClInclude Include="..\..\..\init.h" />
+    <ClInclude Include="..\..\..\IO.h" />
+    <ClInclude Include="..\..\..\main.h" />
+    <ClInclude Include="..\..\..\UI.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\.gitattributes" />
-    <None Include="..\..\.gitignore" />
-    <None Include="..\..\Makefile" />
+    <None Include="..\..\..\.gitattributes" />
+    <None Include="..\..\..\.gitignore" />
+    <None Include="..\..\..\Makefile" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\..\freeglut\lib\freeglut.lib" />
-    <Library Include="..\..\freeglut\lib\freeglut64.lib" />
+    <Library Include="..\..\..\freeglut\lib\freeglut.lib" />
+    <Library Include="..\..\..\freeglut\lib\freeglut64.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

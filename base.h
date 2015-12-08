@@ -5,9 +5,6 @@
 #define PAUSE cin.clear();cin.sync();cin.get();cin.get()
 
 //OpenGL flaw fix
-//#ifndef FREEGLUT_STATIC
-//#define FREEGLUT_STATIC
-//#endif
 #ifndef GLUT_DISABLE_ATEXIT_HACK
 #define GLUT_DISABLE_ATEXIT_HACK
 #endif
@@ -66,6 +63,7 @@
 #include <string>
 #include <cctype>
 #include <vector>
+#include <cassert>
 
 ////Namespaces
 using namespace std;
@@ -74,8 +72,8 @@ using namespace std;
 ////Macro Arguments
 
 //Version Information
-#define MAIN_VERSION "1.8"
-#define JACOB_VERSION "1.7.4"
+#define MAIN_VERSION "2.0"
+#define ACHILLES_VERSION "2.2"
 #define PRINT_VERSION true
 
 //Not Changeable

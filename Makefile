@@ -2,7 +2,7 @@
 
 DIR = bin
 BIN = $(DIR)/JetOthello
-OBJ = $(DIR)/main.o $(DIR)/UI.o $(DIR)/error.o $(DIR)/init.o $(DIR)/IO.o $(DIR)/Jacob.o $(DIR)/board.o
+OBJ = $(DIR)/main.o $(DIR)/UI.o $(DIR)/error.o $(DIR)/init.o $(DIR)/IO.o $(DIR)/Achilles.o $(DIR)/board.o
 LIB = -Lfreeglut -Wl,-Bstatic -lglut -Wl,-Bdynamic -lXxf86vm -g3 -lpthread -lGL -lX11 -lXi -lXrandr
 CXX = g++
 CXXFLAGS = -I"freeglut/include" -Wall -g3 -ofast -std=c++11
@@ -26,7 +26,7 @@ init.h : elements.h
 
 IO.h : elements.h
 
-Jacob.h : base.h
+Achilles.h : base.h
 
 main.h : elements.h
 
@@ -47,7 +47,7 @@ $(DIR)/init.o : init.cpp init.h
 $(DIR)/IO.o : IO.cpp IO.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(DIR)/Jacob.o : Jacob.cpp elements.h Jacob.h
+$(DIR)/Achilles.o : Achilles.cpp elements.h Achilles.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(DIR)/board.o : board.cpp board.h

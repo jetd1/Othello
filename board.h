@@ -2,16 +2,15 @@
 #define BOARD_H
 
 #include "elements.h"
-#include "ctime"
+#include <ctime>
 
 inline bool inRange(int, int);
 
 extern void fatalError(unsigned);
-extern bool cmpCoordV(const Coord&, const Coord&);
+extern bool cmpCoord(const Coord&, const Coord&);
 
 extern short diff;
 extern clock_t startTime;
-extern short sidePass, passCount;
 extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
 extern bool debugFlag, assistFlag, AIFlag, playerSide, cPass;
 

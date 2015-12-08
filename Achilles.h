@@ -1,19 +1,17 @@
-#ifndef JACOB_H
-#define JACOB_H
+#ifndef Achilles_H
+#define ACHILLES_H
 
 #include "base.h"
 #include <ctime>
-#define ALPHA -3000
+#define ALPHA INT_MIN
 
-#define BETA 3000
+#define BETA INT_MAX
 
-#define MINWINDOW 10
+#define MINWINDOW 1
 
 #define TIME_OUT 100
 
 #define RANDFACTOR 24
-
-#define MULTI_THREAD false
 
 #if SIDE_LENGTH==8
 short coordChara[SAFE_LENGTH][SAFE_LENGTH] =
@@ -34,32 +32,31 @@ short coordChara[SAFE_LENGTH][SAFE_LENGTH] =
 short coordChara[SAFE_LENGTH][SAFE_LENGTH]{};
 #endif
 
-double ABReturn[3];
-Coord bestCoord[3];
+double ABReturn;
 clock_t startTime;
 double ABLast = 0;
-double BWFACTOR, CNFACTOR, DCFACTOR;
+double BWFACTOR[2];
+double CNFACTOR[2];
+double DCFACTOR[2];
+double SDFACTOR;
+double MBFACTOR;
+double FRFACTOR;
+double CRFACTOR;
 
 extern Coord inputCoord;
 extern Board gameBoard;
-extern short maxDepth, passCount;
-extern bool debugFlag, playerSide, randomFlag;
+extern short maxDepth;
+extern bool debugFlag, playerSide, randomFlag, finalSearch;
 extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
 
 extern void fatalError(unsigned);
 
-Coord RandomJacob(Board&);
-Coord multiThreadABSearch(Board&);
-Coord AI(Board &board);
+Coord Hector(Board&);
+Coord CallAI(Board &board);
 double BoardEval(Board&);
-double ABJacob(Board &board = gameBoard, short depth = maxDepth, double alpha = ALPHA, double beta = BETA, short r = 0);
+double Achilles(Board &board = gameBoard, short depth = maxDepth, double alpha = ALPHA, double beta = BETA, Coord &bestCoord = inputCoord);
 
-bool cmpBoard(const Board&, const Board&);
-bool rcmpBoard(const Board&, const Board&);
-bool cmpCoordV(const Coord&, const Coord&);
-bool rcmpCoordV(const Coord&, const Coord&);
-bool cmpCoordC(const Coord&, const Coord&);
-bool rcmpCoordC(const Coord&, const Coord&);
+bool cmpCoord(const Coord&, const Coord&);
 
 
 

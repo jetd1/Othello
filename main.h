@@ -7,27 +7,26 @@ Coord passCoord = {-1, -1};
 
 Coord inputCoord;
 Board gameBoard;
-short maxDepth, sidePass;
+short maxDepth;
 bool UIFlag, debugFlag, AIFlag, assistFlag, inputFlag, playerSide, saveError, manualFlag, randomFlag, cPass;
 
 extern Coord passCoord;
 extern int ALPHA, BETA;
-extern short passCount, diff;
-extern bool drawable,debugCalled;
-extern double ABReturn[3];
+extern short diff;
+extern bool drawable,debugCalled,autoFlag;
+extern double ABReturn;
 
 int main(int, char**);
 void gameThread(int, char**);
 void othelloMain();
+void autoPlayThread(int, char**);
 void autoPlay();
 void judge();
 
-inline bool gameEnd();
-
 extern void menu();
 extern void selectDiff();
-extern void JacobInit(short);
-extern void getCoord(getType);
+extern void AchillesInit(short);
+extern void getCoord(playerType);
 extern void initUI(int, char**);
 
 
