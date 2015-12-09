@@ -40,12 +40,11 @@ class Board
 private:
     bool sideFlag;
     short statusCount[4];
-    Cell cell[SAFE_LENGTH][SAFE_LENGTH];
+    Cell cell[10][10];
 
 public:   
     bool passFlag[2];
     short validCountFor[2];
-    short passCount;
     set<Coord> sideFrontier[2];
     set<Coord> allFrontier;
     vector<Coord> validCoord;
@@ -67,15 +66,15 @@ public:
     void clear();
     void flipSide();
     void count();
-    bool isValid(Coord&, bool);
+    bool isValid(Coord&, const bool&);
     void setFrontier();
-    void setFrontierFor(bool);
+    void setFrontierFor(const bool&);
     void setValid();
     void move(Coord&);
     void print();
     void recordPrint();
 
-    double allEvalFor(bool);
+    double allEvalFor(const bool&);
 
     bool save(string saveName = "Othello");
 
@@ -93,7 +92,7 @@ public:
         return (end() && (statusCount[side] > statusCount[!side])) ? statusCount[side] - statusCount[!side] : 0;
     }
 
-    inline bool Board::inRange(int p, int q) { return p >= 1 && p <= SIDE_LENGTH && q >= 1 && q <= SIDE_LENGTH; }
+    inline bool Board::inRange(int p, int q) { return p >= 1 && p <= 8 && q >= 1 && q <= 8; }
 };
 
 

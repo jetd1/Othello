@@ -11,7 +11,7 @@ extern bool cmpCoord(const Coord&, const Coord&);
 
 extern short diff;
 extern clock_t startTime;
-extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
+extern short coordChara[10][10];
 extern bool debugFlag, assistFlag, AIFlag, playerSide, cPass;
 
 short dir[8][2] = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};

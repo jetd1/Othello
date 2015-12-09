@@ -17,8 +17,8 @@ void mouseKey(int button, int state, int x, int y)
 {
     if (!mouseInputAvailable) return;
     if (state != GLUT_DOWN) return;
-    yBuffer[mouseMove] = (x / (screenSize / SIDE_LENGTH)) + 1;
-    xBuffer[mouseMove] = (y / (screenSize / SIDE_LENGTH)) + 1;
+    yBuffer[mouseMove] = (x / (screenSize / 8)) + 1;
+    xBuffer[mouseMove] = (y / (screenSize / 8)) + 1;
     mouseMove++;
     mouseInputAvailable = false;
     return;
@@ -86,12 +86,12 @@ Coord keyboardInput()
 
     if (input.length() == 2)
     {
-        if (input[0] >= START_COORD_Y&&input[0] <= END_COORD_Y&&input[1] >= START_COORD_X&&input[1] <= END_COORD_X)
+        if (input[0] >= 'A'&&input[0] <= 'H'&&input[1] >= '1'&&input[1] <= '8')
         {
             input.assign(input.rbegin(), input.rend());
             inputFlag = true;
         }
-        else if (input[0] >= START_COORD_X&&input[0] <= END_COORD_X&&input[1] >= START_COORD_Y&&input[1] <= END_COORD_Y)
+        else if (input[0] >= '1'&&input[0] <= '8'&&input[1] >= 'A'&&input[1] <= 'H')
             inputFlag = true;
         else return tmpCoord;
 

@@ -4,9 +4,9 @@
 #include "elements.h"
 
 const double M_PI = 3.14159265358979323846;
-int CIRCLE_MAX = 50;
+const int CIRCLE_MAX = 50;
 int screenSize = 400;
-bool drawable = true;
+volatile bool drawable = true;
 
 extern Board gameBoard;
 extern bool AIFlag, assistFlag, inputFlag, playerSide;

@@ -25,7 +25,7 @@ bool autoFlag = false, debugCalled = false, finalSearch = false;
 
 extern Board gameBoard;
 extern short maxDepth;
-extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
+extern short coordChara[10][10];
 extern double BWFACTOR, CNFACTOR, DCFACTOR;
 extern bool assistFlag, AIFlag, UIFlag, playerSide, manualFlag, randomFlag, debugFlag, cPass;
 

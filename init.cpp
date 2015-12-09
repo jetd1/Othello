@@ -98,16 +98,16 @@ void init()
     srand(unsigned(clock()));
 
     gameBoard.clear();
-    for (int i = 0; i < SAFE_LENGTH; i++)
-        for (int j = 0; j < SAFE_LENGTH; j++)
+    for (int i = 0; i < 10; i++)
+        for (int j = 0; j < 10; j++)
         {
             gameBoard[i][j].stat = Empty;
             gameBoard[i][j].coord.x = i;
             gameBoard[i][j].coord.y = j;
             if (AIFlag == AI_MODE) gameBoard[i][j].coord.value = coordChara[i][j];
         }
-    gameBoard[SIDE_LENGTH / 2][SIDE_LENGTH / 2].stat = gameBoard[SIDE_LENGTH / 2 + 1][SIDE_LENGTH / 2 + 1].stat = White;
-    gameBoard[SIDE_LENGTH / 2][SIDE_LENGTH / 2 + 1].stat = gameBoard[SIDE_LENGTH / 2 + 1][SIDE_LENGTH / 2].stat = Black;
+    gameBoard[4][4].stat = gameBoard[5][5].stat = White;
+    gameBoard[4][5].stat = gameBoard[5][4].stat = Black;
     gameBoard.setValid();
     gameBoard.count();
     playerSide = Black;
@@ -362,8 +362,8 @@ void debugMenu()
     }
     else if (in == "WIN"&&AIFlag == AI_MODE)
     {
-        for (int i = 1; i <= SIDE_LENGTH; i++)
-            for (int j = 1; j <= SIDE_LENGTH; j++)
+        for (int i = 1; i <= 8; i++)
+            for (int j = 1; j <= 8; j++)
                 gameBoard[i][j].stat = Status(playerSide);
         gameBoard.count();
         cPass = true;

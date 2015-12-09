@@ -13,8 +13,8 @@
 
 #define RANDFACTOR 24
 
-#if SIDE_LENGTH==8
-short coordChara[SAFE_LENGTH][SAFE_LENGTH] =
+#if 8==8
+short coordChara[10][10] =
 {
     {-8,-8,-8,-8,-8,-8,-8,-8,-8,-8},
     {-8,20,-3,11, 8, 8,11,-3,20,-8},
@@ -29,7 +29,7 @@ short coordChara[SAFE_LENGTH][SAFE_LENGTH] =
 };
 
 #else
-short coordChara[SAFE_LENGTH][SAFE_LENGTH]{};
+short coordChara[10][10]{};
 #endif
 
 double ABReturn;
@@ -47,7 +47,7 @@ extern Coord inputCoord;
 extern Board gameBoard;
 extern short maxDepth;
 extern bool debugFlag, playerSide, randomFlag, finalSearch;
-extern short coordChara[SAFE_LENGTH][SAFE_LENGTH];
+extern short coordChara[10][10];
 
 extern void fatalError(unsigned);
 

@@ -7,8 +7,8 @@
 //construct function
 Board::Board()  //need to rewrite
 {
-    for (short i = 0; i < SAFE_LENGTH; i++)
-        for (short j = 0; j < SAFE_LENGTH; j++)
+    for (short i = 0; i < 10; i++)
+        for (short j = 0; j < 10; j++)
         {
             cell[i][j] = {
                 {i, j, coordChara[i][j]},
@@ -16,7 +16,6 @@ Board::Board()  //need to rewrite
         }
     validCountFor[Black] = validCountFor[White] = 0;
 
-    passCount = 0;
     passFlag[Black] = passFlag[White] = false;
 
     sideFrontier[White].clear();
@@ -43,14 +42,13 @@ bool Board::operator ==(const Status &stat)const { return int(sideFlag) == stat;
 void Board::operator =(Board &board)     //need to rewrite
 {
     board.count();
-    for (int i = 0; i < SAFE_LENGTH; i++)
-        for (int j = 0; j < SAFE_LENGTH; j++)
+    for (int i = 0; i < 10; i++)
+        for (int j = 0; j < 10; j++)
             cell[i][j] = board.cell[i][j];
 
     validCountFor[Black] = board.validCountFor[Black];
     validCountFor[White] = board.validCountFor[White];
 
-    passCount = board.passCount;
     passFlag[Black] = board.passFlag[Black];
     passFlag[White] = board.passFlag[White];
 
@@ -74,8 +72,8 @@ bool Board::operator !()const { return Status(!sideFlag); }
 //member functions
 void Board::clear()
 {
-    for (short i = 0; i < SAFE_LENGTH; i++)
-        for (short j = 0; j < SAFE_LENGTH; j++)
+    for (short i = 0; i < 10; i++)
+        for (short j = 0; j < 10; j++)
         {
             cell[i][j] = {
                 {i, j, coordChara[i][j]},
@@ -83,7 +81,6 @@ void Board::clear()
         }
 
     validCountFor[Black] = validCountFor[White] = 0;
-    passCount = 0;
     passFlag[Black] = passFlag[White] = false;
 
     sideFrontier[White].clear();
@@ -106,8 +103,8 @@ void Board::flipSide() { sideFlag ^= 1; }
 void Board::count()
 {
     statusCount[Black] = statusCount[White] = statusCount[Empty] = 0;
-    for (int i = 1; i <= SIDE_LENGTH; i++)
-        for (int j = 1; j <= SIDE_LENGTH; j++)
+    for (int i = 1; i <= 8; i++)
+        for (int j = 1; j <= 8; j++)
         {
             statusCount[Black] += (cell[i][j].stat == Black);
             statusCount[White] += (cell[i][j].stat == White);
@@ -115,11 +112,11 @@ void Board::count()
         }
 }
 
-void Board::setFrontierFor(bool side)
+void Board::setFrontierFor(const bool& side)
 {
     sideFrontier[side].clear();
-    for (short i = 1; i <= SIDE_LENGTH; i++)
-        for (short j = 1; j <= SIDE_LENGTH; j++)
+    for (short i = 1; i <= 8; i++)
+        for (short j = 1; j <= 8; j++)
             if (cell[i][j].stat == Status(side))
                 for (int d = 0; d < 8; d++)
                 {
@@ -138,7 +135,7 @@ void Board::setFrontier()
     set_union(sideFrontier[sideFlag].begin(), sideFrontier[sideFlag].end(), sideFrontier[!sideFlag].begin(), sideFrontier[!sideFlag].end(), inserter(allFrontier, allFrontier.begin()));
 }
 
-bool Board::isValid(Coord &pos, bool side)
+bool Board::isValid(Coord &pos, const bool& side)
 {
     if (!inRange(pos.x, pos.y))
         return false;
@@ -193,10 +190,7 @@ void Board::setValid()
 void Board::move(Coord &pos)
 {
     if (pos.x == -1 && pos.y == -1)
-    {
-        passCount++;
         passFlag[sideFlag] = true;
-    }
 
     else if (inRange(pos.x, pos.y))
     {
@@ -244,15 +238,15 @@ void Board::print()
     cout << "            Round " << movesRecord.size() + 1 << (sideFlag ? ", Black" : ", White") << " Turn" << endl;
     cout << endl;
     cout << "      ";
-    for (int i = 1; i <= SIDE_LENGTH; i++)
+    for (int i = 1; i <= 8; i++)
         cout << char('@' + i) << "   ";
 
     cout << endl << "    ┌─┬─┬─┬─┬─┬─┬─┬─┐" << endl;
 
-    for (int i = 1; i <= SIDE_LENGTH; i++)
+    for (int i = 1; i <= 8; i++)
     {
         cout << "   " << i << "│";
-        for (int j = 1; j <= SIDE_LENGTH; j++)
+        for (int j = 1; j <= 8; j++)
         {
             switch (cell[i][j].stat)
             {
@@ -275,11 +269,11 @@ void Board::print()
                     fatalError(1);
             }
         }
-        if (i - SIDE_LENGTH)
+        if (i - 8)
             cout << endl << "    ├─┼─┼─┼─┼─┼─┼─┼─┤";
         else
             cout << endl << "    └─┴─┴─┴─┴─┴─┴─┴─┘";
-        if (i - SIDE_LENGTH) cout << endl;
+        if (i - 8) cout << endl;
     }
     cout << endl << left << "       "
         << "Black(●):" << setw(2) << statusCount[Black] << "    "
@@ -320,15 +314,15 @@ void Board::print()
     cout << "            Round " << movesRecord.size() + 1 << (sideFlag ? ", Black" : ", White") << " Turn" << endl;
     cout << endl;
     cout << "      ";
-    for (int i = 1; i <= SIDE_LENGTH; i++)
+    for (int i = 1; i <= 8; i++)
         cout << char('@' + i) << "   ";
 
     cout << endl << "    ┌───┬───┬───┬───┬───┬───┬───┬───┐" << endl;
 
-    for (int i = 1; i <= SIDE_LENGTH; i++)
+    for (int i = 1; i <= 8; i++)
     {
         cout << "   " << i << "│";
-        for (int j = 1; j <= SIDE_LENGTH; j++)
+        for (int j = 1; j <= 8; j++)
         {
             switch (cell[i][j].stat)
             {
@@ -351,11 +345,11 @@ void Board::print()
                     fatalError(1);
             }
         }
-        if (i - SIDE_LENGTH)
+        if (i - 8)
             cout << endl << "    ├───┼───┼───┼───┼───┼───┼───┼───┤";
         else
             cout << endl << "    └───┴───┴───┴───┴───┴───┴───┴───┘";
-        if (i - SIDE_LENGTH) cout << endl;
+        if (i - 8) cout << endl;
     }
     cout << endl << left << "       "
         << "Black(●):" << setw(2) << statusCount[Black] << "    "
@@ -397,11 +391,11 @@ void Board::recordPrint()
     cout << endl;
 }
 
-double Board::allEvalFor(bool side) //Evaluation for all cells of the side
+double Board::allEvalFor(const bool& side) //Evaluation for all cells of the side
 {
     int aval = 0;
-    for (int i = 1; i <= SIDE_LENGTH; i++)
-        for (int j = 1; j <= SIDE_LENGTH; j++)
+    for (int i = 1; i <= 8; i++)
+        for (int j = 1; j <= 8; j++)
             if (cell[i][j].stat == Status(side))
                 aval += cell[i][j].coord.value;
 

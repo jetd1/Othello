@@ -72,23 +72,13 @@ using namespace std;
 ////Macro Arguments
 
 //Version Information
-#define MAIN_VERSION "2.0"
-#define ACHILLES_VERSION "2.2"
+#define MAIN_VERSION "3.0"
+#define ACHILLES_VERSION "2.9"
 #define PRINT_VERSION true
 
 //Not Changeable
 #define AI_MODE true
 #define NON_AI_MODE false
-
-//Changeable
-#define SIDE_LENGTH 8
-#define SAFE_LENGTH SIDE_LENGTH+2
-
-#define START_COORD_X '1'
-#define END_COORD_X '0'+SIDE_LENGTH
-#define START_COORD_Y 'A'
-#define END_COORD_Y '@'+SIDE_LENGTH
-
 
 #endif
 

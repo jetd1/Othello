@@ -78,12 +78,12 @@ void drawBoard()
     glColor3d(0.0, 0.0, 0.0);
     glLineWidth(3);
     glBegin(GL_LINES);
-    for (int i = 1; i < SIDE_LENGTH; ++i)
+    for (int i = 1; i < 8; ++i)
     {
         glVertex2d(-1.0, 0.25*i - 1.0);
         glVertex2d(1.0, 0.25*i - 1.0);
     }
-    for (int i = 1; i < SIDE_LENGTH; ++i)
+    for (int i = 1; i < 8; ++i)
     {
         glVertex2d(0.25*i - 1.0, -1.0);
         glVertex2d(0.25*i - 1.0, 1.0);
@@ -93,9 +93,9 @@ void drawBoard()
 
 void drawStone()
 {
-    for (int i = 1; i <= SIDE_LENGTH; ++i)
+    for (int i = 1; i <= 8; ++i)
     {
-        for (int j = 1; j <= SIDE_LENGTH; ++j)
+        for (int j = 1; j <= 8; ++j)
         {
             switch (gameBoard[i][j].stat)
             {
@@ -146,7 +146,7 @@ void initUI(int argc, char **argv)
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
     glutInitWindowPosition(100, 100);
-    glutInitWindowSize(50 * SIDE_LENGTH, 50 * SIDE_LENGTH);
+    glutInitWindowSize(50 * 8, 50 * 8);
     glutCreateWindow("Othello");
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
     glutDisplayFunc(&display);

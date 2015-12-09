@@ -13,8 +13,9 @@ bool UIFlag, debugFlag, AIFlag, assistFlag, inputFlag, playerSide, saveError, ma
 extern Coord passCoord;
 extern int ALPHA, BETA;
 extern short diff;
-extern bool drawable,debugCalled,autoFlag;
+extern bool debugCalled, autoFlag;
 extern double ABReturn;
+extern volatile bool drawable;
 
 int main(int, char**);
 void gameThread(playerType, playerType);
