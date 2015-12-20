@@ -6,31 +6,22 @@ void menu()
 {
     CLS;
 
-    if (PRINT_VERSION)
-        printVersion();
+    if (firstRun)
+    {
+        selectLang();
+        isAssistMode();
+    }
+
+    firstRun = false;
+
+#ifdef _WIN32
+    system(Game::mainLang.title);
+#endif
+
+    Game::mainLang.printVersion();
+    Game::mainLang.printMenu();
 
     string in;
-
-    if (UIFlag)
-        cout << "GUI Mode On" << endl << endl;
-    else
-        cout << endl;
-
-    cout << "1.Play with Friends" << endl;
-    cout << "2.Play with Achilles" << endl;
-    cout << "3.Achilles Auto Play" << endl;
-    if (UIFlag)
-        cout << "4.Turn Off GUI" << endl;
-    else
-        cout << "4.Turn On GUI" << endl;
-    cout << "5.Load Game" << endl;
-    cout << "6.Instructions" << endl;
-#ifdef WINDOWS_
-    cout << "7.Change Theme" << endl;
-#endif
-    cout << "0.Exit" << endl;
-    cout << endl;
-    cout << "Input:_\b";
 
     cin >> in;
     cout << endl;
@@ -39,121 +30,148 @@ void menu()
         switch (in[0])
         {
             case '1':
-                AIFlag = NON_AI_MODE;
-                isAssistMode();
-                init();
+                Game::AIFlag = NON_AI_MODE;
+                Game::board.init();
+                Game::humanSide = Black;
                 gameThread(Human, Human);
             case '2':
-                AIFlag = AI_MODE;
-                isAssistMode();
-                init();
+                Game::AIFlag = AI_MODE;
+                Game::board.init();
+                Game::humanSide = Black;
                 selectSide();
-                AchillesInit(diff = selectDiff());
-                if (playerSide == Black)
+                Game::diff = selectdiff();
+                AchillesInit(Game::diff);
+                if (Game::humanSide == Black)
                     gameThread(Human, AI);
                 else
                     gameThread(AI, Human);
             case '3':
-                autoFlag = true;
-                AIFlag = NON_AI_MODE;
-                assistFlag = true;
-                init();
+                Game::AIFlag = AI_MODE;
+                Game::autoFlag = true;
+                Game::assistFlag = true;
+                Game::board.init();
 
                 short diffB, diffW;
                 CLS;
-                cout << "Please Set Mode of Achilles Playing Black" << endl << endl;
-                diffB = selectDiff();
+                cout << Game::mainLang.atplbs << endl << endl;
+                diffB = selectdiff();
                 CLS;
-                cout << "Please Set Mode of Achilles Playing White" << endl << endl;
-                diffW = selectDiff();
+                cout << Game::mainLang.atplws << endl << endl;
+                diffW = selectdiff();
 
                 autoPlayThread(diffB, diffW);
             case '4':
-                UIFlag ^= 1;
+                Game::UIFlag ^= 1;
                 menu();
             case '5':
-                loadGame();
+                Game::board.load();
+                if (Game::AIFlag)
+                {
+                    if (Game::humanSide == Black)
+                        gameThread(Human, AI);
+                    else
+                        gameThread(AI, Human);
+                }
+                else
+                    gameThread(Human, Human);
             case '6':
-                help();
-#ifdef WINDOWS_
+                settings();
+                break;
             case '7':
-                theme();
-#endif
+                Game::mainLang.help();
+                menu();
             case '0':
                 exit(0);
         }
     else if (in == "ABAB")
         debugMenu();
 
-    if (debugCalled)
-        debugCalled = false;
+    if (Game::debugCalled)
+        Game::debugCalled = false;
     else
-        cout << "Invalid Input!!!" << endl;
+        cout << Game::mainLang.ivldipt << endl;
     PAUSE;
     menu();
 }
 
-void init()
+void selectLang()
 {
-    srand(unsigned(clock()));
+    CLS;
+    string in;
+    cout << "Please Select Language:" << endll;
+    cout << "1.English" << endl;
+    cout << "2.简体中文" << endl;
+    cout << "3.繁体中文" << endll;
+    cout << "Please Select:_\b";
+    cin >> in;
 
-    gameBoard.clear();
-    for (int i = 0; i < 10; i++)
-        for (int j = 0; j < 10; j++)
+    if (in.length() == 1 && isdigit(in[0]))
+        switch (in[0])
         {
-            gameBoard[i][j].stat = Empty;
-            gameBoard[i][j].coord.x = i;
-            gameBoard[i][j].coord.y = j;
-            if (AIFlag == AI_MODE) gameBoard[i][j].coord.value = coordChara[i][j];
+            case '1':
+                Game::langFlag = en_us;
+                break;
+            case '2':
+                Game::langFlag = zh_cn;
+                break;
+            case '3':
+                Game::langFlag = zh_tw;
+                break;
+            case '4':
+                cout << "Developing..." << endl;
+                Game::langFlag = en_us;
+                PAUSE;
+                break;
+            default:
+                cout << Game::mainLang.ivldipt << endl;
+                PAUSE;
+                selectLang();
         }
-    gameBoard[4][4].stat = gameBoard[5][5].stat = White;
-    gameBoard[4][5].stat = gameBoard[5][4].stat = Black;
-    gameBoard.setValid();
-    gameBoard.count();
-    playerSide = Black;
+    else
+    {
+        cout << Game::mainLang.ivldipt << endl;
+        PAUSE;
+        selectLang();
+    }
+    Game::mainLang.setLangStrings(Game::langFlag);
 }
 
 void selectSide()
 {
     string in;
-    string qst = "Play Black or White?(B/W):_\b";
-    string rpt = "Invalid Input!(Sorry that I'm dumb)";
-    cout << qst;
+    cout << Game::mainLang.sidesel;
     cin >> in;
     in[0] = toupper(in[0]);
     while ((in != "B") && (in != "W"))
     {
-        cout << rpt << endl;
-        cout << qst;
+        cout << Game::mainLang.ivldipt << endl;
+        cout << Game::mainLang.sidesel;
         cin >> in;
         in[0] = toupper(in[0]);
     }
-    playerSide = ((in == "W") ? White : Black);
+    Game::humanSide = ((in == "W") ? White : Black);
 }
 
-short selectDiff()
+short selectdiff()
 {
-    if (manualFlag)
-        return diff;
+    if (Game::manualFlag)
+        return Game::diff;
 
     short diff;
-    if (!autoFlag)
+    if (!Game::autoFlag)
     {
         CLS;
 
         if (PRINT_VERSION)
-            printVersion();
+            Game::mainLang.printVersion();
     }
 
     string in;
 
-    cout << "1.Dumb Mode" << endl;
-    cout << "2.Easy Mode" << endl;
-    cout << "3.Normal Mode" << endl;
-    cout << "4.Hard Mode" << endl;
-    cout << "5.Call Police Mode" << endl;
+    for (int i = 0; i < 5; i++)
+        cout << Game::mainLang.dif[i] << endl;
     cout << endl;
-    cout << "Input:_\b";
+    cout << Game::mainLang.sglipt;
 
     cin >> in;
     cout << endl;
@@ -182,28 +200,27 @@ short selectDiff()
     }
     else
     {
-        cout << "Invalid Input!!!" << endl;
+        cout << Game::mainLang.ivldipt << endl;
         PAUSE;
-        selectDiff();
+        CLS;
+        selectdiff();
     }
 }
 
 void isAssistMode()
 {
     string in;
-    string qst = "Do You Want Any Assistance When Placing the Stone?(Y/N):_\b";
-    string rpt = "Invalid Input!(Sorry that I'm dumb)";
-    cout << qst;
+    cout << Game::mainLang.isass;
     cin >> in;
     in[0] = toupper(in[0]);
     while ((in != "Y") && (in != "N"))
     {
-        cout << rpt << endl;
-        cout << qst;
+        cout << Game::mainLang.ivldipt << endl;
+        cout << Game::mainLang.isass;
         cin >> in;
         in[0] = toupper(in[0]);
     }
-    assistFlag = ((in == "Y") ? true : false);
+    Game::assistFlag = (in == "Y");
 }
 
 void AchillesInit(short diff)
@@ -211,52 +228,44 @@ void AchillesInit(short diff)
     switch (diff)
     {
         case 1:
-            maxDepth = 0;
+            Game::maxDepth = 0;
             break;
         case 2:
-            maxDepth = 1;
-            finalSearch = false;
-            randomFlag = true;
+            Game::maxDepth = 1;
+            Game::finalSearch = false;
+            Game::randomFlag = true;
             break;
         case 3:
-            maxDepth = 3;
-            finalSearch = false;
-            randomFlag = true;
+            Game::maxDepth = 3;
+            Game::finalSearch = false;
+            Game::randomFlag = true;
             break;
         case 4:
-            maxDepth = 5;
-            finalSearch = false;
-            randomFlag = true;
+            Game::maxDepth = 5;
+            Game::finalSearch = false;
+            Game::randomFlag = true;
             break;
         case 5:
-            maxDepth = 8;
-            finalSearch = true;
-            randomFlag = false;
+            Game::maxDepth = 8;
+            Game::finalSearch = true;
+            Game::randomFlag = false;
             break;
         default:
             fatalError(1);
     }
 }
 
-#ifdef WINDOWS_
+#ifdef _WIN32
 void theme()
 {
     CLS;
     
-    cout << "Please Select Theme:" << endl << endl;
-    cout << "0.Default (White on Black)" << endl;  //07
-    cout << "1.Reverse (Black on White)" << endl;             //70
-    cout << "2.Borland (Yellow on Blue) " << endl;            //9e
-    cout << "3.BlueScreen (White on Blue)" << endl;          //9f
-    cout << "4.Geek (Green on Black)" << endl;            //0a
-    cout << "5.Glamorous (Blue on Purple)" << endl;      //5b
-    cout << "6.Pinky (Yellow on Pink)" << endl;         //de
-    cout << "7.Yima (White on Red)" << endl;            //cf
-    cout << "8.DiDiaoYiMa (Red on Black)" << endl;     //7c
-    cout << "9.Dragon (Yellow on Dark Red)" << endl << endl; //4e
-    cout << "Input JET to Randomize the Theme." << endl;
-    cout << endl << endl;
-    cout << "Input:___\b\b\b";
+    cout << Game::mainLang.seltheme << endll;
+    for (int i = 0; i < 10; i++)
+        cout << Game::mainLang.theme[i] << endl;
+    cout << Game::mainLang.rdmtheme << endl;
+    cout << endll;
+    cout << Game::mainLang.triipt;
 
     string input;
     cin >> input;
@@ -325,50 +334,88 @@ void theme()
         }
     else
     {
-        cout << "Invalid Input!" << endl;
+        cout << Game::mainLang.ivldipt << endl;
         PAUSE;
         theme();
     }
-
     cin.sync();
-    menu();
 }
 #endif
 
+void settings()
+{
+    CLS;
+    string in;
+    for (int i = 0; i < 4; i++)
+        cout << Game::mainLang.sts[i] << endl;
+    cout << endl << Game::mainLang.sglipt;
+
+    cin >> in;
+    if (in.length() == 1 && isdigit(in[0]))
+        switch (in[0])
+        {
+            case '1':
+#ifdef _WIN32
+                theme();
+#else
+                cout << Game::mainLang.themenspt << endl;
+                PAUSE;
+#endif
+                break;
+            case '2':
+                selectLang();
+                break;
+            case '3':
+                isAssistMode();
+                break;
+            case '0':
+                menu();
+            default:
+                cout << Game::mainLang.ivldipt << endl;
+                PAUSE;
+        }
+    else
+    {
+        cout << Game::mainLang.ivldipt << endl;
+        PAUSE;
+    }
+    settings();
+}
+
 void debugMenu()
 {
-    debugCalled = true;
+    Game::debugCalled = true;
     string in;
     cin >> in;
     transform(in.begin(), in.end(), in.begin(), ::toupper);
     if (in == "SETDEPTH")
     {
-        cin >> maxDepth;
-        manualFlag = true;
+        cin >> Game::maxDepth;
+        Game::manualFlag = true;
     }
     else if (in == "RANDOM")
-        randomFlag = true;
+        Game::randomFlag = true;
     else if (in == "DEBUG")
-        debugFlag = true;
+        Game::debugFlag = true;
     else if (in == "NDEBUG")
-        debugFlag = false;
-    else if (in == "FLIP"&&AIFlag == AI_MODE)
+        Game::debugFlag = false;
+    else if (in == "FLIP"&&Game::AIFlag == AI_MODE)
     {
-        playerSide ^= 1;
-        if (playerSide == Black)
+        Game::humanSide ^= 1;
+        if (Game::humanSide == Black)
             gameThread(Human, AI);
         else 
             gameThread(AI, Human);
     }
-    else if (in == "WIN"&&AIFlag == AI_MODE)
+    else if (in == "WIN"&&Game::AIFlag == AI_MODE)
     {
         for (int i = 1; i <= 8; i++)
             for (int j = 1; j <= 8; j++)
-                gameBoard[i][j].stat = Status(playerSide);
-        gameBoard.count();
-        cPass = true;
-        gameBoard.movesRecord.resize(63);
-        if (playerSide == Black)
+                Game::board[i][j].stat = Status(Game::humanSide);
+        Game::board.count();
+        Game::AIPass = true;
+        Game::board.movesRecord.resize(63);
+        if (Game::humanSide == Black)
             gameThread(Human, AI);
         else
             gameThread(AI, Human);
@@ -376,4 +423,43 @@ void debugMenu()
     else
         cout << "^&$^%#*$" << endl;
     PAUSE;
+}
+
+
+Board Game::board = Board();
+Coord Game::inputCoord = {-1,-1};
+const Coord Game::passCoord = {-1,-1};
+
+bool Game::AIPass = false;
+bool Game::randomFlag = false;
+bool Game::manualFlag = false;
+bool Game::UIFlag = false;
+bool Game::AIFlag = false;
+bool Game::debugFlag = false;
+bool Game::assistFlag = false;
+bool Game::inputFlag = false;
+bool Game::humanSide = Black;
+bool Game::saveSuccess = false;
+bool Game::autoFlag = false;
+bool Game::debugCalled = false;
+bool Game::finalSearch = false;
+
+short Game::maxDepth = 0;
+short Game::diff = 1;
+
+double Game::AchillesReturn = 0;
+
+language Game::langFlag = en_us;
+
+gameStatus Game::status = Idle;
+langStrings Game::mainLang;
+
+bool Game::liftTheTable()
+{
+    if (status == Playing)
+    {
+        status = Lifting;
+        return true;
+    }
+    return false;;
 }

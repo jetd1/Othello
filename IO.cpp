@@ -2,56 +2,21 @@
 #include <sstream>
 #include <algorithm>
 
-
-void printVersion()
-{
-    cout << "Othello Main Version " << MAIN_VERSION << endl;
-    cout << "Achilles Version " << ACHILLES_VERSION << endl << endl;
-    cout << "Copyleft 2015" << endl;
-    cout << "By Jet" << endl;
-    cout << endl;
-}
-
-// Mouse Callback
-void mouseKey(int button, int state, int x, int y)
-{
-    if (!mouseInputAvailable) return;
-    if (state != GLUT_DOWN) return;
-    yBuffer[mouseMove] = (x / (screenSize / 8)) + 1;
-    xBuffer[mouseMove] = (y / (screenSize / 8)) + 1;
-    mouseMove++;
-    mouseInputAvailable = false;
-    return;
-}
-
-//For Mouse Input
-Coord mouseInput()
-{
-    inputFlag = false;
-    mouseInputAvailable = true;
-    while (mouseMove == 0) 
-        SLP(10);
-    Coord tmpCoord{xBuffer[mouseMove - 1], yBuffer[mouseMove - 1]};
-    mouseMove--;
-    inputFlag = true;
-    return tmpCoord;
-}
-
 //For Keyboard Input
 Coord keyboardInput()
 {
     ////Echo
-    if (AIFlag == AI_MODE)
-        if (playerSide == Black)
-            cout << "            Your(¡ñ) Turn:__\b\b";
+    if (Game::AIFlag == AI_MODE)
+        if (Game::humanSide == Black)
+            cout << Game::mainLang.ytrn1;
         else
-            cout << "            Your(¡ð) Turn:__\b\b";
+            cout << Game::mainLang.ytrn1;
     else
     {
-        if (gameBoard == Black)
-            cout << "           Black(¡ñ) Turn:__\b\b";
+        if (Game::board == Black)
+            cout << Game::mainLang.btrn;
         else
-            cout << "           White(¡ð) Turn:__\b\b";
+            cout << Game::mainLang.wtrn;
     }
 
     string input;
@@ -61,17 +26,14 @@ Coord keyboardInput()
 
     if (input == "EXIT") exit(0);
     if (input == "MENU") menu();
-    if (input == "UNDO")
-    {
-        gameBoard.save("undoTmp");
-        loadGame("undoTmp", AIFlag + 1);
-    }
+    if (input == "UNDO") Game::board.undo();
     if (input == "SAVE")
     {
-        if ((saveError = gameBoard.save()))
+        Game::saveSuccess = Game::board.save();
+        if (Game::saveSuccess)
         {
-            cout << "         Game Successfully Saved!" << endl;
-            cout << "       Press Any Key to Main Menu...";
+            cout << Game::mainLang.savess << endl;
+            cout << Game::mainLang.gotomainspc << Game::mainLang.gotomain;
 
             PAUSE;
             menu();
@@ -82,17 +44,17 @@ Coord keyboardInput()
         debugMenu();
 
     Coord tmpCoord{};
-    inputFlag = false;
+    Game::inputFlag = false;
 
     if (input.length() == 2)
     {
         if (input[0] >= 'A'&&input[0] <= 'H'&&input[1] >= '1'&&input[1] <= '8')
         {
             input.assign(input.rbegin(), input.rend());
-            inputFlag = true;
+            Game::inputFlag = true;
         }
         else if (input[0] >= '1'&&input[0] <= '8'&&input[1] >= 'A'&&input[1] <= 'H')
-            inputFlag = true;
+            Game::inputFlag = true;
         else return tmpCoord;
 
         tmpCoord.x = input[0] - '0';
@@ -106,116 +68,211 @@ void getCoord(playerType T)
     switch (T)
     {
         case Human:
-            if (UIFlag)
-                inputCoord = mouseInput();
+            if (Game::UIFlag)
+                Game::inputCoord = mouseInput();
             else
-                inputCoord = keyboardInput();
+                Game::inputCoord = keyboardInput();
             break;
         case AI:
-                inputCoord = CallAI(gameBoard);
+                Game::inputCoord = CallAI(Game::board);
             break;
         default:
             fatalError(1);
     }
 }
 
-void loadGame(string loadName, int undoSteps)
+void renewMouseStat(double x, double y, int button)
 {
-    CLS;
-    ifstream load(loadName + ".save");
-    ifstream hload(loadName + ".hash");
-    ostringstream sload, hsload;
-    if (!load || !hload || !sload)
+    static int button_old = 0;
+    static double x_old = 0, y_old = 0;
+    if (Game::status == Lifting)
     {
-        cout << "Unable to Open Saved File!" << endl;
-        cout << "Press Any Key to Main Menu...";
-        PAUSE;
-        menu();
+        if (LEFT_MOUSE_BUTTON & button & button_old)
+        {
+            theta -= 100 * (x - x_old);
+            fai += 100 * (y - y_old);
+            if (fai > 89.0) fai = 89.0;
+            if (fai < 1.0) fai = 1.0;
+        }
     }
-
-    hash<string> hashptr;
-    hsload << hload.rdbuf();
-    sload << load.rdbuf();
-
-    string saveHash = hsload.str();
-    string file = sload.str();
-
-    ostringstream convert;
-    convert << hashptr(file);
-    string fileHash = convert.str();
-
-    if (fileHash != saveHash)
+    else if (Game::status == Playing)
     {
-        cout << "Saved File Damaged!" << endl;
-        cout << "Press Any Key to Main Menu...";
-        PAUSE;
-        menu();
+        //They are actually playing.
+        floatingx = x;
+        floatingy = y;
+        if (RIGHT_MOUSE_BUTTON & button) needUndo = true;
     }
-    load.close();
-    hload.close();
-
-    init();
-
-    load.open(loadName + ".save");
-
-    load >> AIFlag;
-    load >> assistFlag;
-    load >> playerSide;
-    load >> diff;
-
-    if (diff)
-        AchillesInit(diff);
-
-    int movesCount;
-    load >> movesCount;
-    movesCount -= undoSteps;
-    gameBoard.movesRecord.clear();
-
-    for (int i = 0; i < movesCount; i++)
+    else if ((Game::status == Pause) && Game::UIFlag)
     {
-        Coord tmpCoord{};
-        load >> tmpCoord.x;
-        load >> tmpCoord.y;
-        gameBoard.move(tmpCoord);
+        if (LEFT_MOUSE_BUTTON & button)
+        {
+            if ((x >= -0.15) && (x <= 0.15))
+            {
+                if ((y >= 0.15) && (y <= 0.25))
+                    Game::board.save();
+                else if ((y >= 0.0) && (y <= 0.1))
+                    Game::board.load();
+                else if ((y >= -0.15) && (y <= -0.05))
+                {
+                    Game::saveSuccess = Game::board.save();
+                    Game::status = End;
+                }
+                else if ((y >= -0.3) && (y <= -0.2))
+                    Game::status = End;
+            }
+        }
     }
-    load.close();
-        
-    if (AIFlag == AI_MODE)
-    {
-        if (playerSide == Black)
-            gameThread(Human, AI);
-        else
-            gameThread(AI, Human);
-    }
-    else
-        gameThread(Human, Human);
+    button_old = button;
+    x_old = x; y_old = y;
 }
 
-void help()
+double zoomScale(double zoom, bool zoomOut)
 {
-    CLS;
-    cout << "***************************************************" << endl;
-    cout << endl;
-    cout << "ON THE BOARD OF COMMAND LINE MODE:" << endl;
-    cout << endl;
-    cout << "'¡ñ' STANDS FOR BLACK  '¡ð' STANDS FOR WHITE" << endl;
-    cout << "'+' MEANS THE CELL IS VALID TO PLACE YOUR STONE" << endl;
-    cout << "' ' MEANS THE CELL IS CURRENT EMPTY AND INVALID" << endl;
-    cout << endl;
-    cout << "7A,A7,7a,a7 ARE ALL RECOGNIZABLE INPUTS" << endl;
-    cout << endl;
-
-    cout << "***************************************************" << endl;
-    cout << endl;
-    cout << "YOU CAN INPUT THESE COMMAND DURING THE GAME" << endl;
-    cout << "INSTEAD OF INPUTTING THE COORDINATE:" << endl;
-    cout << endl;
-    cout << "1.EXIT: ABORT THE GAME AND EXIT." << endl << endl;
-    cout << "2.MENU: ABORT THE GAME AND GO BACK TO THE MAIN MENU." << endl << endl;
-    cout << "3.SAVE: SAVE THE GAME AND GO BACK TO THE MAIN MENU." << endl << endl;
-    cout << "4.UNDO: UNDO YOUR (AND Achilles'S) LAST MOVE." << endl << endl;
-    cout << "***************************************************" << endl;
-    cout << endl << endl << endl;
-    PAUSE;
-    menu();
+    if (zoomOut) return zoom * 0.95 + MAX_ZOOM * 0.05;
+    else return zoom * 0.95 + MIN_ZOOM * 0.05;
 }
+
+// Mouse Callback
+void mouseKey(int button, int state, int x, int y)
+{
+    if (GLUT_DOWN == state) switch (button)
+    {
+        case GLUT_LEFT_BUTTON:
+            mouseButton |= LEFT_MOUSE_BUTTON;
+            break;
+        case GLUT_MIDDLE_BUTTON:
+            mouseButton |= MIDDLE_MOUSE_BUTTON;
+            break;
+        case GLUT_RIGHT_BUTTON:
+            mouseButton |= RIGHT_MOUSE_BUTTON;
+            break;
+    }
+    else switch (button)
+    {
+        case GLUT_LEFT_BUTTON:
+            mouseButton &= ~LEFT_MOUSE_BUTTON;
+            break;
+        case GLUT_MIDDLE_BUTTON:
+            mouseButton &= ~MIDDLE_MOUSE_BUTTON;
+            break;
+        case GLUT_RIGHT_BUTTON:
+            mouseButton &= ~RIGHT_MOUSE_BUTTON;
+            break;
+    }
+    if (GLUT_WHEEL_DOWN == button) zoom = zoomScale(zoom, true);
+    if (GLUT_WHEEL_UP == button) zoom = zoomScale(zoom, false);
+
+    renewMouseStat(double(x - screenWidth / 2.0) / screenSize,
+        double(screenHeight / 2.0 - y) / screenSize,
+        mouseButton);
+
+    if (Game::status != Playing) return;
+    if (state != GLUT_UP) return;
+    if ((GLUT_WHEEL_DOWN == button) || (GLUT_WHEEL_UP == button)) return;
+
+    int step = (screenSize / BOARD_SIZE);
+
+    yBuffer = (x - screenWidth / 2 + screenSize / 2 + screenSize) / step - BOARD_SIZE + 1;
+    xBuffer = (y - screenHeight / 2 + screenSize / 2 + screenSize) / step - BOARD_SIZE + 1;
+    hasMouseInput = true;
+    return;
+}
+
+//Mouse Passive Callback
+void mouseMotion(int x, int y)
+{
+    renewMouseStat((double)(x - screenWidth / 2.0) / screenSize,
+        (double)(screenHeight / 2.0 - y) / screenSize,
+        mouseButton);
+}
+
+void update()
+{
+    if (kbstat['l'] && (Game::status == Playing)) Game::liftTheTable();
+    if (kbstat['\x1B'] && Game::UIFlag)
+    {
+        if (Game::status == Playing) Game::status = Pause;
+        else if (Game::status == Pause) Game::status = Playing;
+    }
+    if (kbstat['\x11'] && (Game::status == Lifting)) isFocus = true;
+
+    if (kbstat['w'] && (Game::status == Playing)) fai = 1.0 * 0.05 + fai * 0.95;
+    if (kbstat['s'] && (Game::status == Playing)) fai = 50.0 * 0.05 + fai * 0.95;
+}
+
+// Keyboard Callback
+void keyboardCallback(unsigned char key, int _x, int _y)
+{
+    kbstat[key] = 1;
+    update();
+}
+
+void keyboardUpCallback(unsigned char key, int x, int y)
+{
+    kbstat[key] = 0;
+    update();
+}
+
+// SpecialKeyboard Callback
+void skeyboardCallback(int key, int _x, int _y)
+{
+    switch (key)
+    {
+        case GLUT_KEY_CTRL_L:
+        case GLUT_KEY_CTRL_R:
+            kbstat['\x11'] = 1;
+            break;
+        case GLUT_KEY_SHIFT_L:
+        case GLUT_KEY_SHIFT_R:
+            kbstat['\x0F'] = 1;
+            break;
+    }
+    update();
+}
+
+
+void skeyboardUpCallback(int key, int x, int y)
+{
+    switch (key)
+    {
+        case GLUT_KEY_CTRL_L:
+        case GLUT_KEY_CTRL_R:
+            kbstat['\x11'] = 0;
+            break;
+        case GLUT_KEY_SHIFT_L:
+        case GLUT_KEY_SHIFT_R:
+            kbstat['\x0F'] = 0;
+            break;
+    }
+    update();
+}
+
+//For Mouse Input
+Coord mouseInput()
+{
+    while (Game::status == Pause) SLP(10);
+    while ((Game::status == Playing) && !hasMouseInput) SLP(10);
+    hasMouseInput = false;
+    if (Game::status != Playing)
+    {
+        while (Game::status != End) SLP(10);
+        Game::status = Idle;
+    }
+    if (needUndo) 
+    { 
+        needUndo = false;
+        Game::board.undo();
+        return{-368,-368};
+    }
+    Game::inputFlag = true;
+    return{xBuffer, yBuffer};
+}
+
+ostream& endll(ostream& strm)
+{
+    strm.put('\n');
+    strm.put('\n');
+    strm.flush();
+    return strm;
+}
+

@@ -33,7 +33,7 @@
 #endif
 
 /*
- * Under windows, we have to differentiate between static and dynamic libraries
+ * Under windows, we have to Game::differentiate between static and dynamic libraries
  */
 #ifdef _WIN32
 /* #pragma may not be supported by some compilers.
@@ -602,10 +602,10 @@ FGAPI void    FGAPIENTRY glutReportErrors( void );
 /* Comment from glut.h of classic GLUT:
 
    Win32 has an annoying issue where there are multiple C run-time
-   libraries (CRTs).  If the executable is linked with a different CRT
+   libraries (CRTs).  If the executable is linked with a Game::different CRT
    from the GLUT DLL, the GLUT DLL will not share the same CRT static
    data seen by the executable.  In particular, atexit callbacks registered
-   in the executable will not be called if GLUT calls its (different)
+   in the executable will not be called if GLUT calls its (Game::different)
    exit routine).  GLUT is typically built with the
    "/MD" option (the CRT with multithreading DLL support), but the Visual
    C++ linker default is "/ML" (the single threaded CRT).

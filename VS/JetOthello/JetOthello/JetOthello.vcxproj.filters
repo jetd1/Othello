@@ -18,9 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\UI.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Achilles.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -30,20 +27,26 @@
     <ClCompile Include="..\..\..\error.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\init.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\IO.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\init.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\display.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\model.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\multilang.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\UI.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Achilles.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -54,9 +57,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\elements.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\init.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\IO.h">
@@ -76,6 +76,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\freeglut\include\GL\freeglut_ext.h">
       <Filter>头文件\freeglut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\init.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\display.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\model.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

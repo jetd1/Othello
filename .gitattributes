@@ -4,20 +4,20 @@
 * text=auto
 
 ###############################################################################
-# Set default behavior for command prompt diff.
+# Set default behavior for command prompt Game::diff.
 #
 # This is need for earlier builds of msysgit that does not have it on by
 # default for csharp files.
 # Note: This is only used by command line
 ###############################################################################
-#*.cs     diff=csharp
+#*.cs     Game::diff=csharp
 
 ###############################################################################
 # Set the merge driver for project and solution files
 #
-# Merging from the command prompt will add diff markers to the files if there
+# Merging from the command prompt will add Game::diff markers to the files if there
 # are conflicts (Merging from VS is not affected by the settings below, in VS
-# the diff markers are never inserted). Diff markers may cause the following 
+# the Game::diff markers are never inserted). Game::diff markers may cause the following 
 # file extensions to fail to load in VS. An alternative would be to treat
 # these files as binary and thus will always conflict and require user
 # intervention with every merge. To do so, just uncomment the entries below
@@ -45,19 +45,19 @@
 #*.gif   binary
 
 ###############################################################################
-# diff behavior for common document formats
+# Game::diff behavior for common document formats
 # 
-# Convert binary document formats to text before diffing them. This feature
+# Convert binary document formats to text before Game::diffing them. This feature
 # is only available from the command line. Turn it on by uncommenting the 
 # entries below.
 ###############################################################################
-#*.doc   diff=astextplain
-#*.DOC   diff=astextplain
-#*.docx  diff=astextplain
-#*.DOCX  diff=astextplain
-#*.dot   diff=astextplain
-#*.DOT   diff=astextplain
-#*.pdf   diff=astextplain
-#*.PDF   diff=astextplain
-#*.rtf   diff=astextplain
-#*.RTF   diff=astextplain
+#*.doc   Game::diff=astextplain
+#*.DOC   Game::diff=astextplain
+#*.docx  Game::diff=astextplain
+#*.DOCX  Game::diff=astextplain
+#*.dot   Game::diff=astextplain
+#*.DOT   Game::diff=astextplain
+#*.pdf   Game::diff=astextplain
+#*.PDF   Game::diff=astextplain
+#*.rtf   Game::diff=astextplain
+#*.RTF   Game::diff=astextplain

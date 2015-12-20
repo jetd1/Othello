@@ -60,7 +60,7 @@ void drawCell(double x, double y, Status stat)
         case Empty:
             break;
         case Valid:
-            if (assistFlag && ((AIFlag == AI_MODE&&~gameBoard == playerSide) || (AIFlag == NON_AI_MODE)))
+            if (Game::assistFlag && ((Game::AIFlag == AI_MODE&&~Game::board == Game::humanSide) || (Game::AIFlag == NON_AI_MODE)))
             {
                 drawPlus(x, y, 0.07);
             }
@@ -97,7 +97,7 @@ void drawStone()
     {
         for (int j = 1; j <= 8; ++j)
         {
-            switch (gameBoard[i][j].stat)
+            switch (Game::board[i][j].stat)
             {
                 case Black:
                     drawCell(-1.125 + 0.25*j, 1.125 - 0.25*i, Black);
@@ -108,7 +108,7 @@ void drawStone()
                 case Empty:
                     break;
                 case Valid:
-                    if (assistFlag && ((AIFlag == AI_MODE&&~gameBoard == playerSide) || (AIFlag == NON_AI_MODE)))
+                    if (Game::assistFlag && ((Game::AIFlag == AI_MODE&&~Game::board == Game::humanSide) || (Game::AIFlag == NON_AI_MODE)))
                     {
                         drawCell(-1.125 + 0.25*j, 1.125 - 0.25*i, Valid);
                     }

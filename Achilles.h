@@ -3,18 +3,19 @@
 
 #include "base.h"
 #include <ctime>
+#include <climits>
+
 #define ALPHA INT_MIN
 
 #define BETA INT_MAX
 
 #define MINWINDOW 1
 
-#define TIME_OUT 100
+#define TIME_OUT 8
 
 #define RANDFACTOR 24
 
-#if 8==8
-short coordChara[10][10] =
+const short coordValue[10][10] =
 {
     {-8,-8,-8,-8,-8,-8,-8,-8,-8,-8},
     {-8,20,-3,11, 8, 8,11,-3,20,-8},
@@ -28,13 +29,7 @@ short coordChara[10][10] =
     {-8,-8,-8,-8,-8,-8,-8,-8,-8,-8}
 };
 
-#else
-short coordChara[10][10]{};
-#endif
-
-double ABReturn;
 clock_t startTime;
-double ABLast = 0;
 double BWFACTOR[2];
 double CNFACTOR[2];
 double DCFACTOR[2];
@@ -43,20 +38,13 @@ double MBFACTOR;
 double FRFACTOR;
 double CRFACTOR;
 
-extern Coord inputCoord;
-extern Board gameBoard;
-extern short maxDepth;
-extern bool debugFlag, playerSide, randomFlag, finalSearch;
-extern short coordChara[10][10];
-
-extern void fatalError(unsigned);
-
 Coord Hector(Board&);
-Coord CallAI(Board &board);
+Coord CallAI(Board&);
 double BoardEval(Board&);
-double Achilles(Board &board = gameBoard, short depth = maxDepth, double alpha = ALPHA, double beta = BETA, Coord &bestCoord = inputCoord);
-
-bool cmpCoord(const Coord&, const Coord&);
+double Achilles(Board &board = Game::board, 
+    short depth = Game::maxDepth,
+    double alpha = ALPHA, double beta = BETA,
+    Coord &bestCoord = Game::inputCoord);
 
 
 

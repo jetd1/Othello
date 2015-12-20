@@ -4,16 +4,14 @@
 #include "elements.h"
 #include <ctime>
 
-inline bool inRange(int, int);
-
 extern void fatalError(unsigned);
-extern bool cmpCoord(const Coord&, const Coord&);
+extern void AchillesInit(short);
 
-extern short diff;
+inline bool cmpCoord(const Coord &A, const Coord &B) { return coordValue[A.x][A.y] > coordValue[B.x][B.y]; }
+
 extern clock_t startTime;
-extern short coordChara[10][10];
-extern bool debugFlag, assistFlag, AIFlag, playerSide, cPass;
+extern const short coordValue[10][10];
 
-short dir[8][2] = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
+const short dir[8][2] = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
 
 #endif

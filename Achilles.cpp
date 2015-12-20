@@ -11,9 +11,9 @@ Version 2.9
 double Achilles(Board &board, short depth, double alpha, double beta, Coord &bestCoord)
 {
     if (board.isWin(~board))
-        return BETA - 1000 + 12 * board.isWin(~board) + depth;
+        return BETA - 2000 + 12 * board.isWin(~board) + depth;
     if (board.isWin(!board))
-        return ALPHA + 2000 - 12 * board.isWin(!board) - depth;
+        return ALPHA + 1000 - 12 * board.isWin(!board) - depth;
 
     if (!depth || !board(Valid) || clock() - startTime > TIME_OUT * CLOCKS_PER_SEC)
         return BoardEval(board);
@@ -26,18 +26,18 @@ double Achilles(Board &board, short depth, double alpha, double beta, Coord &bes
     Eval = -Achilles(mainTmp, depth - 1, -beta, -alpha, bestCoord);
     if (Eval >= beta)
     {
-        if (depth == maxDepth)
+        if (depth == Game::maxDepth)
             bestCoord = board.validCoord[0];
         return beta;
     }
     if (Eval > alpha)
     {
         alpha = Eval;
-        if (depth == maxDepth)
+        if (depth == Game::maxDepth)
             bestCoord = board.validCoord[0];
     }
 
-    for (unsigned i = 1; i < board.validCoord.size(); i++)
+    for (size_t i = 1; i < board.validCoord.size(); i++)
     {
         Board tmpBoard = board;
         tmpBoard.move(board.validCoord[i]);
@@ -49,14 +49,14 @@ double Achilles(Board &board, short depth, double alpha, double beta, Coord &bes
 
         if (Eval >= beta)
         {
-            if (depth == maxDepth)
+            if (depth == Game::maxDepth)
                 bestCoord = board.validCoord[i];
             return beta;
         }
         if (Eval > alpha)
         {
             alpha = Eval;
-            if (depth == maxDepth)
+            if (depth == Game::maxDepth)
                 bestCoord = board.validCoord[i];
         }
     }
@@ -73,12 +73,12 @@ Coord CallAI(Board &board)
 {
     startTime = clock();
 
-    if (maxDepth == 0 || (randomFlag&&!(rand() % RANDFACTOR)))
+    if (Game::maxDepth == 0 || (Game::randomFlag&&!(rand() % RANDFACTOR)))
         return Hector(board);
 
-    if (finalSearch)
+    if (Game::finalSearch)
     {
-        if (gameBoard(Empty) < 16)
+        if (Game::board(Empty) < 16)
         {
             BWFACTOR[Black] = 6.00;
             BWFACTOR[White] = 6.00;
@@ -90,19 +90,19 @@ Coord CallAI(Board &board)
             MBFACTOR = 0.20;
             SDFACTOR = 3.33;
 
-            if (gameBoard.validCoord.size() > 10)
-                maxDepth = 10;
-            else if (gameBoard(Empty) < 14)
-                maxDepth = 13;
+            if (Game::board.validCoord.size() > 10)
+                Game::maxDepth = 10;
+            else if (Game::board(Empty) < 14)
+                Game::maxDepth = 13;
             else
-                maxDepth = 11;
+                Game::maxDepth = 11;
         }
-        else if (gameBoard(Empty) < 21)
+        else if (Game::board(Empty) < 21)
         {
-            if (gameBoard(Empty) < 19)
-                maxDepth = 10;
+            if (Game::board(Empty) < 19)
+                Game::maxDepth = 10;
             else
-                maxDepth = 9;
+                Game::maxDepth = 9;
 
             BWFACTOR[Black] = 0.14;
             BWFACTOR[White] = 0.14;
@@ -115,8 +115,8 @@ Coord CallAI(Board &board)
             SDFACTOR = 3.33;
             CRFACTOR = 0.01;
 
-            if (gameBoard.validCoord.size() > 10)
-                maxDepth = 9;
+            if (Game::board.validCoord.size() > 10)
+                Game::maxDepth = 9;
         }
         else
         {
@@ -130,8 +130,8 @@ Coord CallAI(Board &board)
             MBFACTOR = 0.79;
             SDFACTOR = 3.33;
             CRFACTOR = 0.05;
-            if (gameBoard.validCoord.size() > 8)
-                maxDepth = 7;
+            if (Game::board.validCoord.size() > 8)
+                Game::maxDepth = 7;
         }
     }
     else
@@ -148,11 +148,11 @@ Coord CallAI(Board &board)
         CRFACTOR = 0.05;
     }
 
-    ABReturn = Achilles(board);
+    Game::AchillesReturn = Achilles(board);
 
-    assert(gameBoard.isValid(inputCoord, ~board));
+    assert(Game::board.isValid(Game::inputCoord, ~board));
 
-    return inputCoord;
+    return Game::inputCoord;
 }
 
 double BoardEval(Board &board)
@@ -409,7 +409,7 @@ double BoardEval(Board &board)
 
 
     //Weighed Evaluation
-    double Eval =
+        double Eval =
         (BWFACTOR[~board] * BWRateEval) +
         (CNFACTOR[~board] * CornerEval) +
         (DCFACTOR[~board] * DCornerEval) +
@@ -419,7 +419,6 @@ double BoardEval(Board &board)
         (CRFACTOR*CharaEval);
 
     return Eval;
+    //return board(~board);
 
 }
-
-bool cmpCoord(const Coord &A, const Coord &B) { return A.value > B.value; }

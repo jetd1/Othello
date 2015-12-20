@@ -5,14 +5,15 @@
 #include <algorithm>
 
 //construct function
-Board::Board()  //need to rewrite
+Board::Board()
 {
     for (short i = 0; i < 10; i++)
         for (short j = 0; j < 10; j++)
         {
             cell[i][j] = {
-                {i, j, coordChara[i][j]},
-                Empty};
+                {i, j},
+                Empty,
+                {}};
         }
     validCountFor[Black] = validCountFor[White] = 0;
 
@@ -36,38 +37,48 @@ Board::Board()  //need to rewrite
 
 //overload operators
 Cell* Board::operator [](int i) { return cell[i]; }
-short Board::operator ()(Status stat) { return statusCount[stat]; }
-short Board::operator ()(bool flag) { return statusCount[flag]; }
+short Board::operator ()(const Status &stat) { return statusCount[stat]; }
+short Board::operator ()(const bool &flag) { return statusCount[flag]; }
 bool Board::operator ==(const Status &stat)const { return int(sideFlag) == stat; }
-void Board::operator =(Board &board)     //need to rewrite
+void Board::operator =(const Board &board)     //need to rewrite
 {
-    board.count();
     for (int i = 0; i < 10; i++)
         for (int j = 0; j < 10; j++)
             cell[i][j] = board.cell[i][j];
 
-    validCountFor[Black] = board.validCountFor[Black];
-    validCountFor[White] = board.validCountFor[White];
+    //validCountFor[Black] = board.validCountFor[Black];
+    //validCountFor[White] = board.validCountFor[White];
 
     passFlag[Black] = board.passFlag[Black];
     passFlag[White] = board.passFlag[White];
 
-    sideFrontier[White] = board.sideFrontier[White];
-    sideFrontier[Black] = board.sideFrontier[Black];
-    allFrontier = board.allFrontier;
+    //sideFrontier[White] = board.sideFrontier[White];
+    //sideFrontier[Black] = board.sideFrontier[Black];
+    //allFrontier = board.allFrontier;
     validCoord = board.validCoord;
-    movesRecord = board.movesRecord;
+    //movesRecord = board.movesRecord;
 
-    for (int i = 0; i < 4; i++)
-        statusCount[i] = board(Status(i));
+    //for (int i = 0; i < 4; i++)
+    //    statusCount[i] = board(Status(i));
 
-    aValue[White] = board.aValue[White];
-    aValue[Black] = board.aValue[Black];
+    //aValue[White] = board.aValue[White];
+    //aValue[Black] = board.aValue[Black];
     sideFlag = board.sideFlag;
 }
 bool Board::operator ~()const { return Status(sideFlag); }
 bool Board::operator !()const { return Status(!sideFlag); }
 
+
+void Board::init()
+{
+    srand(unsigned(clock()));
+
+    clear();
+    cell[4][4].stat = cell[5][5].stat = White;
+    cell[4][5].stat = cell[5][4].stat = Black;
+    setValid_fast();
+    count();
+}
 
 //member functions
 void Board::clear()
@@ -76,8 +87,9 @@ void Board::clear()
         for (short j = 0; j < 10; j++)
         {
             cell[i][j] = {
-                {i, j, coordChara[i][j]},
-                Empty};
+                {i, j},
+                Empty,
+                {}};
         }
 
     validCountFor[Black] = validCountFor[White] = 0;
@@ -123,7 +135,7 @@ void Board::setFrontierFor(const bool& side)
                     short x = i + dir[d][0];
                     short y = j + dir[d][1];
                     if (inRange(x, y) && (cell[x][y].stat >= Empty))
-                        sideFrontier[Status(side)].insert(cell[x][y].coord);
+                        sideFrontier[side].insert(cell[x][y].coord);
                 }
 }
 
@@ -135,7 +147,7 @@ void Board::setFrontier()
     set_union(sideFrontier[sideFlag].begin(), sideFrontier[sideFlag].end(), sideFrontier[!sideFlag].begin(), sideFrontier[!sideFlag].end(), inserter(allFrontier, allFrontier.begin()));
 }
 
-bool Board::isValid(Coord &pos, const bool& side)
+bool Board::isValid(const Coord &pos, const bool& side)
 {
     if (!inRange(pos.x, pos.y))
         return false;
@@ -148,9 +160,9 @@ bool Board::isValid(Coord &pos, const bool& side)
         {
             for (int p = pos.x + dx, q = pos.y + dy; inRange(p, q); p += dx, q += dy)
             {
-                if (cell[p][q].stat >= Empty) 
+                if (cell[p][q].stat >= Empty)
                     break;
-                if (cell[p][q].stat == int(side)) 
+                if (cell[p][q].stat == int(side))
                     return true;
             }
         }
@@ -158,7 +170,67 @@ bool Board::isValid(Coord &pos, const bool& side)
     return false;
 }
 
+bool Board::isValid_fast(const Coord &pos, const bool& side)
+{
+    bool R = false;
+    for (int i = 0; i < 8; i++)
+    {
+        short x = pos.x, y = pos.y;
+        cell[x][y].validDir[i] = false;
+
+        short nx = x + dir[i][0], ny = y + dir[i][1];
+        if (cell[nx][ny].stat == Status(!side))
+        {
+            for (int p = nx, q = ny; ; p += dir[i][0], q += dir[i][1])
+            {
+                if (cell[p][q].stat == Status(!side))
+                    continue;
+                if (cell[p][q].stat >= Empty)
+                {
+                    cell[x][y].validDir[i] = false;
+                    break;
+                }
+                if (cell[p][q].stat == Status(side))
+                {
+                    cell[x][y].validDir[i] = true;
+                    R = true;
+                    break;
+                }
+            }
+        }
+    }
+    return R;
+}
+
 void Board::setValid()
+{
+    setFrontier();
+    validCoord.clear();
+    statusCount[Valid] = 0;
+    validCountFor[Black] = validCountFor[White] = 0;
+    for (auto coord : allFrontier)
+    {
+        short x = coord.x;
+        short y = coord.y;
+        if (isValid(coord, sideFlag))
+        {
+            cell[x][y].stat = Valid;
+            statusCount[Valid]++;
+            validCountFor[sideFlag]++;
+            validCoord.push_back(cell[x][y].coord);
+        }
+        else
+        {
+            cell[x][y].stat = Empty;
+            if (isValid(coord, !sideFlag))
+                validCountFor[!sideFlag]++;
+        }
+    }
+        
+    sort(validCoord.begin(), validCoord.end(), cmpCoord);
+}
+
+void Board::setValid_fast()
 {
     setFrontier();
     validCoord.clear();
@@ -169,7 +241,7 @@ void Board::setValid()
         Coord tmpCoord = *itr;
         short x = tmpCoord.x;
         short y = tmpCoord.y;
-        if (isValid(tmpCoord, sideFlag))
+        if (isValid_fast(tmpCoord, sideFlag))
         {
             cell[x][y].stat = Valid;
             statusCount[Valid]++;
@@ -183,11 +255,11 @@ void Board::setValid()
                 validCountFor[!sideFlag]++;
         }
     }
-        
+
     sort(validCoord.begin(), validCoord.end(), cmpCoord);
 }
 
-void Board::move(Coord &pos)
+void Board::move(const Coord &pos)
 {
     if (pos.x == -1 && pos.y == -1)
         passFlag[sideFlag] = true;
@@ -226,17 +298,37 @@ void Board::move(Coord &pos)
     count();
 }
 
-#ifdef WINDOWS_
+void Board::fastmove(const Coord &pos)
+{
+    for (int i = 0; i < 8; i++)
+    {
+        short x = pos.x, y = pos.y;
+        if (cell[x][y].validDir[i])
+        {
+            do
+            {
+                cell[x][y].stat = Status(sideFlag);
+                x += dir[i][0];
+                y += dir[i][1];
+            } while (cell[x][y].stat == Status(!sideFlag));
+        }
+    }
+
+    flipSide();
+    setValid_fast();
+    count();
+}
+
+#ifdef _WIN32
 void Board::print()
 {
-    if (!debugFlag)
+    if (!Game::debugFlag)
     {
         SLP(1);
         CLS;
     }
     cout << endl;
-    cout << "            Round " << movesRecord.size() + 1 << (sideFlag ? ", Black" : ", White") << " Turn" << endl;
-    cout << endl;
+    cout << Game::mainLang.rnd << movesRecord.size() + 1 << Game::mainLang.rnd1 << ", " << (sideFlag ? Game::mainLang.blk : Game::mainLang.wht) << Game::mainLang.trn << endll;
     cout << "      ";
     for (int i = 1; i <= 8; i++)
         cout << char('@' + i) << "   ";
@@ -260,8 +352,8 @@ void Board::print()
                     cout << "  │";
                     break;
                 case Valid:
-                    if (assistFlag && ((AIFlag == AI_MODE&&sideFlag == playerSide) || (AIFlag == NON_AI_MODE)))
-                        cout << " +│";
+                    if ((Game::assistFlag && ((Game::AIFlag && sideFlag == Game::humanSide) || !Game::AIFlag)) || Game::autoFlag)
+                        cout << "╋│";
                     else
                         cout << "  │";
                     break;
@@ -276,43 +368,49 @@ void Board::print()
         if (i - 8) cout << endl;
     }
     cout << endl << left << "       "
-        << "Black(●):" << setw(2) << statusCount[Black] << "    "
-        << "White(○):" << setw(2) << statusCount[White] << endl;
+        << Game::mainLang.blk << "(●):" << setw(2) << statusCount[Black] << "    "
+        << Game::mainLang.wht << "(○):" << setw(2) << statusCount[White] << endl;
 
-    if (movesRecord.size() && AIFlag == AI_MODE&&sideFlag == playerSide&&!cPass)
+    if (movesRecord.size() && Game::AIFlag && sideFlag == Game::humanSide && !Game::AIPass && !Game::autoFlag)
     {
-        if (debugFlag)
+        if (Game::debugFlag)
         {
             ofstream out("timecsm.txt", ios::app);
-            out << "Achilles Placed a Stone at "
+            out << Game::mainLang.aps
                 << movesRecord[movesRecord.size() - 1].x
                 << char(movesRecord[movesRecord.size() - 1].y + '@')
+                << Game::mainLang.aps1
                 << endl
-                << double(clock() - startTime) / CLOCKS_PER_SEC << " Seconds Consumed."
-                << endl << endl;
+                << Game::mainLang.tmcsm1
+                << double(clock() - startTime) / CLOCKS_PER_SEC
+                << Game::mainLang.tmcsm
+                << endll;
+            out.close();
         }
         cout << endl << "        "
-            << "Achilles Placed a Stone at "
+            << Game::mainLang.aps
             << movesRecord[movesRecord.size() - 1].x
             << char(movesRecord[movesRecord.size() - 1].y + '@')
+            << Game::mainLang.aps1
             << endl << "          "
-            << double(clock() - startTime) / CLOCKS_PER_SEC << " Seconds Consumed."
-            << endl << endl;
+            << Game::mainLang.tmcsm1
+            << double(clock() - startTime) / CLOCKS_PER_SEC
+            << Game::mainLang.tmcsm
+            << endll;
     }
-    else cout << endl << endl;
+    else cout << endll;
 }
 
 #else
 void Board::print()
 {
-    if (!debugFlag)
+    if (!Game::debugFlag)
     {
         SLP(1);
         CLS;
     }
     cout << endl;
-    cout << "            Round " << movesRecord.size() + 1 << (sideFlag ? ", Black" : ", White") << " Turn" << endl;
-    cout << endl;
+    cout << Game::mainLang.rnd << movesRecord.size() + 1 << Game::mainLang.rnd1 << ", " << (sideFlag ? Game::mainLang.blk : Game::mainLang.wht) << Game::mainLang.trn << endll;
     cout << "      ";
     for (int i = 1; i <= 8; i++)
         cout << char('@' + i) << "   ";
@@ -336,8 +434,8 @@ void Board::print()
                     cout << "   │";
                     break;
                 case Valid:
-                    if (assistFlag && ((AIFlag == AI_MODE&&sideFlag == playerSide) || (AIFlag == NON_AI_MODE)))
-                        cout << " + │";
+                    if (Game::assistFlag && ((Game::AIFlag == AI_MODE&&sideFlag == Game::humanSide) || (Game::AIFlag == NON_AI_MODE)))
+                        cout << " ╋ │";
                     else
                         cout << "   │";
                     break;
@@ -352,42 +450,49 @@ void Board::print()
         if (i - 8) cout << endl;
     }
     cout << endl << left << "       "
-        << "Black(●):" << setw(2) << statusCount[Black] << "    "
-        << "White(○):" << setw(2) << statusCount[White] << endl;
+        << Game::mainLang.blk << "(●):" << setw(2) << statusCount[Black] << "    "
+        << Game::mainLang.wht << "(○):" << setw(2) << statusCount[White] << endl;
 
-    if (movesRecord.size() && AIFlag == AI_MODE&&sideFlag == playerSide&&!cPass)
+    if (movesRecord.size() && Game::AIFlag && sideFlag == Game::humanSide && !Game::AIPass && !Game::autoFlag)
     {
-        if (debugFlag)
+        if (Game::debugFlag)
         {
             ofstream out("timecsm.txt", ios::app);
-            out << "Achilles Placed a Stone at "
+            out << Game::mainLang.aps
                 << movesRecord[movesRecord.size() - 1].x
                 << char(movesRecord[movesRecord.size() - 1].y + '@')
+                << Game::mainLang.aps1
                 << endl
-                << double(clock() - startTime) / CLOCKS_PER_SEC << " Seconds Consumed."
-                << endl << endl;
+                << Game::mainLang.tmcsm1
+                << double(clock() - startTime) / CLOCKS_PER_SEC
+                << Game::mainLang.tmcsm
+                << endll;
+            out.close();
         }
         cout << endl << "        "
-            << "Achilles Placed a Stone at "
+            << Game::mainLang.aps
             << movesRecord[movesRecord.size() - 1].x
             << char(movesRecord[movesRecord.size() - 1].y + '@')
+            << Game::mainLang.aps1
             << endl << "          "
-            << double(clock() - startTime) / CLOCKS_PER_SEC << " Seconds Consumed."
-            << endl << endl;
+            << Game::mainLang.tmcsm1
+            << double(clock() - startTime) / CLOCKS_PER_SEC
+            << Game::mainLang.tmcsm
+            << endll;
     }
-    else cout << endl << endl;
+    else cout << endll;
 }
 
 #endif
 
 void Board::recordPrint()
 {
-    cout << "Game Record:" << endl << endl;
+    cout << Game::mainLang.gmrcd << endll;
     for (unsigned i = 0; i < movesRecord.size(); i++)
         if (movesRecord[i].x != -1)
             cout << movesRecord[i].x << char(movesRecord[i].y + '@') << ' ';
         else
-            cout << "PASS" << ' ';
+            cout << Game::mainLang.pass << ' ';
     cout << endl;
 }
 
@@ -397,7 +502,7 @@ double Board::allEvalFor(const bool& side) //Evaluation for all cells of the sid
     for (int i = 1; i <= 8; i++)
         for (int j = 1; j <= 8; j++)
             if (cell[i][j].stat == Status(side))
-                aval += cell[i][j].coord.value;
+                aval += coordValue[i][j];
 
     aValue[side] = aval;
     return aValue[side];
@@ -405,18 +510,18 @@ double Board::allEvalFor(const bool& side) //Evaluation for all cells of the sid
 
 bool Board::save(string saveName)
 {
-    ofstream save(saveName+".save");
+    ofstream save(saveName+".save",ios::binary);
     if (!save)
     {
-        cout << "    Unable to Save, Game Will Now Resume!";
+        cout << Game::mainLang.savefl;
         PAUSE;
         return false;
     }
 
-    save << AIFlag << endl;
-    save << assistFlag << endl;
-    save << playerSide << endl;
-    save << diff << endl << endl;
+    save << Game::AIFlag << endl;
+    save << Game::assistFlag << endl;
+    save << Game::humanSide << endl;
+    save << Game::diff << endl << endl;
     save << movesRecord.size() << endl;
     for (unsigned i = 0; i < movesRecord.size(); i++)
         save << movesRecord[i].x << ' '
@@ -427,7 +532,7 @@ bool Board::save(string saveName)
     ofstream hsave(saveName + ".hash");
     if (!load || !hsave)
     {
-        cout << "Unable to Save, Game Will Now Resume!";
+        cout << Game::mainLang.savefl;
         PAUSE;
         return false;
     }
@@ -443,4 +548,76 @@ bool Board::save(string saveName)
     load.close();
 
     return true;
+}
+
+bool Board::load(string loadName, int undoSteps)
+{
+    CLS;
+    ifstream load(loadName + ".save", ios::binary);
+    ifstream hload(loadName + ".hash");
+    ostringstream sload, hsload;
+    if (!load || !hload || !sload)
+    {
+        cout << Game::mainLang.loadfl << endl;
+        cout << Game::mainLang.gotomain;
+        PAUSE;
+        return false;
+    }
+
+    hash<string> hashptr;
+    hsload << hload.rdbuf();
+    sload << load.rdbuf();
+
+    string saveHash = hsload.str();
+    string file = sload.str();
+
+    ostringstream convert;
+    convert << hashptr(file);
+    string fileHash = convert.str();
+
+    if (fileHash != saveHash)
+    {
+        cout << Game::mainLang.savedmg << endl;
+        cout << Game::mainLang.gotomain;
+        PAUSE;
+        return false;
+    }
+    load.close();
+    hload.close();
+
+    Game::board.init();
+
+    load.open(loadName + ".save");
+
+    load >> Game::AIFlag;
+    load >> Game::assistFlag;
+    load >> Game::humanSide;
+    load >> Game::diff;
+
+    if (Game::diff)
+        AchillesInit(Game::diff);
+
+    int movesCount;
+    load >> movesCount;
+    movesCount -= undoSteps;
+    Game::board.movesRecord.clear();
+
+    for (int i = 0; i < movesCount; i++)
+    {
+        Coord tmpCoord{};
+        load >> tmpCoord.x;
+        load >> tmpCoord.y;
+        Game::board.move(tmpCoord);
+    }
+    load.close();
+
+    print();
+
+    return true;
+}
+
+void Board::undo()
+{
+    save("undoTmp");
+    load("undoTmp", Game::AIFlag + 1);
 }
